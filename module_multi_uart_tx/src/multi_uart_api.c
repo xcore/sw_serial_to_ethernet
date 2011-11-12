@@ -143,12 +143,12 @@ int uart_tx_initialise_channel( int channel_id, e_uart_tx_config_parity parity, 
 }
 
 /**
- * Calculate tx full word
+ * Assemble tx full word
  * @param channel_id    Channel identifier
  * @param uart_char     The character being sent
  * @return              Full UART word in the format (msb -> lsb) STOP|PARITY|DATA|START 
  */
-unsigned int uart_tx_calc_word( int channel_id, unsigned int uart_char )
+unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
 {
     unsigned int full_word;
     int temp;

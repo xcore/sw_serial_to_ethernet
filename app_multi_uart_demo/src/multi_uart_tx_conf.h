@@ -13,7 +13,7 @@
  * Div 8  => 230400 max bps
  * Div 4  => 460800 max bps
  */
-#define UART_CLOCK_DIVIDER      1
+#define UART_CLOCK_DIVIDER      500
 
 /**
  * Define the buffer size in bytes - full UART words are stored in this buffer, so if 2 bytes per word are required (e.g. 12 bit UART word) then this must be accounted for

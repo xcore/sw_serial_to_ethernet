@@ -7,13 +7,13 @@ s_multi_uart_tx_ports uart_tx_ports =
 {    
     XS1_PORT_8A,
     XS1_PORT_1A,
-    XS1_CLKBLK_REF
+    XS1_CLKBLK_1
 };
 
 
 void uart_tx_test(chanend cUART)
 {
-    unsigned char char_tx = 0x0;
+    unsigned char char_tx = 0xAA;
     unsigned temp = 0;
 
     /* configure UARTs */
@@ -37,13 +37,15 @@ void uart_tx_test(chanend cUART)
        for (int i = 0; i < 8;)
        {
            int buffer_space;
+           temp = uart_tx_assemble_word( i, (unsigned)char_tx );
            cUART <: i;
-           cUART <: char_tx;
+           cUART <: temp;;
            cUART :> buffer_space;
            if (buffer_space)
                i++;
+//           printintln(buffer_space);
        }
-       char_tx += 1;
+       //char_tx += 1;
    }
 }
 

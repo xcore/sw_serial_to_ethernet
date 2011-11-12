@@ -1,4 +1,5 @@
 #include "multi_uart_tx.h"
+#include <print.h>
 
 extern s_multi_uart_tx_channel uart_tx_channel[UART_TX_CHAN_COUNT];
 
@@ -11,12 +12,15 @@ unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
 
 void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
 {
-    //if ((unsigned)tx_ports.pUart != (unsigned)XS1_CLKBLK_REF)
-    //{
-        // TODO configure external clock   
-    //}
+    if (UART_CLOCK_DIVIDER > 1)
+    {
+        // TODO configuration for external clock
+        configure_clock_ref( tx_ports.cbUart, UART_CLOCK_DIVIDER/2 );	
+    }
     
-    configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 1); // TODO honour stop bit polarity	 
+    configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 1); // TODO honour stop bit polarity
+    
+    start_clock( tx_ports.cbUart );
 }
 
 unsigned multi_uart_tx_buffer_get( int chan_id )
@@ -25,7 +29,8 @@ unsigned multi_uart_tx_buffer_get( int chan_id )
     
     int rd_ptr = uart_tx_channel[chan_id].rd_ptr;
     uart_tx_channel[chan_id].nelements++;
-    uart_tx_channel[chan_id].buf_empty = (uart_tx_channel[chan_id].nelements == uart_tx_channel[chan_id].nMax);
+    uart_tx_channel[chan_id].buf_empty = 
+        (uart_tx_channel[chan_id].nelements == uart_tx_channel[chan_id].nMax);
         
     for (int i = 0; i < uart_tx_channel[chan_id].inc; i++)
     {
@@ -92,12 +97,17 @@ void run_multi_uart_tx( chanend cUART, s_multi_uart_tx_ports &tx_ports )
         
         /* initialise port */
         tx_ports.pUart <: port_val @ port_ts;
-        port_ts += 1;
+        port_ts += 3;
         
         while (run_tx_loop)
         {
             /* process the next bit on the ports */
             tx_ports.pUart @ port_ts <: port_val;
+            port_ts += 3;
+            
+            printint(uart_tx_channel[0].tick_count); printstr(" : ");
+            printhexln(uart_tx_channel[0].current_word_pos);
+            
             /* calculate next port_val */
             for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
             {
@@ -108,6 +118,7 @@ void run_multi_uart_tx( chanend cUART, s_multi_uart_tx_ports &tx_ports )
                     port_val |= (uart_tx_channel[i].current_word & 1) << i;
                     uart_tx_channel[i].current_word >>= 1;
                     uart_tx_channel[i].current_word_pos -= 1;
+                    uart_tx_channel[i].tick_count = uart_tx_channel[i].clocks_per_bit;
                 }
                 /* active and not yet completed bit time */
                 else if (uart_tx_channel[i].tick_count > 0 && uart_tx_channel[i].current_word_pos)
@@ -119,7 +130,7 @@ void run_multi_uart_tx( chanend cUART, s_multi_uart_tx_ports &tx_ports )
                 {
                     /* initialise values */
                     unsigned uart_word = multi_uart_tx_buffer_get( i );
-                    uart_tx_channel[i].current_word = uart_word;
+                    uart_tx_channel[i].current_word = 0b10111111110; //uart_word;
                     uart_tx_channel[i].current_word_pos = uart_tx_channel[i].uart_word_len;
                     uart_tx_channel[i].tick_count = uart_tx_channel[i].clocks_per_bit;
                 }
