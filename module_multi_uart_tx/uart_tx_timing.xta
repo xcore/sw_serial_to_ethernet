@@ -1,0 +1,11 @@
+# load "/Volumes/Vault/sandboxes/sb_multi_uart/sc_multi_uart/app_multi_uart_demo/bin/multi_uart_demo.xe"
+
+#
+# Analyze bit transmission bit
+#
+analyze endpoints bit_ep bit_ep
+set required 0 4.34 us
+print summary
+#set loop - buffer_get 4
+#set loop - buffer_put 4
+

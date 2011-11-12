@@ -28,10 +28,9 @@ void uart_tx_test(chanend cUART)
    
    while (temp != UART_TX_GO)
    {
-       cUART <: UART_TX_GO;
        cUART :> temp;
    }
-   
+
    while (1)
    {
        for (int i = 0; i < 8;)
