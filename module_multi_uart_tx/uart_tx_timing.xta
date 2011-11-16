@@ -4,8 +4,12 @@
 # Analyze bit transmission bit
 #
 analyze endpoints bit_ep bit_ep
+# 230400 bps is 4.34uS
 set required 0 4.34 us
+#set required 0 5.00 us
+#set loop - update_loop 8
 print summary
+exit
 #set loop - buffer_get 4
 #set loop - buffer_put 4
 

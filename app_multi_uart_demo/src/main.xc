@@ -11,19 +11,25 @@ s_multi_uart_tx_ports uart_tx_ports =
 };
 
 
-void uart_tx_test(chanend cUART)
+void uart_tx_test(streaming chanend cUART)
 {
     unsigned char char_tx = 0xAA;
     unsigned temp = 0;
+    unsigned baud_rate = 200000;
 
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
     {
-       if (uart_tx_initialise_channel( i, even, sb_1, 50000, 8 ))
+       if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
        {
            printstr("Invalid baud rate for channel ");
            printintln(i);
        }
+       printintln(baud_rate);
+       baud_rate /= 2;
+       if ((int)baud_rate <= 3125)
+           baud_rate = 3125;
+       
     }
    
    while (temp != UART_TX_GO)
@@ -41,11 +47,18 @@ void uart_tx_test(chanend cUART)
            cUART <: temp;;
            cUART :> buffer_space;
            if (buffer_space)
+           {
+               if (i == 0) {printhexln(char_tx); printhexln(temp);}
                i++;
-//           printintln(buffer_space);
+           }
        }
-       //char_tx += 1;
+       char_tx += 1;
    }
+}
+
+void dummy()
+{
+    while (1);
 }
 
 /**
@@ -53,10 +66,17 @@ void uart_tx_test(chanend cUART)
  */
 int main(void)
 {
-    chan cUART;
+    streaming chan cUART;
     
     par
     {
+        dummy();
+        dummy();
+        dummy();
+        dummy();
+        dummy();
+        dummy();
+        
         uart_tx_test(cUART);
         run_multi_uart_tx( cUART, uart_tx_ports );
     }

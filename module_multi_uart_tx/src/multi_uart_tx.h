@@ -5,6 +5,10 @@
 #include <xccompat.h>
 #include <xclib.h>
 
+#ifdef __STDC__
+#define streaming
+#endif
+
 #ifdef __multi_uart_tx_conf_h_exists__
 #include "multi_uart_tx_conf.h"
 #else
@@ -120,7 +124,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
 /**
  * Multi UART Transmit Thread
  */
-void run_multi_uart_tx( chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports) );
+void run_multi_uart_tx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports) );
 
  
 #endif /* __MULTI_UART_TX_H__ */

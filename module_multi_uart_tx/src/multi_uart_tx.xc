@@ -1,6 +1,8 @@
 #include "multi_uart_tx.h"
 #include <print.h>
 
+#define PORT_TS_INC 1
+
 extern s_multi_uart_tx_channel uart_tx_channel[UART_TX_CHAN_COUNT];
 
 #define increment(a, inc)  { a = (a+inc); a *= !(a == UART_TX_BUF_SIZE); }
@@ -45,6 +47,27 @@ unsigned multi_uart_tx_buffer_get( int chan_id )
     return word;
 }
 
+{unsigned, unsigned} multi_uart_tx_chan_get( int chan_id, chanend cUART )
+{
+    
+    int t;
+    unsigned uart_word;
+    unsigned status = 1;
+    
+   select
+   {
+   case cUART :> t:
+       cUART :> uart_word;
+       status = (chan_id != t); 
+       cUART <: status;
+       break;
+   default:
+       break;
+   }
+    
+    return {uart_word, status};                           
+}
+
 #pragma unsafe arrays
 int multi_uart_tx_buffer_put( int chan_id, char data[] )
 {
@@ -69,7 +92,7 @@ int multi_uart_tx_buffer_put( int chan_id, char data[] )
 }
 
 #pragma unsafe arrays
-void run_multi_uart_tx( chanend cUART, s_multi_uart_tx_ports &tx_ports )
+void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports )
 {
     int chan_id;
     unsigned uart_word;
@@ -78,93 +101,74 @@ void run_multi_uart_tx( chanend cUART, s_multi_uart_tx_ports &tx_ports )
     unsigned port_val = 0xFF; // TODO honour IDLE/STOP polarity
     unsigned short port_ts;
     
+    unsigned current_word[UART_TX_CHAN_COUNT];
+    unsigned current_word_pos[UART_TX_CHAN_COUNT];
+    unsigned tick_count[UART_TX_CHAN_COUNT];
+    
     multi_uart_tx_port_init( tx_ports );
     
-    /* initialise data structures */
+	cUART <: UART_TX_GO;
+	
+	/* initialise data structures */
 	for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
 	{
-		uart_tx_channel[i].current_word = 0;
-		uart_tx_channel[i].current_word_pos = 0; // disable channel
-		uart_tx_channel[i].tick_count = 0;
+	    current_word[i] = 0;
+		current_word_pos[i] = 0; // disable channel
+		tick_count[i] = 0;
 		uart_tx_channel[i].wr_ptr = 0;
 		uart_tx_channel[i].rd_ptr = 0;
 		uart_tx_channel[i].nelements = uart_tx_channel[i].nMax;
-	}
 
-	cUART <: UART_TX_GO;
-        
+		current_word[i] = 0xAAAA;
+		current_word_pos[i] = uart_tx_channel[i].uart_word_len;
+		tick_count[i] = uart_tx_channel[i].clocks_per_bit;
+	}
+    
+	port_val = 0xffffffff;
 	/* initialise port */
 	tx_ports.pUart <: port_val @ port_ts;
-	port_ts += 2;
+	port_ts += 20;
 
 	while (1)
 	{
 		/* process the next bit on the ports */
 		#pragma xta endpoint "bit_ep"
 		tx_ports.pUart @ port_ts <: port_val;
-		port_ts += 2;
+		port_ts += PORT_TS_INC;
 
 		/* calculate next port_val */
+		#pragma loop unroll UART_TX_CHAN_COUNT
 		for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
 		{
-			/* active and counter tells us we need to send a bit */
-			if (uart_tx_channel[i].tick_count == 0 && uart_tx_channel[i].current_word_pos)
+		    #pragma xta label "update_loop"
+			tick_count[i]--;
+		    /* active and counter tells us we need to send a bit */
+			if (tick_count[i] == 0 && current_word_pos[i])
 			{
-				port_val &= ~(1<<i); // clear bit
-				port_val |= (uart_tx_channel[i].current_word & 1) << i;
-				uart_tx_channel[i].current_word >>= 1;
-				uart_tx_channel[i].current_word_pos -= 1;
-				uart_tx_channel[i].tick_count = uart_tx_channel[i].clocks_per_bit;
-			}
-			/* active and not yet completed bit time */
-			else if (uart_tx_channel[i].tick_count > 0 && uart_tx_channel[i].current_word_pos)
-			{
-				uart_tx_channel[i].tick_count--;
-			}
-			/* check for new buffer value */
-			else if (!uart_tx_channel[i].buf_empty)
-			{
-				/* initialise values */
-				//unsigned uart_word = multi_uart_tx_buffer_get( i );
-				int chan_id;
-
-				select
-				{
-					case cUART :> chan_id:
-						if (chan_id == i)
-						{
-							cUART :> uart_word;
-							cUART <: 1;
-						} else
-							cUART <: 0;
-						break;
-				}
-
-				uart_tx_channel[i].current_word = uart_word;
-				uart_tx_channel[i].current_word_pos = uart_tx_channel[i].uart_word_len;
-				uart_tx_channel[i].tick_count = uart_tx_channel[i].clocks_per_bit;
-			}
+				port_val &= ~(1 << i);
+			    port_val |= (current_word[i] & 1) << i;
+				current_word[i] >>= 1;
+				current_word_pos[i] -= 1;
+				tick_count[i] = uart_tx_channel[i].clocks_per_bit;
+			} 
 		}
-
-		/* check if a word needs to be received - we can receive 1 word per clock,
-		 * so buffer can get full
-		 */
-		/*
+		
+		/* check if otherside trying to send a value */
 		select
 		{
 		case cUART :> chan_id:
-			if (chan_id == UART_TX_STOP)
-				run_tx_loop = 0;
-			else
-			{
-				cUART :> uart_word;
-				elements_available = multi_uart_tx_buffer_put( chan_id, (uart_word, char[]) );
-				cUART <: elements_available;
-			}
-			break;
+		    cUART :> uart_word;
+		    if (!current_word_pos[chan_id])
+		    {
+		        current_word[chan_id] = uart_word;
+		        current_word_pos[chan_id] = uart_tx_channel[chan_id].uart_word_len;
+		        tick_count[chan_id] = uart_tx_channel[chan_id].clocks_per_bit;
+		        cUART <: 1;
+		    } else
+		        cUART <: 0;
+		    break;
 		default:
-			break;
-		} */
-            
+		    break;
+		}
     }   
 }

@@ -152,7 +152,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
 {
     unsigned int full_word;
     int temp;
-    int pos;
+    int pos = 0;
     
     /* format data into the word (msb -> lsb) STOP|PARITY|DATA|START */
     
