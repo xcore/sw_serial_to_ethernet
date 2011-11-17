@@ -150,8 +150,8 @@ int uart_tx_initialise_channel( int channel_id, e_uart_tx_config_parity parity, 
  */
 unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
 {
-    unsigned int full_word;
-    int temp;
+    unsigned int full_word, result;
+    unsigned int temp;
     int pos = 0;
     
     /* format data into the word (msb -> lsb) STOP|PARITY|DATA|START */
@@ -183,6 +183,13 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
             full_word |= 0x3 << pos;
             break;
     }
+    
+    /* mask off word to uart word length */
+    full_word = (((1 << uart_tx_channel[channel_id].uart_word_len) - 1) & full_word);
+    
+    /* do calc XOR'd output */
+    temp = (full_word << 1) | 0x1; // TODO honour STOP bit polarity
+    full_word = temp ^ full_word;
     
     return full_word;
 }

@@ -1,7 +1,7 @@
 # The TARGET variable determines what target system the application is
 # compiled for. It either refers to an XN file in the source directories
 # or a valid argument for the --target option when compiling
-TARGET = XK-1
+TARGET = multi_uart
 
 # The APP_NAME variable determines the name of the final .xe file. It should
 # not include the .xe postfix. If left blank the name will default to
@@ -17,9 +17,9 @@ USED_MODULES = module_multi_uart_tx
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to
 # xcc for the final link (mapping) stage.
 ifeq "$(CONFIG)" "Debug"
-XCC_FLAGS = -g -O0
+XCC_FLAGS = -g -O0 -Wall -Wtiming
 else
-XCC_FLAGS = -g -O3
+XCC_FLAGS = -g -O3 -Wall -Wtiming
 endif
 
 # The VERBOSE variable, if set to 1, enables verbose output from the make

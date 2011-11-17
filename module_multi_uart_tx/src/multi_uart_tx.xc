@@ -119,9 +119,22 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		uart_tx_channel[i].rd_ptr = 0;
 		uart_tx_channel[i].nelements = uart_tx_channel[i].nMax;
 
-		current_word[i] = 0xAAAA;
-		current_word_pos[i] = uart_tx_channel[i].uart_word_len;
-		tick_count[i] = uart_tx_channel[i].clocks_per_bit;
+		select
+		{
+		case cUART :> chan_id:
+		    cUART :> uart_word;
+		    if (chan_id == i )
+		    {
+		        current_word[chan_id] = uart_word;
+		        current_word_pos[chan_id] = uart_tx_channel[chan_id].uart_word_len;
+		        tick_count[chan_id] = uart_tx_channel[chan_id].clocks_per_bit;
+		        cUART <: 1;
+		    } else
+		        cUART <: 0;
+		    break;
+		default:
+		    break;
+		}
 	}
     
 	port_val = 0xffffffff;
@@ -145,8 +158,9 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		    /* active and counter tells us we need to send a bit */
 			if (tick_count[i] == 0 && current_word_pos[i])
 			{
-				port_val &= ~(1 << i);
-			    port_val |= (current_word[i] & 1) << i;
+				//port_val &= ~(1 << i);
+			    //port_val |= (current_word[i] & 1) << i;
+			    port_val ^= (current_word[i] & 1) << i;
 				current_word[i] >>= 1;
 				current_word_pos[i] -= 1;
 				tick_count[i] = uart_tx_channel[i].clocks_per_bit;
