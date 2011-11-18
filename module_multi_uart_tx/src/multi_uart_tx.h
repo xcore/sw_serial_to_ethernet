@@ -86,20 +86,6 @@ typedef struct STRUCT_MUTI_UART_TX_CHANNEL
     e_uart_tx_config_stop_bits sb_mode;
     e_uart_tx_config_parity parity_mode;
     
-    /* internal channel variables */
-    int current_word; // data currently being output
-    int current_word_pos; // current shift position in the word
-    int tick_count; // counter for number of divided clock ticks per bit    
-    
-    /* buffering variables */
-    int wr_ptr;
-    int rd_ptr;
-    int nelements;
-    int nMax;
-    int buf_empty;
-    int inc; // increment for a full word
-    char buf[UART_TX_BUF_SIZE]; // buffer holding complete words
-    
 } s_multi_uart_tx_channel;
 
 

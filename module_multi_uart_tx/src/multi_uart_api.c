@@ -119,26 +119,6 @@ int uart_tx_initialise_channel( int channel_id, e_uart_tx_config_parity parity, 
     
     uart_tx_channel[channel_id].uart_word_len += char_len;
     
-    /* calculate buffer increment value */
-    uart_tx_channel[channel_id].inc = uart_tx_channel[channel_id].uart_word_len / 8;
-    if (uart_tx_channel[channel_id].inc * 4 < uart_tx_channel[channel_id].uart_word_len)
-        uart_tx_channel[channel_id].inc += 1;
-    
-    /* set max number of elements in buffer */
-    uart_tx_channel[channel_id].nMax = UART_TX_BUF_SIZE / uart_tx_channel[channel_id].inc;
-    
-    /* zero the buffer pointers */
-    uart_tx_channel[channel_id].wr_ptr = 0;
-    uart_tx_channel[channel_id].rd_ptr = 0;
-    
-    /* clean buffer */
-    for (int i = 0; i < UART_TX_BUF_SIZE; i++)
-        uart_tx_channel[channel_id].buf[i] = 0;
-    
-    /* clean other variables */
-    uart_tx_channel[channel_id].current_word = 0;
-    uart_tx_channel[channel_id].current_word_pos = 0;
-    
     return 0;
 }
 

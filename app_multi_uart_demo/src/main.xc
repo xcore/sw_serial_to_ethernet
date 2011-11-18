@@ -36,6 +36,7 @@ void uart_tx_test(streaming chanend cUART)
    {
        cUART :> temp;
    }
+   cUART <: 1;
 
    while (1)
    {
@@ -46,11 +47,7 @@ void uart_tx_test(streaming chanend cUART)
            cUART <: i;
            cUART <: temp;;
            cUART :> buffer_space;
-           if (buffer_space)
-           {
-               if (i == 0) {printhexln(char_tx); printhexln(temp);}
-               i++;
-           }
+           i += (buffer_space < UART_TX_BUF_SIZE);
        }
        char_tx += 1;
    }
