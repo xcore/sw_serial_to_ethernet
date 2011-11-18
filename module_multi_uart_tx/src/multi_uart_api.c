@@ -130,7 +130,7 @@ int uart_tx_initialise_channel( int channel_id, e_uart_tx_config_parity parity, 
  */
 unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
 {
-    unsigned int full_word, result;
+    unsigned int full_word;
     unsigned int temp;
     int pos = 0;
     
@@ -174,4 +174,24 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     return full_word;
 }
 
+/**
+ * Insert a UART Character into the appropriate UART buffer
+ * @param channel_id    Channel identifier
+ * @param uart_char     Character to be sent over UART
+ * @return              Buffer fill level
+ */
+unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char )
+{
+    if (uart_tx_channel[channel_id].nelements < UART_TX_BUF_SIZE)
+    {
+        unsigned uart_word = uart_tx_assemble_word( channel_id, uart_char );
+        int wr_ptr = uart_tx_channel[channel_id].wr_ptr;
+        uart_tx_channel[channel_id].buf[wr_ptr] = uart_word;
+        wr_ptr++;
+        wr_ptr &= (UART_TX_BUF_SIZE-1);
+        uart_tx_channel[channel_id].wr_ptr = wr_ptr;
+        uart_tx_channel[channel_id].nelements++;
+    }
+    return uart_tx_channel[channel_id].nelements;
+}
 

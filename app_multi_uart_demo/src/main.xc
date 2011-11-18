@@ -42,11 +42,7 @@ void uart_tx_test(streaming chanend cUART)
    {
        for (int i = 0; i < 8;)
        {
-           int buffer_space;
-           temp = uart_tx_assemble_word( i, (unsigned)char_tx );
-           cUART <: i;
-           cUART <: temp;;
-           cUART :> buffer_space;
+           int buffer_space = uart_tx_put_char(i, (unsigned int)char_tx);
            i += (buffer_space < UART_TX_BUF_SIZE);
        }
        char_tx += 1;

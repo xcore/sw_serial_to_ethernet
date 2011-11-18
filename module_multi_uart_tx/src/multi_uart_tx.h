@@ -86,6 +86,11 @@ typedef struct STRUCT_MUTI_UART_TX_CHANNEL
     e_uart_tx_config_stop_bits sb_mode;
     e_uart_tx_config_parity parity_mode;
     
+    int wr_ptr;
+    int rd_ptr;
+    unsigned nelements;
+    unsigned buf[UART_TX_BUF_SIZE];
+    
 } s_multi_uart_tx_channel;
 
 
@@ -106,6 +111,14 @@ int uart_tx_initialise_channel( int channel_id, e_uart_tx_config_parity parity, 
  * @return              Full UART word in the format (msb -> lsb) STOP|PARITY|DATA|START 
  */
 unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
+
+/**
+ * Insert a UART Character into the appropriate UART buffer
+ * @param channel_id    Channel identifier
+ * @param uart_char     Character to be sent over UART
+ * @return              Buffer fill level
+ */
+unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char );
 
 /**
  * Multi UART Transmit Thread
