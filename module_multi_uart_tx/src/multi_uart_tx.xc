@@ -90,6 +90,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 			} 
 		}
 		
+		/* check if UART channel needs a value from the buffer */
 		if (current_word_pos[j] == 0 && uart_tx_channel[j].nelements)
 		{
 		    int rd_ptr = uart_tx_channel[j].rd_ptr;

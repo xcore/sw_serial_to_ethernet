@@ -13,8 +13,10 @@ s_multi_uart_tx_ports uart_tx_ports =
 
 void uart_tx_test(streaming chanend cUART)
 {
-    unsigned char char_tx = 0xAA;
+    unsigned char_ptr[8] = {0,0,0,0,0,0,0,0};
+    unsigned char test_str[] = "Hello, this is a test.\n\0";
     unsigned temp = 0;
+    int chan_id = 0;
     unsigned baud_rate = 200000;
 
     /* configure UARTs */
@@ -40,12 +42,16 @@ void uart_tx_test(streaming chanend cUART)
 
    while (1)
    {
-       for (int i = 0; i < 8;)
+               
+       int buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[char_ptr[chan_id]]);
+       if (buffer_space < UART_TX_BUF_SIZE)
        {
-           int buffer_space = uart_tx_put_char(i, (unsigned int)char_tx);
-           i += (buffer_space < UART_TX_BUF_SIZE);
+           char_ptr[chan_id]++;
+           if (test_str[char_ptr[chan_id]] == '\0')
+               char_ptr[chan_id] = 0;
        }
-       char_tx += 1;
+       else chan_id++;
+       chan_id &= UART_TX_CHAN_COUNT-1;
    }
 }
 
