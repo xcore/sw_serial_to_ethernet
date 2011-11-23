@@ -46,7 +46,7 @@
 typedef struct STRUCT_MULTI_UART_RX_PORTS
 {
 #ifdef __XC__
-    buffered in port:8 pUart;
+    buffered in port:32 pUart;
     in port pUartClk;
     clock cbUart;
 #else
@@ -63,6 +63,7 @@ typedef struct STRUCT_MUTI_UART_RX_CHANNEL
     int uart_word_len; // number of bits in UART word e.g. Start bit + 8 bit data + parity + 2 stop bits is 12 bit UART word
     int clocks_per_bit; // define baud rate in relation to max baud rate
     int invert_output; // define if output is inverted (set to 1)
+    int use_sample; // sample in stream to use
     
     /* mode definition */
     e_uart_config_stop_bits sb_mode;

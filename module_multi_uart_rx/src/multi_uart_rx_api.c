@@ -11,7 +11,7 @@ unsigned crc8_helper(unsigned *checksum, unsigned data, unsigned poly);
  */
 static int uart_rx_calc_baud( int baud )
 {
-    int max_baud = UART_RX_CLOCK_RATE_HZ / UART_RX_CLOCK_DIVIDER;
+    int max_baud = UART_RX_CLOCK_RATE_HZ / (UART_RX_CLOCK_DIVIDER);
     
     /* check we are not requesting a value greater than the max */
     if (baud > max_baud)
@@ -21,7 +21,7 @@ static int uart_rx_calc_baud( int baud )
     if (max_baud % baud != 0)
         return 0;
     
-    return (max_baud / baud); // return clock divider
+    return ((max_baud / baud)*4); // return clock divider
 }
 
 /**
@@ -85,6 +85,9 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     /* check and calculate baud rate divider */
     if ((uart_rx_channel[channel_id].clocks_per_bit = uart_rx_calc_baud(baud)) == 0)
         return 1;
+    
+    /* set which sample we will use */
+    uart_rx_channel[channel_id].use_sample = uart_rx_channel[channel_id].clocks_per_bit >> 1;
     
     /* set operation mode */
     uart_rx_channel[channel_id].sb_mode = stop_bits;

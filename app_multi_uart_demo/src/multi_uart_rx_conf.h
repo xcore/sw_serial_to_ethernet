@@ -8,7 +8,7 @@
 #define UART_RX_CLOCK_RATE_HZ      100000000 //1843200
 
 /**
- * Clock divider value that defines max baud rate. For external 1.8432MHz clock
+ * Clock divider value that defines max baud rate. E.g. with external 1.8432MHz clock
  * Div 16 => 115200 max bps
  * Div 8  => 230400 max bps
  * Div 4  => 460800 max bps
