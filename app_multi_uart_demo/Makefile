@@ -9,7 +9,7 @@ TARGET = multi_uart
 APP_NAME = multi_uart_demo
 
 # The USED_MODULES variable lists other module used by the application.
-USED_MODULES = module_multi_uart_tx
+USED_MODULES = module_multi_uart_tx module_multi_uart_rx
 
 # The flags passed to xcc when building the application
 # You can also set the following to override flags for a particular language:
@@ -35,3 +35,7 @@ include $(XMOS_MAKE_PATH)/xcommon/module_xcommon/build/Makefile.common
 
 runsim: bin/$(APP_NAME).xe
 	xsim -t --trace-to uart_trace.log --vcd-tracing "-o uart_sim.vcd -ports -ports-detailed" bin/$(APP_NAME).xe
+
+runsim_loop: bin/$(APP_NAME).xe
+	xsim -t --trace-to uart_trace.log --plugin LoopbackPort.dll "-port stdcore[0] XS1_PORT_8A 8 0 -port stdcore[0] XS1_PORT_8B 8 0" --vcd-tracing "-o uart_sim.vcd -ports -ports-detailed" bin/$(APP_NAME).xe
+	

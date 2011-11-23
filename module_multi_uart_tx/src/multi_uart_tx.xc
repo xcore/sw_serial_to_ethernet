@@ -14,10 +14,10 @@ unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
 
 void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
 {
-    if (UART_CLOCK_DIVIDER > 1)
+    if (UART_TX_CLOCK_DIVIDER > 1)
     {
         // TODO configuration for external clock
-        configure_clock_ref( tx_ports.cbUart, UART_CLOCK_DIVIDER/2 );	
+        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/2 );	
     }
     
     configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 1); // TODO honour stop bit polarity
@@ -47,7 +47,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
     
     multi_uart_tx_port_init( tx_ports );
     
-	cUART <: UART_TX_GO;
+	cUART <: MULTI_UART_GO;
 	cUART :> int _;
 	
 	/* initialise data structures */
@@ -70,7 +70,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 	while (1)
 	{
 		/* process the next bit on the ports */
-		#pragma xta endpoint "bit_ep"
+		#pragma xta endpoint "tx_bit_ep"
 		tx_ports.pUart @ port_ts <: port_val;
 		port_ts += PORT_TS_INC;
 
@@ -98,7 +98,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		    rd_ptr++;
 		    rd_ptr &= (UART_TX_BUF_SIZE-1);
 		    uart_tx_channel[j].rd_ptr = rd_ptr;
-		    uart_tx_channel[j].nelements++;
+		    uart_tx_channel[j].nelements--;
 		    current_word_pos[j] = uart_tx_channel[j].uart_word_len;
 		    tick_count[j] = clocks_per_bit[j];
 		}
@@ -107,3 +107,8 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		j &= (UART_TX_CHAN_COUNT-1);
     }   
 }
+
+/* do timing for loop - 4.35uS is 230500bps */
+#pragma xta command "analyze endpoints tx_bit_ep tx_bit_ep"
+#pragma xta command "set required - 4.34 us"
+//#pragma xta command "print summary"

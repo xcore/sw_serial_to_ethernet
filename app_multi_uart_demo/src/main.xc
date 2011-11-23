@@ -2,12 +2,20 @@
 #include <platform.h>
 #include <print.h>
 #include "multi_uart_tx.h"
+#include "multi_uart_rx.h"
 
 s_multi_uart_tx_ports uart_tx_ports =
 {    
     XS1_PORT_8A,
     XS1_PORT_1A,
     XS1_CLKBLK_1
+};
+
+s_multi_uart_rx_ports uart_rx_ports =
+{    
+    XS1_PORT_8B,
+    XS1_PORT_1B,
+    XS1_CLKBLK_2
 };
 
 
@@ -34,7 +42,7 @@ void uart_tx_test(streaming chanend cUART)
        
     }
    
-   while (temp != UART_TX_GO)
+   while (temp != MULTI_UART_GO)
    {
        cUART :> temp;
    }
@@ -44,15 +52,54 @@ void uart_tx_test(streaming chanend cUART)
    {
                
        int buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[char_ptr[chan_id]]);
-       if (buffer_space < UART_TX_BUF_SIZE)
+       if (buffer_space <= UART_TX_BUF_SIZE)
        {
            char_ptr[chan_id]++;
            if (test_str[char_ptr[chan_id]] == '\0')
                char_ptr[chan_id] = 0;
        }
-       else chan_id++;
-       chan_id &= UART_TX_CHAN_COUNT-1;
+       //else chan_id++;
+       //chan_id &= UART_TX_CHAN_COUNT-1;
    }
+}
+
+void uart_rx_test(streaming chanend cUART)
+{
+    unsigned uart_char;
+    int buf_entries;
+    unsigned baud_rate = 200000; 
+    
+    /* configure UARTs */
+    for (int i = 0; i < 8; i++)
+    {
+        if (uart_rx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+        {
+            printstr("Invalid baud rate for rx channel ");
+            printintln(i);
+        }
+        baud_rate /= 2;
+        if ((int)baud_rate <= 3125)
+            baud_rate = 3125;
+    }
+    
+    /* main loop */
+    while (1)
+    {
+        for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
+        {
+            buf_entries = uart_rx_get_char( i, uart_char );
+            if (buf_entries >= 0)
+            {
+                printhex(uart_char); printstr(" -> ");
+                uart_char >>= 2;
+                uart_char &= 0xFF;
+                printcharln(uart_char);
+            }
+        }
+        
+    }
+    
+    
 }
 
 void dummy()
@@ -65,7 +112,8 @@ void dummy()
  */
 int main(void)
 {
-    streaming chan cUART;
+    streaming chan cTxUART;
+    streaming chan cRxUART;
     
     par
     {
@@ -73,11 +121,14 @@ int main(void)
         dummy();
         dummy();
         dummy();
-        dummy();
-        dummy();
         
-        uart_tx_test(cUART);
-        run_multi_uart_tx( cUART, uart_tx_ports );
+        /* TX Stuff */
+        uart_tx_test(cTxUART);
+        run_multi_uart_tx( cTxUART, uart_tx_ports );
+        
+        /* RX stuff */
+        uart_rx_test(cRxUART);
+        run_multi_uart_rx( cRxUART, uart_rx_ports );
     }
     return 0;
 }
