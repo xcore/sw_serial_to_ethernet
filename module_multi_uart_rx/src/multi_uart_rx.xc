@@ -126,7 +126,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
                             if (bit_count[i] == 0)
                                 state[i] = parity_0;
                             else
-                                state[i] = data_bits;
+                                state[i] = data_bit_0;
                         }
                     }
                     else

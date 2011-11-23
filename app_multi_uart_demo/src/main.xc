@@ -52,14 +52,14 @@ void uart_tx_test(streaming chanend cUART)
    {
                
        int buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[char_ptr[chan_id]]);
-       if (buffer_space <= UART_TX_BUF_SIZE)
+       if (buffer_space < UART_TX_BUF_SIZE)
        {
            char_ptr[chan_id]++;
            if (test_str[char_ptr[chan_id]] == '\0')
                char_ptr[chan_id] = 0;
        }
-       //else chan_id++;
-       //chan_id &= UART_TX_CHAN_COUNT-1;
+       else chan_id++;
+       chan_id &= UART_TX_CHAN_COUNT-1;
    }
 }
 
@@ -90,7 +90,7 @@ void uart_rx_test(streaming chanend cUART)
             buf_entries = uart_rx_get_char( i, uart_char );
             if (buf_entries >= 0)
             {
-                printhex(uart_char); printstr(" -> ");
+                printint(i); printstr(": "); printhex(uart_char); printstr(" -> ");
                 uart_char >>= 2;
                 uart_char &= 0xFF;
                 printcharln(uart_char);
