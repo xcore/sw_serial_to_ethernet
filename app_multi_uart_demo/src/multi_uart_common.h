@@ -7,11 +7,11 @@
 
 typedef enum ENUM_UART_RX_CONFIG_PARITY
 {
-    odd,
-    even,
-    mark,
-    space,
-    none
+    odd = 0x1,
+    even = 0x2,
+    mark = 0x3,
+    space = 0x4,
+    none = 0x0
 } e_uart_config_parity;
 
 typedef enum ENUM_UART_RX_CONFIG_STOP_BITS
