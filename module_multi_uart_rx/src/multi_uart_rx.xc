@@ -115,76 +115,53 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
                 switch (state[i])
                 {
                 case idle:
-                    /* search for start bit edge */
-                    if ((fourBits & 1) == 0) // TODO polarity
+                    /* align us with the centre of the bit, initialise values - these only 
+                     * matter when not in idle state
+                     */
+                    tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample;
+                    bit_count[i] = uart_rx_channel[i].uart_char_len;
+                    uart_word[i] = 0;
+                    
+                    switch(fourBits)
                     {
-                        state[i] = data_bits;
-                        /* align us with the centre of the bit */
-                        tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample;
-                        bit_count[i] = uart_rx_channel[i].uart_char_len;
-                        uart_word[i] = 0;
-                        break;
-                    }
-                    fourBits >>= 1;
-                    if ((fourBits & 1) == 0) // TODO polarity
-                    {
-                        state[i] = data_bits;
-                        /* align us with the centre of the bit */
-                        tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample - 1;
-                        bit_count[i] = uart_rx_channel[i].uart_char_len;
-                        uart_word[i] = 0;
-                        break;
-                    }
-                    fourBits >>= 1;
-                    if ((fourBits & 1) == 0) // TODO polarity
-                    {
-                        state[i] = data_bits;
-                        tick_adjustment = 1;
-                        /* align us with the centre of the bit */
-                        tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample - 2;
-                        bit_count[i] = uart_rx_channel[i].uart_char_len;
-                        uart_word[i] = 0;
-                        break;
-                    }
-                    fourBits >>= 1;
-                    if ((fourBits & 1) == 0) // TODO polarity
-                    {
-                        state[i] = data_bits;
-                        /* align us with the centre of the bit */
-                        tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample - 3;
-                        bit_count[i] = uart_rx_channel[i].uart_char_len;
-                        uart_word[i] = 0;
-                        break;
+                        case (0b0000):
+                            state[i] = data_bits;
+                            break;
+                        case (0b0001):
+                            state[i] = data_bits;
+                            tickcount[i] -= 1;
+                            break;
+                        case (0b0011):
+                            state[i] = data_bits;
+                            tickcount[i] -= 2;
+                            break;
+                        case (0b0111):
+                            state[i] = data_bits;
+                            tickcount[i] -= 3;
+                            break;
+                        default:
+                            break;
                     }
                     break;
-                case data_bits:
+                case data_bits: // get data, parity and stop bits
                     uart_word[i] <<= 1;
                     uart_word[i] |= bit;
                     bit_count[i]--;
                     if (bit_count[i] == 0) 
                     {
-                            state[i] = stop_bit;
+                        // TODO respect polarity
+                        if (bit == 1 && uart_rx_channel[i].nelements < UART_RX_BUF_SIZE) 
+                        {
+                            int wr_ptr = uart_rx_channel[i].wr_ptr;
+                            uart_rx_channel[i].buf[wr_ptr] = uart_word[i];
+                            wr_ptr++;
+                            wr_ptr &= (UART_RX_BUF_SIZE-1);
+                            uart_rx_channel[i].wr_ptr = wr_ptr;
+                            uart_rx_channel[i].nelements++;
+                        }
+                        state[i] = idle;
                     }
                     tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
-                    break;
-                case parity:
-                    uart_word[i] <<= 1;
-                    uart_word[i] |= bit;
-                    state[i] = stop_bit;    
-                    tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
-                    break;
-                case stop_bit:
-                    if (bit == 1 && uart_rx_channel[i].nelements < UART_RX_BUF_SIZE) // TODO respect polarity
-                    {
-                        int wr_ptr = uart_rx_channel[i].wr_ptr;
-                        uart_rx_channel[i].buf[wr_ptr] = uart_word[i];
-                        wr_ptr++;
-                        wr_ptr &= (UART_RX_BUF_SIZE-1);
-                        uart_rx_channel[i].wr_ptr = wr_ptr;
-                        uart_rx_channel[i].nelements++;
-                    }
-                    // TODO do IDLE check here in case there is a IPD of 1 bit?
-                    state[i] = idle;
                     break;
                 }
             } else tickcount[i] -= 4;
@@ -195,10 +172,8 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     }
 }
 
-#if 0
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
 //#pragma xta command "set loop - rx_idle_loop 4"
 #pragma xta command "set required - 4.34 us"
 #pragma xta command "analyze function uart_rx_get_char"
 #pragma xta command "print nodeinfo - -"
-#endif
