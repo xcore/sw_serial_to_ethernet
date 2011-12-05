@@ -68,6 +68,7 @@ typedef struct STRUCT_MUTI_UART_RX_CHANNEL
     /* mode definition */
     e_uart_config_stop_bits sb_mode;
     e_uart_config_parity parity_mode;
+    e_uart_polarity polarity_mode;
     
     int wr_ptr;
     int rd_ptr;
@@ -85,7 +86,7 @@ typedef struct STRUCT_MUTI_UART_RX_CHANNEL
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
  */
-int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, int baud, int char_len );
+int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_polarity polarity, int baud, int char_len );
 
 /**
  * Insert a UART Character into the appropriate UART buffer

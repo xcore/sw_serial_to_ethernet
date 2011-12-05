@@ -68,7 +68,7 @@ void uart_rx_test(streaming chanend cUART)
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
     {
-        if (uart_rx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+        if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
         {
             //printstr("Invalid baud rate for rx channel ");
             //printintln(i);
@@ -121,7 +121,7 @@ int main(void)
         run_multi_uart_tx( cTxUART, uart_tx_ports );
         
         /* RX stuff */
-        #if 0
+        #if 1
         uart_rx_test(cRxUART);
         run_multi_uart_rx( cRxUART, uart_rx_ports );
         #else

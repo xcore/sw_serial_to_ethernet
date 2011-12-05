@@ -18,6 +18,12 @@ typedef enum ENUM_UART_RX_CONFIG_STOP_BITS
 {
     sb_1,
     sb_2,
-} e_uart_config_stop_bits; 
+} e_uart_config_stop_bits;
+
+typedef enum ENUM_UART_RX_CONFIG_POLARITY
+{
+    start_1 = 1,
+    start_0 = 0,
+} e_uart_polarity; 
 
 #endif /* __MULTI_UART_COMMON_H__ */
