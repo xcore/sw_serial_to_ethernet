@@ -9,7 +9,7 @@ TARGET = multi_uart
 APP_NAME = multi_uart_demo
 
 # The USED_MODULES variable lists other module used by the application.
-USED_MODULES = module_multi_uart_tx module_multi_uart_rx
+USED_MODULES = module_multi_uart
 
 # The flags passed to xcc when building the application
 # You can also set the following to override flags for a particular language:

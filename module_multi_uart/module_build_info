@@ -9,7 +9,7 @@
 #
 # You can also set MODULE_XCC_C_FLAGS, MODULE_XCC_XC_FLAGS etc..
 
-OPTIONAL_HEADERS += multi_uart_tx_conf.h
+OPTIONAL_HEADERS += multi_uart_rx_conf.h multi_uart_tx_conf.h
 
 MODULE_XCC_FLAGS = $(XCC_FLAGS) -O3
 
