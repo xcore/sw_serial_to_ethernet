@@ -32,7 +32,7 @@ static int uart_tx_calc_baud( int baud )
  */
 static unsigned uart_tx_calc_parity(int channel_id, unsigned int uart_char)
 {
-    unsigned p;
+    unsigned p=0;
     
     switch (uart_tx_channel[channel_id].parity_mode)
     {
@@ -57,13 +57,16 @@ static unsigned uart_tx_calc_parity(int channel_id, unsigned int uart_char)
     else
     {
         int poly = 0x1;
+        p = uart_char;
         crc8_helper(&p, uart_char, poly);
     }
+    
+    p &= 1;
     
     switch (uart_tx_channel[channel_id].parity_mode)
     {
         case even:
-            return p;
+            return (p);
         case odd :
             return (!p);
         default:
@@ -137,7 +140,8 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     /* format data into the word (msb -> lsb) STOP|PARITY|DATA|START */
     
     /* start bit */
-    full_word = 1;
+    // TODO honour start bit polarity
+    full_word = 0;
     pos += 1;
     
     /* uart word - mask, reverse char and put into full word */
@@ -149,7 +153,8 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     /* parity */
     if (uart_tx_channel[channel_id].parity_mode != none)
     {
-        full_word |= (uart_tx_calc_parity(channel_id, uart_char) << pos);
+        int parity = uart_tx_calc_parity(channel_id, uart_char);
+        full_word |= ( parity << pos);
         pos += 1;
     }
     
@@ -182,6 +187,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
  */
 unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char )
 {
+    int elements;
     if (uart_tx_channel[channel_id].nelements < UART_TX_BUF_SIZE)
     {
         unsigned uart_word = uart_tx_assemble_word( channel_id, uart_char );
@@ -191,7 +197,8 @@ unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char )
         wr_ptr &= (UART_TX_BUF_SIZE-1);
         uart_tx_channel[channel_id].wr_ptr = wr_ptr;
         uart_tx_channel[channel_id].nelements++;
+        elements = uart_tx_channel[channel_id].nelements;
     }
-    return uart_tx_channel[channel_id].nelements;
+    return ;
 }
 

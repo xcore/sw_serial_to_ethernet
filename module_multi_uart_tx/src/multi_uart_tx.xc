@@ -99,6 +99,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		    rd_ptr &= (UART_TX_BUF_SIZE-1);
 		    uart_tx_channel[j].rd_ptr = rd_ptr;
 		    uart_tx_channel[j].nelements--;
+		    if (j == 0) printhexln(current_word[0]);
 		    current_word_pos[j] = uart_tx_channel[j].uart_word_len;
 		    tick_count[j] = clocks_per_bit[j];
 		}
@@ -111,4 +112,5 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 /* do timing for loop - 4.35uS is 230500bps */
 #pragma xta command "analyze endpoints tx_bit_ep tx_bit_ep"
 #pragma xta command "set required - 4.34 us"
-//#pragma xta command "print summary"
+#pragma xta command "analyze function uart_tx_put_char"
+#pragma xta command "print nodeinfo - -"

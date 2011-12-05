@@ -21,8 +21,7 @@ s_multi_uart_rx_ports uart_rx_ports =
 
 void uart_tx_test(streaming chanend cUART)
 {
-    unsigned char_ptr[8] = {0,0,0,0,0,0,0,0};
-    unsigned char test_str[] = "Hello, this is a test.\n\0";
+    unsigned uart_char[8] = {0,0,0,0,0,0,0,0};
     unsigned temp = 0;
     int chan_id = 0;
     unsigned baud_rate = 200000;
@@ -35,11 +34,9 @@ void uart_tx_test(streaming chanend cUART)
            printstr("Invalid baud rate for channel ");
            printintln(i);
        }
-       printintln(baud_rate);
        baud_rate /= 2;
        if ((int)baud_rate <= 3125)
            baud_rate = 3125;
-       
     }
    
    while (temp != MULTI_UART_GO)
@@ -51,12 +48,11 @@ void uart_tx_test(streaming chanend cUART)
    while (1)
    {
                
-       int buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[char_ptr[chan_id]]);
+       int buffer_space = uart_tx_put_char(chan_id, (unsigned int)uart_char[chan_id]);
+       //printint(chan_id); printstr(" -> "); printhexln(uart_char[chan_id]);
        if (buffer_space < UART_TX_BUF_SIZE)
-       {
-           char_ptr[chan_id]++;
-           if (test_str[char_ptr[chan_id]] == '\0')
-               char_ptr[chan_id] = 0;
+       {           
+           uart_char[chan_id]++;
        }
        else chan_id++;
        chan_id &= UART_TX_CHAN_COUNT-1;
@@ -74,8 +70,8 @@ void uart_rx_test(streaming chanend cUART)
     {
         if (uart_rx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
         {
-            printstr("Invalid baud rate for rx channel ");
-            printintln(i);
+            //printstr("Invalid baud rate for rx channel ");
+            //printintln(i);
         }
         baud_rate /= 2;
         if ((int)baud_rate <= 3125)
@@ -90,16 +86,14 @@ void uart_rx_test(streaming chanend cUART)
             buf_entries = uart_rx_get_char( i, uart_char );
             if (buf_entries >= 0)
             {
-                printint(i); printstr(": "); printhex(uart_char); printstr(" -> ");
+                //printint(i); printstr(": "); printhex(uart_char); printstr(" -> ");
                 uart_char >>= 2;
                 uart_char &= 0xFF;
-                printcharln(uart_char);
+                //printcharln(uart_char);
             }
         }
         
     }
-    
-    
 }
 
 void dummy()
@@ -127,8 +121,13 @@ int main(void)
         run_multi_uart_tx( cTxUART, uart_tx_ports );
         
         /* RX stuff */
+        #if 0
         uart_rx_test(cRxUART);
         run_multi_uart_rx( cRxUART, uart_rx_ports );
+        #else
+        dummy();
+        dummy();
+        #endif
     }
     return 0;
 }
