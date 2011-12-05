@@ -30,15 +30,7 @@ void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports )
 #pragma unsafe arrays
 void multi_uart_rx_buffer_put( int chan_id, unsigned int uart_word )
 {
-    if (uart_rx_channel[chan_id].nelements < UART_RX_BUF_SIZE)
-    {
-        int wr_ptr = uart_rx_channel[chan_id].wr_ptr;
-        uart_rx_channel[chan_id].buf[wr_ptr] = uart_word;
-        wr_ptr++;
-        wr_ptr &= (UART_RX_BUF_SIZE-1);
-        uart_rx_channel[chan_id].wr_ptr = wr_ptr;
-        uart_rx_channel[chan_id].nelements++;
-    }
+    
 }
 
 
@@ -165,24 +157,12 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
                         break;
                     }
                     break;
-                case start_bit:
-                    if (bit == 0) // TODO polarity
-                    {
-                        state[i] = data_bits;
-                        bit_count[i] = uart_rx_channel[i].uart_char_len-1;
-                        uart_word[i] = 0;
-                    }
-                    tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
-                    break;
                 case data_bits:
                     uart_word[i] <<= 1;
                     uart_word[i] |= bit;
                     bit_count[i]--;
                     if (bit_count[i] == 0) 
                     {
-                        if (uart_rx_channel[i].parity_mode != 0)
-                            state[i] = parity;
-                        else
                             state[i] = stop_bit;
                     }
                     tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
@@ -194,8 +174,15 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
                     tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
                     break;
                 case stop_bit:
-                    if (bit == 1) // TODO respect polarity
-                        multi_uart_rx_buffer_put( i, uart_word[i] );
+                    if (bit == 1 && uart_rx_channel[i].nelements < UART_RX_BUF_SIZE) // TODO respect polarity
+                    {
+                        int wr_ptr = uart_rx_channel[i].wr_ptr;
+                        uart_rx_channel[i].buf[wr_ptr] = uart_word[i];
+                        wr_ptr++;
+                        wr_ptr &= (UART_RX_BUF_SIZE-1);
+                        uart_rx_channel[i].wr_ptr = wr_ptr;
+                        uart_rx_channel[i].nelements++;
+                    }
                     // TODO do IDLE check here in case there is a IPD of 1 bit?
                     state[i] = idle;
                     break;
@@ -208,8 +195,10 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     }
 }
 
-
+#if 0
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
 //#pragma xta command "set loop - rx_idle_loop 4"
-#pragma xta command "set required - 4.34 us" // timing requirement per bit is this value over 4
-//#pragma xta command "print summary"
+#pragma xta command "set required - 4.34 us"
+#pragma xta command "analyze function uart_rx_get_char"
+#pragma xta command "print nodeinfo - -"
+#endif
