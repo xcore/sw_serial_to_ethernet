@@ -56,7 +56,7 @@ typedef struct STRUCT_MULTI_UART_RX_PORTS
 #endif
 } s_multi_uart_rx_ports;
 
-typedef struct STRUCT_MUTI_UART_RX_CHANNEL
+typedef struct STRUCT_MULTI_UART_RX_CHANNEL
 {
     /* configuration constants */
     int uart_char_len; // length of the UART char
