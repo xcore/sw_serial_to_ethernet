@@ -36,12 +36,13 @@ void multi_uart_rx_buffer_put( int chan_id, unsigned int uart_word )
 
 typedef enum ENUM_UART_RX_CHAN_STATE
 {
-    idle,
-    start_bit,
-    data_bits,
-    parity,
-    stop_bit    
+    idle = 0x0,
+    store_idle,
+    data_bits = 0x1,
 } e_uart_rx_chan_state;
+
+// global for access by ASM
+unsigned fourBitLookup[16];
 
 #pragma unsafe arrays
 void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports )
@@ -49,19 +50,17 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 
     unsigned port_val;
     e_uart_rx_chan_state state[UART_RX_CHAN_COUNT];
-    unsigned mask, word, fourBits, bit;
-    int tick_adjustment;
+    unsigned word, fourBits, bit;
+    int tc;
     
     int tickcount[UART_RX_CHAN_COUNT];
     int bit_count[UART_RX_CHAN_COUNT];
-    int last_bit_val[UART_RX_CHAN_COUNT];
     int uart_word[UART_RX_CHAN_COUNT];
     
     /*
      * Four bit look up table that takes the CRC32 with poly 0xf of the masked off 32 bit word 
      * from an 8 bit port and translates it into the 4 desired bits - huzzah!
      */
-    unsigned fourBitLookup[16];
     fourBitLookup[15] = 0;
     fourBitLookup[7] = 1;
     fourBitLookup[13] = 2;
@@ -91,8 +90,6 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
         tickcount[i] = uart_rx_channel[i].use_sample;
     }
     
-    mask = 0x01010101; // mask for desired bits - note, input word gets shifted, not the mask
-    
     rx_ports.pUart :> port_val; // junk data
     while (1)
     {
@@ -105,43 +102,43 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
             #pragma xta label "rx_bit_proc_loop"
             if (tickcount[i] < 4 || state[i] == idle)
             {
-                word = port_val & mask;
+                word = port_val & 0x01010101;
                 crc32( word, 0xf, 0xf );
                 fourBits = fourBitLookup[word];
                 bit = fourBits >> tickcount[i];
                 bit &= 1;
-                tick_adjustment = tickcount[i];
                 
+                #pragma fallthrough
                 switch (state[i])
                 {
                 case idle:
                     /* align us with the centre of the bit, initialise values - these only 
                      * matter when not in idle state
                      */
-                    tickcount[i] = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample;
+                    tc = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample;
                     bit_count[i] = uart_rx_channel[i].uart_char_len;
                     uart_word[i] = 0;
+                    
+                    state[i] = data_bits;
                     
                     switch(fourBits)
                     {
                         case (0b0000):
-                            state[i] = data_bits;
                             break;
                         case (0b0001):
-                            state[i] = data_bits;
-                            tickcount[i] -= 1;
+                            tc -= 1;
                             break;
                         case (0b0011):
-                            state[i] = data_bits;
-                            tickcount[i] -= 2;
+                            tc -= 2;
                             break;
                         case (0b0111):
-                            state[i] = data_bits;
-                            tickcount[i] -= 3;
+                            tc -= 3;
                             break;
                         default:
+                            state[i] = idle;
                             break;
                     }
+                    tickcount[i] = tc;
                     break;
                 case data_bits: // get data, parity and stop bits
                     uart_word[i] <<= 1;
@@ -149,21 +146,12 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
                     bit_count[i]--;
                     if (bit_count[i] == 0) 
                     {
-                        // TODO respect polarity
-                        if (bit == 1 && uart_rx_channel[i].nelements < UART_RX_BUF_SIZE) 
-                        {
-                            int wr_ptr = uart_rx_channel[i].wr_ptr;
-                            uart_rx_channel[i].buf[wr_ptr] = uart_word[i];
-                            wr_ptr++;
-                            wr_ptr &= (UART_RX_BUF_SIZE-1);
-                            uart_rx_channel[i].wr_ptr = wr_ptr;
-                            uart_rx_channel[i].nelements++;
-                        }
                         state[i] = idle;
                     }
-                    tickcount[i] = uart_rx_channel[i].clocks_per_bit - tick_adjustment;
+                    tickcount[i] = uart_rx_channel[i].clocks_per_bit - tickcount[i];
                     break;
                 }
+                
             } else tickcount[i] -= 4;
             /* shift input word for next channel */
             port_val >>= 1;
