@@ -29,9 +29,10 @@ void uart_tx_test(streaming chanend cUART)
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
     {
+        printintln(baud_rate);
        if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
        {
-           printstr("Invalid baud rate for channel ");
+           printstr("Invalid baud rate for tx channel ");
            printintln(i);
        }
        baud_rate /= 2;
@@ -70,8 +71,8 @@ void uart_rx_test(streaming chanend cUART)
     {
         if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
         {
-            //printstr("Invalid baud rate for rx channel ");
-            //printintln(i);
+            printstr("Invalid baud rate for rx channel ");
+            printintln(i);
         }
         baud_rate /= 2;
         if ((int)baud_rate <= 3125)
@@ -81,6 +82,17 @@ void uart_rx_test(streaming chanend cUART)
     /* main loop */
     while (1)
     {
+        int chan_id;
+        
+        cUART :>  chan_id;
+        cUART :> uart_char;
+        
+        printint(chan_id); printstr(": "); printhex(uart_char); printstr(" -> ");
+        uart_char >>= 2;
+        uart_char &= 0xFF;
+        printhexln(uart_char);
+        
+        #if 0
         for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
         {
             buf_entries = uart_rx_get_char( i, uart_char );
@@ -92,7 +104,7 @@ void uart_rx_test(streaming chanend cUART)
                 //printcharln(uart_char);
             }
         }
-        
+        #endif
     }
 }
 

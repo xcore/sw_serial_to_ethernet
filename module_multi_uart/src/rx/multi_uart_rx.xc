@@ -41,8 +41,11 @@ typedef enum ENUM_UART_RX_CHAN_STATE
     data_bits = 0x1,
 } e_uart_rx_chan_state;
 
+void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
+
 // global for access by ASM
 unsigned fourBitLookup[16];
+unsigned startBitLookup[16];
 
 #pragma unsafe arrays
 void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports )
@@ -78,6 +81,15 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     fourBitLookup[6] = 14;
     fourBitLookup[14] = 15;
     
+    for (int i = 0; i < 16; i++)
+    {
+        startBitLookup[i] = 0xffffffff;
+    }
+    startBitLookup[0b0000] = 0;
+    startBitLookup[0b0001] = 1;
+    startBitLookup[0b0011] = 2;
+    startBitLookup[0b0111] = 3;
+    
     multi_uart_rx_port_init( rx_ports );
     
     /* initialisation loop */
@@ -85,7 +97,6 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     {
         state[i] = idle;
         uart_word[i] = 0;
-        last_bit_val[i] = 0;
         bit_count[i] = 0;
         tickcount[i] = uart_rx_channel[i].use_sample;
     }
@@ -93,75 +104,24 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     rx_ports.pUart :> port_val; // junk data
     while (1)
     {
-        #pragma xta endpoint "rx_bit_ep"
-        rx_ports.pUart :> port_val;
         
-        #pragma loop unroll UART_RX_CHAN_COUNT
-        for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
-        {
-            #pragma xta label "rx_bit_proc_loop"
-            if (tickcount[i] < 4 || state[i] == idle)
-            {
-                word = port_val & 0x01010101;
-                crc32( word, 0xf, 0xf );
-                fourBits = fourBitLookup[word];
-                bit = fourBits >> tickcount[i];
-                bit &= 1;
-                
-                #pragma fallthrough
-                switch (state[i])
-                {
-                case idle:
-                    /* align us with the centre of the bit, initialise values - these only 
-                     * matter when not in idle state
-                     */
-                    tc = uart_rx_channel[i].clocks_per_bit + uart_rx_channel[i].use_sample;
-                    bit_count[i] = uart_rx_channel[i].uart_char_len;
-                    uart_word[i] = 0;
-                    
-                    state[i] = data_bits;
-                    
-                    switch(fourBits)
-                    {
-                        case (0b0000):
-                            break;
-                        case (0b0001):
-                            tc -= 1;
-                            break;
-                        case (0b0011):
-                            tc -= 2;
-                            break;
-                        case (0b0111):
-                            tc -= 3;
-                            break;
-                        default:
-                            state[i] = idle;
-                            break;
-                    }
-                    tickcount[i] = tc;
-                    break;
-                case data_bits: // get data, parity and stop bits
-                    uart_word[i] <<= 1;
-                    uart_word[i] |= bit;
-                    bit_count[i]--;
-                    if (bit_count[i] == 0) 
-                    {
-                        state[i] = idle;
-                    }
-                    tickcount[i] = uart_rx_channel[i].clocks_per_bit - tickcount[i];
-                    break;
-                }
-                
-            } else tickcount[i] -= 4;
-            /* shift input word for next channel */
-            port_val >>= 1;
-        }
+        uart_rx_loop( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART  );
+        
+        #if 0
+        #endif
         
     }
 }
 
+#if 0
+#pragma xta command "config Terror off"
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
-//#pragma xta command "set loop - rx_idle_loop 4"
+#pragma xta command "set loop - process_loop 8"
+#pragma xta command "set loop - rx_bit_ep 1"
+//#pragma xta command "print nodeinfo - -"
 #pragma xta command "set required - 4.34 us"
+
+
 #pragma xta command "analyze function uart_rx_get_char"
 #pragma xta command "print nodeinfo - -"
+#endif

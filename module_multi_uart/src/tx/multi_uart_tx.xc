@@ -20,7 +20,7 @@ void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
         configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/2 );	
     }
     
-    configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 1); // TODO honour stop bit polarity
+    configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 0xFF); // TODO honour stop bit polarity
     
     start_clock( tx_ports.cbUart );
 }
