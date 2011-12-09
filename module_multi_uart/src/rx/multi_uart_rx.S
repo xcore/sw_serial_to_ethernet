@@ -6,7 +6,7 @@
 
 #define STACK_SIZE  10
 #define CHAN_STRUCT_SIZE 0x6C
-#define CHAN_COUNT 8
+#define CHAN_COUNT 1
 
 /* function prototype:
  * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  )
@@ -106,14 +106,14 @@ process_loop:
 	ldw r11, r1[r5]
 	bf r11, idle_process
     
-    /* check if tickcount is  < 4 */
-	ldc r11, 4
+    /* check if tickcount is  =< 4 (same as < 5) */
+	ldc r11, 5
 	ldw r10, r2[r5]
 	lss r11, r10, r11
 	bt r11, data_process // TODO - we assume here that we only have two states
 
 	/* decerement tick_count */
-	sub r10, r10, 4
+	sub r10, r10, 4 // TODO - we assume 4 here
 	stw r10, r2[r5]
 	
 	/* shift port_val, check loop and increment or quit loop */
@@ -140,7 +140,7 @@ idle_process:
     add r11, r11, r10
     
     /* initialise bit count */
-    ldw r9, r11[0] // char_len
+    ldw r9, r11[1] // word_len
     stw r9, r3[r5]
     
     /* clocks_per_bit */
@@ -160,11 +160,11 @@ idle_process:
     eq r8, r8, r10
     bt r8, invalid_start
     
-    /* add TC value for swallowed bits */
-    add r9, r9, r10
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
     
     /* store tick_count */
-    stw r9, r11[2]
+    stw r9, r2[r5]
     
     /* store new state */
     ldc r10, 1
@@ -190,11 +190,12 @@ invalid_start:
     bf r11, rx_bit_ep
     bu process_loop
     
-check_sb:
+//check_sb:
     /* TODO - This state checks the validity of the start bit */
     
 data_process:
     /* get bit from fourBits - tick_count still in r10 */
+    sub r10, r10, 1
     shr r8, r8, r10
     ldc r9, 1
     and r8, r8, r9 // now got the bit
@@ -219,16 +220,24 @@ data_process:
     ldw r9, sp[STACK_SIZE+2]
     out res[r9], r5
     out res[r9], r11
+    bu channel_loop
     
 dp_calc_tick:
+    
+    // get struct pointer for UART channel
     ldaw r11, dp[uart_rx_channel]
     ldc r9, CHAN_STRUCT_SIZE
-    mul r9, r5, r9 // get struct pointer for channel
+    mul r9, r5, r9
     add r11, r11, r9
     
-    /* clocks_per_bit */
+    /* load tick_count[i] */
+    ldw r10, r2[r5]
+    
+    /* get clocks_per_bit, and correct for bits we already swallowed */
     ldw r11, r11[2]
-    sub r11, r11, r10
+    // new tick_count = cpb - (4-tc) = cpb - 4 + tc
+    sub r11, r11, 4 // TODO this is number of samples per bit of the fastest baud rate
+    add r11, r11, r10
     stw r11, r2[r5]
     
 channel_loop:

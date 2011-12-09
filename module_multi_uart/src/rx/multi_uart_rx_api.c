@@ -98,7 +98,7 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     uart_rx_channel[channel_id].uart_char_len = char_len;
     
     /* calculate word length for data_bit state */
-    uart_rx_channel[channel_id].uart_word_len += 1; // start bit
+    //uart_rx_channel[channel_id].uart_word_len += 1; // start bit ignored as this is used as a state machine condition for counting in bits - start bit is handled in its own state.
     switch (parity)
     {
         case odd:

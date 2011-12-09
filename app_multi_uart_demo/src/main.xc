@@ -87,10 +87,13 @@ void uart_rx_test(streaming chanend cUART)
         cUART :>  chan_id;
         cUART :> uart_char;
         
-        printint(chan_id); printstr(": "); printhex(uart_char); printstr(" -> ");
-        uart_char >>= 2;
-        uart_char &= 0xFF;
-        printhexln(uart_char);
+        if (chan_id == 0)
+        {
+            printint(chan_id); printstr(": "); printhex(uart_char); printstr(" -> ");
+            uart_char >>= 2;
+            uart_char &= 0xFF;
+            printhexln(uart_char);
+        }
         
         #if 0
         for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
@@ -99,7 +102,7 @@ void uart_rx_test(streaming chanend cUART)
             if (buf_entries >= 0)
             {
                 //printint(i); printstr(": "); printhex(uart_char); printstr(" -> ");
-                uart_char >>= 2;
+                uart_char >>= 1;
                 uart_char &= 0xFF;
                 //printcharln(uart_char);
             }

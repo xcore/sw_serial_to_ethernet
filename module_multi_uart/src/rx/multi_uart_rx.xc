@@ -22,7 +22,7 @@ void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports )
         configure_clock_ref( rx_ports.cbUart, UART_RX_CLOCK_DIVIDER/8 );	
     }
     
-    configure_out_port(	rx_ports.pUart, rx_ports.cbUart, 1); // TODO honour stop bit polarity
+    configure_in_port(	rx_ports.pUart, rx_ports.cbUart); // TODO honour stop bit polarity
     
     start_clock( rx_ports.cbUart );
 }
@@ -85,10 +85,10 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     {
         startBitLookup[i] = 0xffffffff;
     }
-    startBitLookup[0b0000] = 0;
-    startBitLookup[0b0001] = 1;
+    startBitLookup[0b0000] = 4;
+    startBitLookup[0b0001] = 3;
     startBitLookup[0b0011] = 2;
-    startBitLookup[0b0111] = 3;
+    startBitLookup[0b0111] = 1;
     
     multi_uart_rx_port_init( rx_ports );
     
@@ -104,12 +104,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     rx_ports.pUart :> port_val; // junk data
     while (1)
     {
-        
         uart_rx_loop( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART  );
-        
-        #if 0
-        #endif
-        
     }
 }
 
