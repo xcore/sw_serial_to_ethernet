@@ -87,7 +87,11 @@ void uart_rx_test(streaming chanend cUART)
         cUART :>  chan_id;
         cUART :> uart_char;
         
-        if (chan_id == 0)
+        //if (chan_id == 0)
+        
+        for (int i = 0; i < chan_id; i++)
+            printchar('\t');
+        
         {
             printint(chan_id); printstr(": "); printhex(uart_char); printstr(" -> ");
             uart_char >>= 2;

@@ -102,21 +102,19 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     }
     
     rx_ports.pUart :> port_val; // junk data
-    while (1)
-    {
-        uart_rx_loop( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART  );
-    }
+    
+    uart_rx_loop( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART  );
 }
 
-#if 0
+
 #pragma xta command "config Terror off"
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
 #pragma xta command "set loop - process_loop 8"
-#pragma xta command "set loop - rx_bit_ep 1"
-//#pragma xta command "print nodeinfo - -"
-#pragma xta command "set required - 4.34 us"
-
-
-#pragma xta command "analyze function uart_rx_get_char"
+//#pragma xta command "set loop - rx_bit_ep 1"
 #pragma xta command "print nodeinfo - -"
-#endif
+//#pragma xta command "set required - 4.34 us"
+
+
+//#pragma xta command "analyze function uart_rx_get_char"
+//#pragma xta command "print nodeinfo - -"
+

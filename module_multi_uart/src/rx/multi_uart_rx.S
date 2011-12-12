@@ -7,7 +7,7 @@
 #define STACK_SIZE  10
 #define CHAN_STRUCT_SIZE 0x6C
 // TODO this needs to come from the configuration header
-#define CHAN_COUNT 1  
+#define CHAN_COUNT 8  
 
 /* function prototype:
  * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  )
@@ -111,7 +111,7 @@ process_loop:
 	ldc r11, 5
 	ldw r10, r2[r5]
 	lss r11, r10, r11
-	bt r11, data_process // TODO - we assume here that we only have two states
+	bt r11, data_process // WARN - we assume here that we only have two states, adding more states is costly
 
 	/* decerement tick_count */
 	sub r10, r10, 4 
