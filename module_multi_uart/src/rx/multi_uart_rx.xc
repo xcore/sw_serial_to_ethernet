@@ -41,7 +41,7 @@ typedef enum ENUM_UART_RX_CHAN_STATE
     data_bits = 0x1,
 } e_uart_rx_chan_state;
 
-void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
+void uart_rx_loop_4( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
 
 // global for access by ASM
 unsigned fourBitLookup[16];
@@ -59,6 +59,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     int tickcount[UART_RX_CHAN_COUNT];
     int bit_count[UART_RX_CHAN_COUNT];
     int uart_word[UART_RX_CHAN_COUNT];
+    
     
     /*
      * Four bit look up table that takes the CRC32 with poly 0xf of the masked off 32 bit word 
@@ -103,16 +104,33 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     
     rx_ports.pUart :> port_val; // junk data
     
-    uart_rx_loop( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART  );
+    uart_rx_loop_4( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
 }
 
 
 #pragma xta command "config Terror off"
+
+#pragma xta command "echo --------------------------------------------------"
+#pragma xta command "echo FullRxLoop"
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
-#pragma xta command "set loop - process_loop 8"
 //#pragma xta command "set loop - rx_bit_ep 1"
 #pragma xta command "print nodeinfo - -"
-//#pragma xta command "set required - 4.34 us"
+//#pragma xta command "set required - 4.37 us"
+
+#if 0
+#pragma xta command "echo --------------------------------------------------"
+#pragma xta command "echo Idle"
+#pragma xta command "analyze endpoints idle_process_0 idle_process_1"
+#pragma xta command "print nodeinfo - -"
+#pragma xta command "set required - 542.5 ns"
+
+#pragma xta command "echo --------------------------------------------------"
+#pragma xta command "echo Data"
+#pragma xta command "analyze endpoints data_process_0 data_process_1"
+#pragma xta command "print nodeinfo - -"
+#pragma xta command "set required - 542.5 ns"
+#endif
+
 
 
 //#pragma xta command "analyze function uart_rx_get_char"

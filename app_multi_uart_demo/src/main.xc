@@ -130,8 +130,8 @@ int main(void)
     
     par
     {
-        dummy();
-        dummy();
+        //dummy();
+        //dummy();
         dummy();
         dummy();
         

@@ -45,6 +45,7 @@ uart_rx_loop:
      * sp[10] => bit_count pointer
      * sp[STACK_SIZE+1] => uart_word pointer
      * sp[STACK_SIZE+2] => cUART channel
+     * sp[STACK_SIZE+3] => clocks_per_bit array pointer
      */
 
     /* callee save */
@@ -130,10 +131,6 @@ idle_process:
      * sampling points are then calculated from this point
      */
     
-    /* zero uart_word entry */
-    ldc r10, 0
-    stw r10, r4[r5]    
-    
     /* initial tc */
     ldaw r11, dp[uart_rx_channel]
     ldc r9, CHAN_STRUCT_SIZE
@@ -161,15 +158,18 @@ idle_process:
     eq r8, r8, r10
     bt r8, invalid_start
     
+    /* store new state - at this point r8 == 1*/
+    stw r8, r1[r5] 
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]    
+    
     /* sub TC value for swallowed bits */
     sub r9, r9, r10
     
     /* store tick_count */
     stw r9, r2[r5]
-    
-    /* store new state */
-    ldc r10, 1
-    stw r10, r1[r5] // set state to idle
     
     /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
@@ -180,8 +180,9 @@ idle_process:
     bu process_loop
     
 invalid_start:    
-    ldc r10, 0
-    stw r10, r1[r5] // set state to idle
+    // already set to idle...
+    //ldc r10, 0
+    //stw r10, r1[r5] // set state to idle
     
     /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
@@ -218,7 +219,14 @@ data_process:
     ldw r9, sp[STACK_SIZE+2]
     out res[r9], r5
     out res[r9], r11
-    bu channel_loop
+    
+    /* shift port_val, check loop and increment or quit loop */
+    shr r6, r6, 1
+    ldc r9, CHAN_COUNT
+    add r5, r5, 1
+    lsu r11, r5, r9
+    bf r11, rx_bit_ep
+    bu process_loop
     
 dp_calc_tick:
     
@@ -238,7 +246,6 @@ dp_calc_tick:
     add r11, r11, r10
     stw r11, r2[r5]
     
-channel_loop:
     /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     ldc r9, CHAN_COUNT

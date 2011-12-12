@@ -109,7 +109,9 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 }
 
 /* do timing for loop - 4.35uS is 230500bps */
+#pragma xta command "echo --------------------------------------------------"
 #pragma xta command "analyze endpoints tx_bit_ep tx_bit_ep"
 #pragma xta command "set required - 4.34 us"
 #pragma xta command "analyze function uart_tx_put_char"
 #pragma xta command "print nodeinfo - -"
+#pragma xta command "echo --------------------------------------------------"
