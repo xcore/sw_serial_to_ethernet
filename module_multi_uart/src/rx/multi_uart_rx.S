@@ -6,7 +6,8 @@
 
 #define STACK_SIZE  10
 #define CHAN_STRUCT_SIZE 0x6C
-#define CHAN_COUNT 1
+// TODO this needs to come from the configuration header
+#define CHAN_COUNT 1  
 
 /* function prototype:
  * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  )
@@ -113,14 +114,14 @@ process_loop:
 	bt r11, data_process // TODO - we assume here that we only have two states
 
 	/* decerement tick_count */
-	sub r10, r10, 4 // TODO - we assume 4 here
+	sub r10, r10, 4 
 	stw r10, r2[r5]
 	
 	/* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     ldc r9, CHAN_COUNT
     add r5, r5, 1
-    lsu r11, r5, r9 // TODO change to chan count define
+    lsu r11, r5, r9
     bf r11, rx_bit_ep
     bu process_loop
 	
@@ -174,7 +175,7 @@ idle_process:
     shr r6, r6, 1
     ldc r9, CHAN_COUNT
     add r5, r5, 1
-    lsu r11, r5, r9 // TODO change to chan count define
+    lsu r11, r5, r9
     bf r11, rx_bit_ep
     bu process_loop
     
@@ -186,12 +187,9 @@ invalid_start:
     shr r6, r6, 1
     ldc r9, CHAN_COUNT
     add r5, r5, 1
-    lsu r11, r5, r9 // TODO change to chan count define
+    lsu r11, r5, r9
     bf r11, rx_bit_ep
     bu process_loop
-    
-//check_sb:
-    /* TODO - This state checks the validity of the start bit */
     
 data_process:
     /* get bit from fourBits - tick_count still in r10 */
@@ -236,7 +234,7 @@ dp_calc_tick:
     /* get clocks_per_bit, and correct for bits we already swallowed */
     ldw r11, r11[2]
     // new tick_count = cpb - (4-tc) = cpb - 4 + tc
-    sub r11, r11, 4 // TODO this is number of samples per bit of the fastest baud rate
+    sub r11, r11, 4
     add r11, r11, r10
     stw r11, r2[r5]
     
@@ -245,7 +243,7 @@ channel_loop:
     shr r6, r6, 1
     ldc r9, CHAN_COUNT
     add r5, r5, 1
-    lsu r11, r5, r9 // TODO change to chan count define
+    lsu r11, r5, r9
     bf r11, rx_bit_ep
     bu process_loop
     

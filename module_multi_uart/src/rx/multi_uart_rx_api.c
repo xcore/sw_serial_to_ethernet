@@ -21,7 +21,7 @@ static int uart_rx_calc_baud( int baud )
     if (max_baud % baud != 0)
         return 0;
     
-    return ((max_baud / baud)*4); // return clock divider
+    return ((max_baud / baud)*4); // return clock divider - we oversample by 4 at max baud
 }
 
 /**
