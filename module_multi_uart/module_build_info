@@ -13,4 +13,6 @@ OPTIONAL_HEADERS += multi_uart_rx_conf.h multi_uart_tx_conf.h
 
 MODULE_XCC_FLAGS = $(XCC_FLAGS) -O3
 
+EXCLUDE_FILES = ./gen/gen_uart_out.S
+
 
