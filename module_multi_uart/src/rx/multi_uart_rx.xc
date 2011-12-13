@@ -41,7 +41,7 @@ typedef enum ENUM_UART_RX_CHAN_STATE
     data_bits = 0x1,
 } e_uart_rx_chan_state;
 
-void uart_rx_loop_4( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
+void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
 
 // global for access by ASM
 unsigned fourBitLookup[16];
@@ -104,7 +104,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     
     rx_ports.pUart :> port_val; // junk data
     
-    uart_rx_loop_4( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
+    uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
 }
 
 
@@ -115,7 +115,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
 //#pragma xta command "set loop - rx_bit_ep 1"
 #pragma xta command "print nodeinfo - -"
-//#pragma xta command "set required - 4.37 us"
+#pragma xta command "set required - 4.37 us"
 
 #if 0
 #pragma xta command "echo --------------------------------------------------"

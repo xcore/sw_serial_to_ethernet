@@ -1,0 +1,6 @@
+	/* check if this is the last channel */
+    bu next_channel
+    
+	retsp STACK_SIZE
+
+.cc_bottom uart_rx_loop_8.func
