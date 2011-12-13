@@ -17,9 +17,9 @@ USED_MODULES = module_multi_uart
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to
 # xcc for the final link (mapping) stage.
 ifeq "$(CONFIG)" "Debug"
-XCC_FLAGS = -g -O3 -Wall -Wtiming -report
+XCC_FLAGS = -g -O3 -Wall -Wtiming -report -save-temps
 else
-XCC_FLAGS = -g -O3 -Wall -Wtiming -report
+XCC_FLAGS = -g -O3 -Wall -Wtiming -report -save-temps
 endif
 
 # The VERBOSE variable, if set to 1, enables verbose output from the make
