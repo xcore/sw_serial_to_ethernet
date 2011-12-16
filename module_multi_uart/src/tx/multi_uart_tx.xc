@@ -1,6 +1,10 @@
 #include "multi_uart_tx.h"
 #include <print.h>
 
+#if UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) > 255
+    #error "UART TX Divider / oversample combination producers divider that is too large"
+#endif
+
 #define PORT_TS_INC 1
 
 extern s_multi_uart_tx_channel uart_tx_channel[UART_TX_CHAN_COUNT];
@@ -17,7 +21,7 @@ void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
     if (UART_TX_CLOCK_DIVIDER > 1)
     {
         // TODO configuration for external clock
-        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/2 );	
+        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );	
     }
     
     configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 0xFF); // TODO honour stop bit polarity
