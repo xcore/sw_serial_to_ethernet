@@ -89,12 +89,12 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
 int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_polarity polarity, int baud, int char_len );
 
 /**
- * Insert a UART Character into the appropriate UART buffer
- * @param channel_id    Channel identifier
- * @param uart_char     Character to be sent over UART
- * @return              Buffer fill level
+ * Validate RX'd character
+ * @param   chan_id     uart channel id from which the char came from
+ * @param   uart_word   uart char in the format DATA_BITS|PARITY|STOP BITS (parity optional according to config)
+ * @return              Return 0 on valid data, -1 on stop bit fail - remaining character in uart_word 
  */
-int uart_rx_get_char( int channel_id, REFERENCE_PARAM(unsigned,uart_char) );
+int uart_rx_validate_char( int chan_id, REFERENCE_PARAM(unsigned,uart_word) );
 
 /**
  * Multi UART Receive Thread

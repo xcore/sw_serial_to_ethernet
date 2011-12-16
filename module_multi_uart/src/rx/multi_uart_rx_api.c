@@ -58,7 +58,9 @@ static unsigned uart_rx_calc_parity(int channel_id, unsigned int uart_char)
     else
     {
         int poly = 0x1;
+        p = uart_char;
         crc8_helper(&p, uart_char, poly);
+        p &= 1;
     }
     
     switch (uart_rx_channel[channel_id].parity_mode)
@@ -128,23 +130,51 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
 }
 
 /**
- * Get a UART Character from the appropriate UART buffer
- * @param channel_id    Channel identifier
- * @param uart_char     Returned UART char
- * @return              Buffer fill levels, -1 if empty
+ * Validate RX'd character
+ * @param   chan_id     uart channel id from which the char came from
+ * @param   uart_word   uart char in the format DATA_BITS|PARITY|STOP BITS (parity optional according to config)
+ * @return              Return 0 on valid data, -1 on stop bit fail - remaining character in uart_word 
  */
-int uart_rx_get_char( int channel_id, REFERENCE_PARAM(unsigned,uart_char) )
+int uart_rx_validate_char( int chan_id, unsigned *uart_word )
 {
-    if (uart_rx_channel[channel_id].nelements > 0)
+    int error = 0;
+        
+    switch (uart_rx_channel[chan_id].sb_mode)
     {
-        int rd_ptr = uart_rx_channel[channel_id].rd_ptr;
-        *uart_char = uart_rx_channel[channel_id].buf[rd_ptr];
-        rd_ptr++;
-        rd_ptr &= (UART_RX_BUF_SIZE-1);
-        uart_rx_channel[channel_id].rd_ptr = rd_ptr;
-        uart_rx_channel[channel_id].nelements--;
-        return uart_rx_channel[channel_id].nelements;
+        case sb_1:
+            if (*uart_word & 1 != 1) // TODO respect polarity
+                error = 1;
+            *uart_word >>= 1;
+            break;
+        case sb_2:
+            if (*uart_word & 0x3 != 0x3) // TODO respect polarity
+                error = 1;
+            *uart_word >>= 2;
+            break;
     }
-    else return -1;
+    
+    if (error) return -1;
+    
+    switch (uart_rx_channel[chan_id].parity_mode)
+    {
+        case odd:
+        case even:
+        case mark:
+        case space:
+            if ((*uart_word&1) != uart_rx_calc_parity(chan_id, *uart_word>>1))
+            {
+                printhexln(uart_rx_calc_parity(chan_id, *uart_word>>1));
+                error = 1;
+            }
+            *uart_word >>= 1;
+            break;
+        case none:
+            break;
+    }
+    
+    if (error) return -1;
+       
+    return 0;
 }
+
 
