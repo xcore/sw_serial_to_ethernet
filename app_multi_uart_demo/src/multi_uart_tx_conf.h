@@ -9,7 +9,7 @@
 
 
 /**
- * Define the max baud rate
+ * Define the max baud rate - validated to 230kbaud
  */
 #define UART_TX_MAX_BAUD_RATE   100000
 

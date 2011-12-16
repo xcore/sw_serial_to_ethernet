@@ -19,7 +19,7 @@
 #define UART_RX_CLOCK_RATE_HZ      100000000 //1843200
 
 /**
- * Define the max baud rate - only 
+ * Define the max baud rate - validated to 115200 baud
  */
 #define UART_RX_MAX_BAUD    100000
 
