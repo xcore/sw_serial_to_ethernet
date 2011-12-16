@@ -62,7 +62,7 @@ void uart_tx_test(streaming chanend cUART)
 
 void uart_rx_test(streaming chanend cUART)
 {
-    unsigned uart_char;
+    unsigned uart_char, temp;
     int buf_entries;
     unsigned baud_rate = 100000; 
     
@@ -78,6 +78,10 @@ void uart_rx_test(streaming chanend cUART)
         if ((int)baud_rate <= 3125)
             baud_rate = 3125;
     }
+   
+   /* wait for intialisation */
+   while (temp != MULTI_UART_GO) cUART :> temp;
+   cUART <: 1;
     
     /* main loop */
     while (1)

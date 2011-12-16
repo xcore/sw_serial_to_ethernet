@@ -109,6 +109,9 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     
     rx_ports.pUart :> port_val; // junk data
     
+    cUART <: MULTI_UART_GO;
+	cUART :> int _;
+    
     uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
 }
 
