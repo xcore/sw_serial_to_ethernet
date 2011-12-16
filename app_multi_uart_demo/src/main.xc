@@ -50,7 +50,6 @@ void uart_tx_test(streaming chanend cUART)
    {
                
        int buffer_space = uart_tx_put_char(chan_id, (unsigned int)uart_char[chan_id]);
-       //printint(chan_id); printstr(" -> "); printhexln(uart_char[chan_id]);
        if (buffer_space < UART_TX_BUF_SIZE)
        {           
            uart_char[chan_id]++;
@@ -88,14 +87,18 @@ void uart_rx_test(streaming chanend cUART)
     {
         int chan_id;
         
+        /* get character over channel */
         cUART :>  chan_id;
         cUART :> uart_char;
         
+        /* process received value */
         temp = uart_char;
+        
         
         for (int i = 0; i < chan_id; i++)
             printchar('\t');
         
+        /* validation of uart char - gives you the raw character as well */
         if (uart_rx_validate_char( chan_id, uart_char ) == 0)
         {
             printint(chan_id); printstr(": "); printhex(temp); printstr(" -> ");
@@ -125,6 +128,7 @@ int main(void)
     
     par
     {
+        /* use all 8 threads */
         dummy();
         dummy();
         dummy();
@@ -135,13 +139,8 @@ int main(void)
         run_multi_uart_tx( cTxUART, uart_tx_ports );
         
         /* RX stuff */
-        #if 1
         uart_rx_test(cRxUART);
         run_multi_uart_rx( cRxUART, uart_rx_ports );
-        #else
-        dummy();
-        dummy();
-        #endif
     }
     return 0;
 }
