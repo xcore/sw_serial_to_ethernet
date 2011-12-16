@@ -24,7 +24,7 @@ void uart_tx_test(streaming chanend cUART)
     unsigned uart_char[8] = {0,0,0,0,0,0,0,0};
     unsigned temp = 0;
     int chan_id = 0;
-    unsigned baud_rate = 200000;
+    unsigned baud_rate = 100000;
 
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
@@ -64,7 +64,7 @@ void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char;
     int buf_entries;
-    unsigned baud_rate = 200000; 
+    unsigned baud_rate = 100000; 
     
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
@@ -87,11 +87,10 @@ void uart_rx_test(streaming chanend cUART)
         cUART :>  chan_id;
         cUART :> uart_char;
         
-        //if (chan_id == 0)
-        
         for (int i = 0; i < chan_id; i++)
             printchar('\t');
         
+        //if (chan_id == 0)
         {
             printint(chan_id); printstr(": "); printhex(uart_char); printstr(" -> ");
             uart_char >>= 2;

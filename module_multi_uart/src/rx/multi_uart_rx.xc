@@ -1,6 +1,10 @@
 #include "multi_uart_rx.h"
 #include <print.h>
 
+#if (UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE)) > 255
+    #error "UART RX Divider is to big - max baud rate may be too low or ref freq too high"
+#endif
+
 #define PORT_TS_INC 1
 
 out port pState = XS1_PORT_8C;
@@ -16,10 +20,11 @@ static unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
 
 void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports )
 {
+    
     if (UART_RX_CLOCK_DIVIDER > 1)
     {
         // TODO configuration for external clock
-        configure_clock_ref( rx_ports.cbUart, UART_RX_CLOCK_DIVIDER/8 );	
+        configure_clock_ref( rx_ports.cbUart, UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE));	
     }
     
     configure_in_port(	rx_ports.pUart, rx_ports.cbUart); // TODO honour stop bit polarity

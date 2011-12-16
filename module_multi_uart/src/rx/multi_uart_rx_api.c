@@ -11,7 +11,7 @@ unsigned crc8_helper(unsigned *checksum, unsigned data, unsigned poly);
  */
 static int uart_rx_calc_baud( int baud )
 {
-    int max_baud = UART_RX_CLOCK_RATE_HZ / (UART_RX_CLOCK_DIVIDER);
+    int max_baud = UART_RX_MAX_BAUD; //UART_RX_CLOCK_RATE_HZ / (UART_RX_CLOCK_DIVIDER);
     
     /* check we are not requesting a value greater than the max */
     if (baud > max_baud)
@@ -21,7 +21,8 @@ static int uart_rx_calc_baud( int baud )
     if (max_baud % baud != 0)
         return 0;
     
-    return ((max_baud / baud)*4); // return clock divider - we oversample by 4 at max baud
+    // return clock divider - this is the number of port ticks per bit
+    return ((max_baud / baud) * UART_RX_OVERSAMPLE); 
 }
 
 /**
