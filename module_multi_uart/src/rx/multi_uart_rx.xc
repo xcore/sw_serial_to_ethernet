@@ -113,14 +113,13 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 }
 
 
-#pragma xta command "config Terror off"
-
+// Validate timing to 115200 baud
 #pragma xta command "echo --------------------------------------------------"
 #pragma xta command "echo FullRxLoop"
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
 //#pragma xta command "set loop - rx_bit_ep 1"
 #pragma xta command "print nodeinfo - -"
-#pragma xta command "set required - 4.37 us"
+#pragma xta command "set required - 8.68 us"
 
 #if 0
 #pragma xta command "echo --------------------------------------------------"
