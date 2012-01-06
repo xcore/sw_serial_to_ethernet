@@ -15,17 +15,30 @@
 #else
 
 /**
+ * Define to use external clock reference
+ */
+#define UART_TX_USE_EXTERNAL_CLOCK
+
+/**
  * Define the external clock rate
  */
 #define UART_CLOCK_RATE_HZ      1843200
 
 /**
- * Clock divider value that defines max baud rate. For external 1.8432MHz clock
- * Div 16 => 115200 max bps
- * Div 8  => 230400 max bps
- * Div 4  => 460800 max bps
+ * Define the max baud rate - validated to 230kbaud
  */
-#define UART_CLOCK_DIVIDER      8
+#define UART_TX_MAX_BAUD_RATE   100000
+
+/**
+ * Clock divider value that defines max baud rate - this is only used when using the internal clock
+ */
+#define UART_TX_CLOCK_DIVIDER      (UART_TX_CLOCK_RATE_HZ/UART_TX_MAX_BAUD_RATE)
+
+/**
+ * Define the oversampling of the clock - this is where the UART_TX_CLOCK_DIVIDER is > 255 
+ * (otherwise set to 1) - only used when using an internal clock reference
+ */
+#define UART_TX_OVERSAMPLE          2
 
 /**
  * Define the buffer size in bytes - full UART words are stored in this buffer, so if 2 bytes per word are required (e.g. 12 bit UART word) then this must be accounted for
@@ -97,9 +110,9 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
  * Insert a UART Character into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
- * @return              Buffer fill level
+ * @return              Buffer fill level, -1 for full
  */
-unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char );
+int uart_tx_put_char( int channel_id, unsigned int uart_char );
 
 /**
  * Multi UART Transmit Thread

@@ -117,6 +117,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 
 
 // Validate timing to 115200 baud
+#if 0
 #pragma xta command "echo --------------------------------------------------"
 #pragma xta command "echo FullRxLoop"
 #pragma xta command "analyze endpoints rx_bit_ep rx_bit_ep"
@@ -127,7 +128,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 #pragma xta command "analyze function uart_rx_validate_char"
 #pragma xta command "print nodeinfo - -"
 
-#if 0
+
 #pragma xta command "echo --------------------------------------------------"
 #pragma xta command "echo Idle"
 #pragma xta command "analyze endpoints idle_process_0 idle_process_1"

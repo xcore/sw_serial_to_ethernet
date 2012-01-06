@@ -8,7 +8,7 @@ xsi:schemaLocation="http://www.xmos.com http://www.xmos.com">
     </Declarations>
   
     <Packages>
-        <Package Id="0" Type="XS1-L1A-LQ64">
+        <Package Id="0" Type="XS1-L1A-TQ128">
             <Nodes>
                 <Node Id="0" Type="XS1-L1A" InPackageId="0" SystemFrequency="500MHz" ReferenceFrequency="100Mhz" Oscillator="20Mhz">
                     <Boot>

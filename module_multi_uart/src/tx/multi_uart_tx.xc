@@ -5,7 +5,11 @@
     #error "UART TX Divider / oversample combination producers divider that is too large"
 #endif
 
+#ifdef UART_TX_USE_EXTERNAL_CLOCK
+#define PORT_TS_INC (UART_TX_CLOCK_RATE_HZ/UART_TX_MAX_BAUD_RATE)
+#else
 #define PORT_TS_INC 1
+#endif
 
 extern s_multi_uart_tx_channel uart_tx_channel[UART_TX_CHAN_COUNT];
 
@@ -18,11 +22,14 @@ unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
 
 void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
 {
+    #ifdef UART_TX_USE_EXTERNAL_CLOCK
+    configure_clock_src(tx_ports.cbUart, tx_ports.pUartClk);
+    #else
     if (UART_TX_CLOCK_DIVIDER > 1)
     {
-        // TODO configuration for external clock
-        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );	
+        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );
     }
+    #endif
     
     configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 0xFF); // TODO honour stop bit polarity
     
@@ -103,6 +110,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		        rd_ptr &= (UART_TX_BUF_SIZE-1);
 		        uart_tx_channel[j].rd_ptr = rd_ptr;
 		        uart_tx_channel[j].nelements--;
+		        
 		        current_word_pos[j] = uart_tx_channel[j].uart_word_len;
 		        tick_count[j] = clocks_per_bit[j];
 		    }
@@ -147,9 +155,11 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 }
 
 /* do timing for loop - 4.34uS is 230400bps, 8.68uS for 115200bps */
+#if 0
 #pragma xta command "echo --------------------------------------------------"
 #pragma xta command "analyze endpoints tx_bit_ep0 tx_bit_ep1"
 #pragma xta command "set required - 8.68 us"
 #pragma xta command "analyze function uart_tx_put_char"
 #pragma xta command "print nodeinfo - -"
 #pragma xta command "echo --------------------------------------------------"
+#endif

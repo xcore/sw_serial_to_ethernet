@@ -17,11 +17,19 @@ static int uart_tx_calc_baud( int baud )
     if (baud > max_baud)
         return 0;
     
+    #ifdef UART_TX_USE_EXTERNAL_CLOCK
+    if (UART_TX_CLOCK_RATE_HZ % baud != 0)
+        return 0; 
+    
+    return (UART_TX_CLOCK_RATE_HZ/baud)/(UART_TX_CLOCK_RATE_HZ/UART_TX_MAX_BAUD_RATE);
+    #else
+    /* checks and calculations for internal clocking */
     /* check we divide exactly */
     if (max_baud % baud != 0)
-        return 0;
+        return 0; 
     
     return (max_baud / baud)*UART_TX_OVERSAMPLE; // return clock divider
+    #endif
 }
 
 /**
@@ -146,7 +154,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     
     /* uart word - mask, reverse char and put into full word */
     temp = (((1 << uart_tx_channel[channel_id].uart_char_len) - 1) & uart_char);
-    temp = bitrev(temp) >> (32-uart_tx_channel[channel_id].uart_char_len);
+    //temp = bitrev(temp) >> (32-uart_tx_channel[channel_id].uart_char_len);
     full_word |=  temp << pos;
     pos += uart_tx_channel[channel_id].uart_char_len;
     
@@ -183,22 +191,22 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
  * Insert a UART Character into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
- * @return              Buffer fill level
+ * @return              Buffer fill level, -1 for full
  */
-unsigned int uart_tx_put_char( int channel_id, unsigned int uart_char )
+int uart_tx_put_char( int channel_id, unsigned int uart_char )
 {
-    int elements;
     if (uart_tx_channel[channel_id].nelements < UART_TX_BUF_SIZE)
     {
         unsigned uart_word = uart_tx_assemble_word( channel_id, uart_char );
         int wr_ptr = uart_tx_channel[channel_id].wr_ptr;
         uart_tx_channel[channel_id].buf[wr_ptr] = uart_word;
+        uart_tx_channel[channel_id].nelements++;
         wr_ptr++;
         wr_ptr &= (UART_TX_BUF_SIZE-1);
         uart_tx_channel[channel_id].wr_ptr = wr_ptr;
-        uart_tx_channel[channel_id].nelements++;
-        elements = uart_tx_channel[channel_id].nelements;
+        return uart_tx_channel[channel_id].nelements;
     }
-    return ;
+    else return -1;
+    
 }
 
