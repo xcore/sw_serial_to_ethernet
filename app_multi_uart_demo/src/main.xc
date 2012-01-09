@@ -1,22 +1,21 @@
 #include <xs1.h>
 #include <platform.h>
 #include <print.h>
-#include "multi_uart_tx.h"
-#include "multi_uart_rx.h"
+#include "multi_uart_common.h"
+#include "multi_uart_rxtx.h"
 
 s_multi_uart_tx_ports uart_tx_ports =
 {    
     XS1_PORT_8A,
-    XS1_PORT_1A,
-    XS1_CLKBLK_1
 };
 
 s_multi_uart_rx_ports uart_rx_ports =
 {    
     XS1_PORT_8B,
-    XS1_PORT_1B,
-    XS1_CLKBLK_2
 };
+
+in port uart_ref_ext_clk = XS1_PORT_1A;
+clock uart_clock = XS1_CLKBLK_1;
 
 
 void uart_tx_test(streaming chanend cUART)
@@ -36,9 +35,10 @@ void uart_tx_test(streaming chanend cUART)
     int chan_id = 0;
     unsigned baud_rate = 115200;
     int buffer_space = 0;
+    
+    timer t;
 
     /* configure UARTs */
-    
     for (int i = 0; i < 8; i++)
     {
         if ((int)baud_rate <= 225)
@@ -46,12 +46,12 @@ void uart_tx_test(streaming chanend cUART)
        
        printintln(baud_rate);
        
-       if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+       if (uart_tx_initialise_channel( i, none, sb_1, baud_rate, 8 ))
        {
            printstr("Invalid baud rate for tx channel ");
            printintln(i);
        }
-       baud_rate >>= 1;
+       //baud_rate >>= 1;
     }
    
    while (temp != MULTI_UART_GO)
@@ -62,7 +62,7 @@ void uart_tx_test(streaming chanend cUART)
 
    while (1)
    {
-       //buffer_space = uart_tx_put_char(chan_id, 0x55);
+       /* fill buffers with test strings */
        buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[chan_id][rd_ptr[chan_id]]);
        
        if (buffer_space != -1)
@@ -76,15 +76,14 @@ void uart_tx_test(streaming chanend cUART)
        chan_id &= UART_TX_CHAN_COUNT-1;
        
        #if 0
-       test_count++;
-       
        /* test reconfiguration */
        if (test_count > 1000)
        {
+           
+           uart_tx_reconf_pause( cUART, t );
+           
+           /* reset counter */
            test_count = 0;
-           cUART <: 0; // pause uart
-           temp = 0;
-           while (temp != MULTI_UART_GO) cUART :> temp; // wait for UART to be ready for reconf
            
            /* configure UARTs */
            baud_rate /= 2;
@@ -99,7 +98,9 @@ void uart_tx_test(streaming chanend cUART)
                    printintln(i);
                }
            }
-           cUART <: 1; // done - let the UART commence
+           
+           uart_tx_reconf_enable( cUART );
+           
        }
        #endif
    }
@@ -108,7 +109,6 @@ void uart_tx_test(streaming chanend cUART)
 void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char, temp;
-    int buf_entries;
     unsigned baud_rate = 100000; 
     
     /* configure UARTs */
@@ -182,11 +182,13 @@ int main(void)
         
         /* TX Stuff */
         uart_tx_test(cTxUART);
-        run_multi_uart_tx( cTxUART, uart_tx_ports );
+        
         
         /* RX stuff */
         //uart_rx_test(cRxUART);
-        //run_multi_uart_rx( cRxUART, uart_rx_ports );
+        
+        /* run the multi-uart RX & TX with a common external clock */
+        run_ext_clk_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_ref_ext_clk, uart_clock);
     }
     return 0;
 }

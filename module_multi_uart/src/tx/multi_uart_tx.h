@@ -56,15 +56,11 @@
 typedef struct STRUCT_MULTI_UART_TX_PORTS
 {
     buffered out port:8 pUart;
-    in port pUartClk;
-    clock cbUart;
 } s_multi_uart_tx_ports;
 #else
 typedef struct STRUCT_MULTI_UART_TX_PORTS
 {
     unsigned pUart;
-    unsigned pUartClk;
-    clock cbUart;
 } s_multi_uart_tx_ports;
 #endif
 
@@ -110,6 +106,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
  * Insert a UART Character into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
+ * @param uart_clock    Clock block to run the port from
  * @return              Buffer fill level, -1 for full
  */
 int uart_tx_put_char( int channel_id, unsigned int uart_char );
@@ -117,7 +114,7 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char );
 /**
  * Multi UART Transmit Thread
  */
-void run_multi_uart_tx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports) );
+void run_multi_uart_tx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports), clock uart_clock);
 
  
 #endif /* __MULTI_UART_TX_H__ */

@@ -20,20 +20,18 @@ unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
     return crc8shr(checksum, data, poly);
 }
 
-void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports )
+void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports, clock uart_clock )
 {
-    #ifdef UART_TX_USE_EXTERNAL_CLOCK
-    configure_clock_src(tx_ports.cbUart, tx_ports.pUartClk);
-    #else
+    #ifndef UART_TX_USE_EXTERNAL_CLOCK
     if (UART_TX_CLOCK_DIVIDER > 1)
     {
         configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );
     }
     #endif
     
-    configure_out_port(	tx_ports.pUart, tx_ports.cbUart, 0xFF); // TODO honour stop bit polarity
+    configure_out_port(	tx_ports.pUart, uart_clock, 0xFF); // TODO honour stop bit polarity
     
-    start_clock( tx_ports.cbUart );
+    start_clock( uart_clock );
 }
 
 #pragma unsafe arrays
@@ -45,7 +43,7 @@ unsigned multi_uart_tx_buffer_get( int chan_id )
 }
 
 #pragma unsafe arrays
-void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports )
+void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports, clock uart_clock )
 {
     unsigned port_val = 0xFF; // TODO honour IDLE/STOP polarity
     unsigned short port_ts;
@@ -57,7 +55,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
     unsigned tick_count[UART_TX_CHAN_COUNT];
     unsigned clocks_per_bit[UART_TX_CHAN_COUNT];
     
-    multi_uart_tx_port_init( tx_ports );
+    multi_uart_tx_port_init( tx_ports, uart_clock );
     
 	cUART <: MULTI_UART_GO;
 	cUART :> int _;

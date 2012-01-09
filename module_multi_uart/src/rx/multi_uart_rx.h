@@ -47,12 +47,8 @@ typedef struct STRUCT_MULTI_UART_RX_PORTS
 {
 #ifdef __XC__
     buffered in port:32 pUart;
-    in port pUartClk;
-    clock cbUart;
 #else
     unsigned pUart;
-    unsigned pUartClk;
-    clock cbUart;
 #endif
 } s_multi_uart_rx_ports;
 
@@ -99,7 +95,7 @@ int uart_rx_validate_char( int chan_id, REFERENCE_PARAM(unsigned,uart_word) );
 /**
  * Multi UART Receive Thread
  */
-void run_multi_uart_rx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_rx_ports, tx_ports) );
+void run_multi_uart_rx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_rx_ports, tx_ports), clock uart_clock );
 
  
 #endif /* __MULTI_UART_RX_H__ */

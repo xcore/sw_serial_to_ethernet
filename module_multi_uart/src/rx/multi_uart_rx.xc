@@ -18,18 +18,18 @@ static unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
     return crc8shr(checksum, data, poly);
 }
 
-void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports )
+void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports, clock uart_clock )
 {
     
     if (UART_RX_CLOCK_DIVIDER > 1)
     {
         // TODO configuration for external clock
-        configure_clock_ref( rx_ports.cbUart, UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE));	
+        configure_clock_ref( uart_clock, UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE));	
     }
     
-    configure_in_port(	rx_ports.pUart, rx_ports.cbUart); // TODO honour stop bit polarity
+    configure_in_port(	rx_ports.pUart, uart_clock); // TODO honour stop bit polarity
     
-    start_clock( rx_ports.cbUart );
+    start_clock( uart_clock );
 }
 
 #pragma unsafe arrays
@@ -53,7 +53,7 @@ unsigned fourBitLookup[16];
 unsigned startBitLookup[16];
 
 #pragma unsafe arrays
-void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports )
+void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports, clock uart_clock )
 {
 
     unsigned port_val;
@@ -96,7 +96,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     startBitLookup[0b0011] = 2;
     startBitLookup[0b0111] = 1;
     
-    multi_uart_rx_port_init( rx_ports );
+    multi_uart_rx_port_init( rx_ports, uart_clock );
     
     /* initialisation loop */
     for (int i = 0; i < UART_RX_CHAN_COUNT; i++)

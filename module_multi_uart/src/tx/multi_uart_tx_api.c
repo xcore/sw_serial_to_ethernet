@@ -1,4 +1,5 @@
 #include "multi_uart_tx.h"
+#include "multi_uart_helper.h"
 
 s_multi_uart_tx_channel uart_tx_channel[UART_TX_CHAN_COUNT];
 
@@ -207,6 +208,63 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char )
         return uart_tx_channel[channel_id].nelements;
     }
     else return -1;
+}
+
+/**
+ * Pause the Multi-UART TX thread for reconfiguration
+ * @param cUART     chanend to UART TX thread
+ * @param t         timer for running buffer clearance pause
+ */
+void uart_tx_reconf_pause( chanend cUART, timer t )
+{
+    unsigned pause_time;
+    unsigned min_baud_chan;
+    unsigned temp = 0;
+    
+    /* find slowest channel - which is max(clocks_per_bit)*/
+    for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
+    {
+        if (temp < uart_tx_channel[i].clocks_per_bit)
+        {
+            temp = uart_tx_channel[i].clocks_per_bit;
+            min_baud_chan = i;
+        }
+    }
+    
+    /* calculate baud rate */
+    #ifdef UART_TX_USE_EXTERNAL_CLOCK
+    pause_time = (UART_TX_CLOCK_RATE_HZ)/(uart_tx_channel[min_baud_chan].clocks_per_bit * (UART_TX_CLOCK_RATE_HZ/UART_TX_MAX_BAUD_RATE));
+    #else
+    pause_time = (UART_TX_MAX_BAUD_RATE);
+    #endif
+    
+    /* calculate uart word rate, add margin for any IWD */
+    pause_time = pause_time / (uart_tx_channel[min_baud_chan].uart_word_len+2);
+    
+    /* get number of clock ticks per word */
+    pause_time = 100000000 / pause_time;
+    
+    /* get total time to complete a buffer */
+    pause_time = pause_time * UART_TX_BUF_SIZE;
+    
+    /* pause for buffer empty */
+    wait_for(t, pause_time );
+    
+    /* request pause */
+    send_streaming_int(cUART, 0); 
+    temp = 0;
+    do 
+    {
+        temp = get_streaming_uint(cUART); // wait for UART to be ready for reconf
+    } while (temp != MULTI_UART_GO);
     
 }
 
+/**
+ * Release the UART into normal operation - must be called after uart_tx_reconf_pause
+ * @param cUART channel end to TX UART
+ */
+void uart_tx_reconf_enable( chanend cUART )
+{
+    send_streaming_int(cUART, 1); // done - let the UART commence
+}
