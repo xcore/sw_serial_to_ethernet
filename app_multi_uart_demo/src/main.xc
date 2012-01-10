@@ -37,6 +37,7 @@ void uart_tx_test(streaming chanend cUART)
     int buffer_space = 0;
     
     timer t;
+    unsigned int ts;
 
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
@@ -46,7 +47,7 @@ void uart_tx_test(streaming chanend cUART)
        
        printintln(baud_rate);
        
-       if (uart_tx_initialise_channel( i, none, sb_1, baud_rate, 8 ))
+       if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
        {
            printstr("Invalid baud rate for tx channel ");
            printintln(i);
@@ -59,6 +60,9 @@ void uart_tx_test(streaming chanend cUART)
        cUART :> temp;
    }
    cUART <: 1;
+   
+   t :> ts;
+   ts += 20 * 100000000; // 20 second
 
    while (1)
    {
@@ -75,34 +79,40 @@ void uart_tx_test(streaming chanend cUART)
        chan_id++;
        chan_id &= UART_TX_CHAN_COUNT-1;
        
-       #if 0
-       /* test reconfiguration */
-       if (test_count > 1000)
+       /* test reconfiguration every 10s */
+       select
        {
+           case t when timerafter(ts) :> ts:
+               // cause the system to pause
+               uart_tx_reconf_pause( cUART, t );
+               
+               printstr("reconf\n");
            
-           uart_tx_reconf_pause( cUART, t );
-           
-           /* reset counter */
-           test_count = 0;
-           
-           /* configure UARTs */
-           baud_rate /= 2;
-           if ((int)baud_rate <= 225)
-               baud_rate = 225;
-           for (int i = 0; i < 8; i++)
-           {
-               printintln(baud_rate);
-               if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+               /* configure UARTs - channels 4-7 get changed*/
+               baud_rate = 57600;
+               if ((int)baud_rate <= 225)
+                   baud_rate = 225;
+               for (int i = 4; i < 8; i++)
                {
-                   printstr("Invalid baud rate for tx channel ");
-                   printintln(i);
+                   printintln(baud_rate);
+                   if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+                   {
+                       printstr("Invalid baud rate for tx channel ");
+                       printintln(i);
+                   }
                }
-           }
            
-           uart_tx_reconf_enable( cUART );
-           
+               // enable the uart post reconfiguration
+               uart_tx_reconf_enable( cUART );
+               
+               t :> ts;
+               /* reset time stamp */
+               ts += 20 * 100000000; // 20s
+               
+               break;
+           default:
+               break;
        }
-       #endif
    }
 }
 
