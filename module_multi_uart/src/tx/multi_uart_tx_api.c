@@ -231,11 +231,11 @@ void uart_tx_reconf_pause( chanend cUART, timer t )
         }
     }
     
-    /* calculate baud rate */
+    /* calculate baud rate from clocks per bit*/
     #ifdef UART_TX_USE_EXTERNAL_CLOCK
     pause_time = (UART_TX_CLOCK_RATE_HZ)/(uart_tx_channel[min_baud_chan].clocks_per_bit * (UART_TX_CLOCK_RATE_HZ/UART_TX_MAX_BAUD_RATE));
     #else
-    pause_time = (UART_TX_MAX_BAUD_RATE);
+    pause_time = ((UART_TX_MAX_BAUD_RATE)*UART_TX_OVERSAMPLE)*uart_tx_channel[min_baud_chan].clocks_per_bit;
     #endif
     
     /* calculate uart word rate, add margin for any IWD */
