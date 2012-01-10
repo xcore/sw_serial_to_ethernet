@@ -39,3 +39,5 @@ runsim: all
 runsim_loop: all
 	xsim -t --trace-to uart_trace.log --plugin LoopbackPort.dll "-port stdcore[0] XS1_PORT_8A 8 0 -port stdcore[0] XS1_PORT_8B 8 0" --vcd-tracing "-o uart_sim.vcd -ports -ports-detailed" bin/$(APP_NAME).xe
 	
+run: all
+	xrun --io bin/multi_uart_demo.xe
