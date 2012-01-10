@@ -106,7 +106,7 @@ int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     uart_tx_channel[channel_id].uart_char_len = char_len;
     
     /* calculate word length */
-    uart_tx_channel[channel_id].uart_word_len += 1; // start bit
+    uart_tx_channel[channel_id].uart_word_len = 1; // start bit
     switch (parity)
     {
         case odd:
