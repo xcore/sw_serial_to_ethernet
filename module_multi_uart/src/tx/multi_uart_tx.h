@@ -116,5 +116,17 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char );
  */
 void run_multi_uart_tx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports), clock uart_clock);
 
+/**
+ * Pause the Multi-UART TX thread for reconfiguration
+ * @param cUART     chanend to UART TX thread
+ * @param t         timer for running buffer clearance pause
+ */
+void uart_tx_reconf_pause( streaming chanend cUART, timer t );
+
+/**
+ * Release the UART into normal operation - must be called after uart_tx_reconf_pause
+ * @param cUART channel end to TX UART
+ */
+void uart_tx_reconf_enable( streaming chanend cUART );
  
 #endif /* __MULTI_UART_TX_H__ */
