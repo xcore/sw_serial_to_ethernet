@@ -8,7 +8,7 @@
 #define UART_RX_CHAN_COUNT  8
 #endif
 
-#define STACK_SIZE  10
+#define STACK_SIZE  12
 #define CHAN_STRUCT_SIZE 0x6C
 // TODO this needs to come from the configuration header
 #define CHAN_COUNT UART_RX_CHAN_COUNT
@@ -91,7 +91,17 @@ uart_rx_loop_8:
 	stw r2, sp[9]
 	stw r3, sp[10]
 	
+	/* setup pause target */
+	ldap r11, finish_uart_rx
+	ldw r10, sp[STACK_SIZE+2]
+	setv res[r10], r11
+	eeu res[r10]
+	
 rx_bit_ep:
+    /* check for pause command on the channel */
+    setsr 0x1
+    clrsr 0x1
+    
     /* get data */
 	in r6,res[r0]
 	

@@ -3,6 +3,11 @@
  */
 
 /**
+ * Define to use external clock reference
+ */
+#define UART_RX_USE_EXTERNAL_CLOCK
+
+/**
  * Define the buffer size in UART word entries - needs to be a power of 2 (i.e. 1,2,4,8,16,32)
  */
 #define UART_RX_BUF_SIZE    16
@@ -16,12 +21,12 @@
  /**
  * Define the external clock rate
  */
-#define UART_RX_CLOCK_RATE_HZ      100000000 //1843200
+#define UART_RX_CLOCK_RATE_HZ      1843200
 
 /**
  * Define the max baud rate - validated to 115200 baud
  */
-#define UART_RX_MAX_BAUD    100000
+#define UART_RX_MAX_BAUD    115200
 
 /**
  * Clock divider value that defines max baud rate. E.g. with external 1.8432MHz clock

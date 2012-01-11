@@ -98,21 +98,28 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     
     multi_uart_rx_port_init( rx_ports, uart_clock );
     
-    /* initialisation loop */
-    for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
+    while (1)
     {
-        state[i] = idle;
-        uart_word[i] = 0;
-        bit_count[i] = 0;
-        tickcount[i] = uart_rx_channel[i].use_sample;
+        
+        cUART <: MULTI_UART_GO;
+        cUART :> int _;
+        
+        /* initialisation loop */
+        for (int i = 0; i < UART_RX_CHAN_COUNT; i++)
+        {
+            state[i] = idle;
+            uart_word[i] = 0;
+            bit_count[i] = 0;
+            tickcount[i] = uart_rx_channel[i].use_sample;
+        }
+        
+        rx_ports.pUart :> port_val; // junk data
+        
+        /* run ASM function - will exit on reconfiguration request over the channel */
+        uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
+        
+        printstr("RX pause\n");
     }
-    
-    rx_ports.pUart :> port_val; // junk data
-    
-    cUART <: MULTI_UART_GO;
-	cUART :> int _;
-    
-    uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
 }
 
 

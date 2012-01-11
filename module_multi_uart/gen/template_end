@@ -1,6 +1,25 @@
 	/* check if this is the last channel */
     bu next_channel
+
+finish_uart_rx:
     
+    /* read pause trigger out of channel */
+    ldw r10, sp[STACK_SIZE+2]
+    in r10, res[r10]
+    
+    /* clear all events */
+    clre
+    
+    /* reload stored reg values */
+    ldw r4, sp[1]	
+	ldw r5, sp[2]
+	ldw r6, sp[3]
+	ldw r7, sp[4]
+	ldw r8, sp[5]
+	ldw r9, sp[6]
+	ldw r10, sp[7]
+	
+	/* return */
 	retsp STACK_SIZE
 
 .cc_bottom uart_rx_loop_8.func

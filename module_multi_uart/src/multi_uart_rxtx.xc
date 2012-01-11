@@ -15,7 +15,7 @@ void run_ext_clk_multi_uart_rxtx( streaming chanend cTxUart, s_multi_uart_tx_por
     par
     {
         run_multi_uart_tx( cTxUart, uart_tx_ports, uart_clock );
-        //run_multi_uart_rx( cRxUart, uart_rx_ports, uart_clock );
+        run_multi_uart_rx( cRxUart, uart_rx_ports, uart_clock );
     }
 }
 

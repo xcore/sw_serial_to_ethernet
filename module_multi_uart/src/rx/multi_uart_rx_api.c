@@ -15,7 +15,8 @@ static int uart_rx_calc_baud( int baud )
     
     /* check we are not requesting a value greater than the max */
     if (baud > max_baud)
-        return 0;
+    	return 0;
+
     
     /* check we divide exactly */
     if (max_baud % baud != 0)
@@ -101,7 +102,7 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     uart_rx_channel[channel_id].uart_char_len = char_len;
     
     /* calculate word length for data_bit state */
-    //uart_rx_channel[channel_id].uart_word_len += 1; // start bit ignored as this is used as a state machine condition for counting in bits - start bit is handled in its own state.
+    uart_rx_channel[channel_id].uart_word_len = 0; // start bit ignored as this is used as a state machine condition for counting in bits - start bit is handled in its own state.
     switch (parity)
     {
         case odd:

@@ -45,7 +45,7 @@ void uart_tx_test(streaming chanend cUART)
         if ((int)baud_rate <= 225)
            baud_rate = 225;
        
-       printintln(baud_rate);
+       //printintln(baud_rate);
        
        if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
        {
@@ -119,7 +119,13 @@ void uart_tx_test(streaming chanend cUART)
 void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char, temp;
-    unsigned baud_rate = 100000; 
+    unsigned baud_rate = 115200; 
+    char buffer[256] = "";
+    unsigned char wr_ptr = 0;
+    
+    timer t;
+    unsigned ts;
+    
     
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
@@ -129,42 +135,61 @@ void uart_rx_test(streaming chanend cUART)
             printstr("Invalid baud rate for rx channel ");
             printintln(i);
         }
-        baud_rate /= 2;
-        if ((int)baud_rate <= 3125)
-            baud_rate = 3125;
+        //baud_rate /= 2;
+        if ((int)baud_rate <= 225)
+            baud_rate = 225;
     }
     
-    /* wait for intialisation */
-    while (temp != MULTI_UART_GO) cUART :> temp;
+    /* release UART rx thread */
+    do { cUART :> temp; } while (temp != MULTI_UART_GO);
     cUART <: 1;
+    
+    t :> ts;
+    ts += 5 * 100000000; // 20 second
     
     /* main loop */
     while (1)
     {
         int chan_id;
         
-        /* get character over channel */
-        cUART :>  chan_id;
-        cUART :> uart_char;
-        
-        /* process received value */
-        temp = uart_char;
-        
-        
-        for (int i = 0; i < chan_id; i++)
-            printchar('\t');
-        
-        /* validation of uart char - gives you the raw character as well */
-        if (uart_rx_validate_char( chan_id, uart_char ) == 0)
+        select
         {
-            printint(chan_id); printstr(": "); printhex(temp); printstr(" -> ");
-            printhexln(uart_char);
-        }
-        else 
-        {
-            printint(chan_id); printstr(": "); printhex(temp); printstr(" -> ");
-            printhex(uart_char);
-            printstr(" [IV]\n");
+            case t when timerafter(ts) :> ts:
+                /* pause */
+                cUART <: 0;
+            
+                /* reconfigure */
+                // TODO...
+            
+                /* release UART rx thread */
+                do { cUART :> temp; } while (temp != MULTI_UART_GO);
+                cUART <: 1;
+            
+                t :> ts;
+                ts += 5 * 100000000; // 20 second
+                break;
+            
+            case cUART :>  chan_id:
+                /* get character over channel */
+                cUART :> uart_char;
+        
+                /* process received value */
+                temp = uart_char;
+        
+                if (chan_id == 0)
+                {
+                    if (uart_rx_validate_char( chan_id, uart_char ) == 0)
+                    {
+                        buffer[wr_ptr] = (char)uart_char;
+                        printhexln((uart_char>>2));
+                        if ((char)uart_char == '\n')
+                            printstr(buffer);
+                    }
+                }
+                break;
+                
+            default:
+                break;
         }
     }
 }
@@ -190,14 +215,14 @@ int main(void)
         dummy();
         dummy();
         
-        /* TX Stuff */
+        /* TX test thread */
         uart_tx_test(cTxUART);
         
         
-        /* RX stuff */
-        //uart_rx_test(cRxUART);
+        /* RX test thread */
+        uart_rx_test(cRxUART);
         
-        /* run the multi-uart RX & TX with a common external clock */
+        /* run the multi-uart RX & TX with a common external clock - (2 threads) */
         run_ext_clk_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_ref_ext_clk, uart_clock);
     }
     return 0;

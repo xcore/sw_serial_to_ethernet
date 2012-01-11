@@ -2,8 +2,8 @@
 #define __MULTI_UART_COMMON_H__
 
 /* define channel commands */
-#define MULTI_UART_STOP     0xFF
-#define MULTI_UART_GO       0xFE
+#define MULTI_UART_STOP     0xFFFFFFFF
+#define MULTI_UART_GO       0xFFFFFFFE
 
 typedef enum ENUM_UART_RX_CONFIG_PARITY
 {
