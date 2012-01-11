@@ -1,4 +1,5 @@
 #include "multi_uart_rx.h"
+#include <print.h>
 
 s_multi_uart_rx_channel uart_rx_channel[UART_RX_CHAN_COUNT];
 
@@ -143,12 +144,12 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
     switch (uart_rx_channel[chan_id].sb_mode)
     {
         case sb_1:
-            if (*uart_word & 1 != 1) // TODO respect polarity
+            if ((*uart_word & 1) != 1) // TODO respect polarity
                 error = 1;
             *uart_word >>= 1;
             break;
         case sb_2:
-            if (*uart_word & 0x3 != 0x3) // TODO respect polarity
+            if ((*uart_word & 0x3) != 0x3) // TODO respect polarity
                 error = 1;
             *uart_word >>= 2;
             break;
