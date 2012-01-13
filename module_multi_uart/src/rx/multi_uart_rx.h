@@ -94,6 +94,9 @@ int uart_rx_validate_char( int chan_id, REFERENCE_PARAM(unsigned,uart_word) );
 
 /**
  * Multi UART Receive Thread
+ * @param   cUART       channel interface for RX UART
+ * @param   tx_ports    port structure
+ * @param   uart_clock  clock block for UART
  */
 void run_multi_uart_rx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_rx_ports, tx_ports), clock uart_clock );
 
