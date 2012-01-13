@@ -19,7 +19,9 @@ clock uart_clock_rx = XS1_CLKBLK_2;
 
 
 
-
+/**
+ * Basic test of the TX server - will transmit an identifying message on each UART channel
+ */
 void uart_tx_test(streaming chanend cUART)
 {
     char test_str[8][29] = {"UART Channel 1 Test String\n\0",
@@ -118,6 +120,10 @@ void uart_tx_test(streaming chanend cUART)
    }
 }
 
+/**
+ * Basic test of the RX - will print out a character at a time - will break on continuous 
+ * data because of the prints
+ */
 void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char, temp;
