@@ -131,6 +131,9 @@ int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     
     uart_tx_channel[channel_id].uart_word_len += char_len;
     
+    /* add interframe bits */
+    uart_tx_channel[channel_id].uart_word_len += UART_TX_IFB;
+    
     return 0;
 }
 
@@ -155,7 +158,6 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     
     /* uart word - mask, reverse char and put into full word */
     temp = (((1 << uart_tx_channel[channel_id].uart_char_len) - 1) & uart_char);
-    //temp = bitrev(temp) >> (32-uart_tx_channel[channel_id].uart_char_len);
     full_word |=  temp << pos;
     pos += uart_tx_channel[channel_id].uart_char_len;
     
@@ -172,11 +174,15 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     {
         case sb_1:
             full_word |= 1 << pos;
+            pos += 1;
             break;
         case sb_2:
             full_word |= 0x3 << pos;
+            pos += 2;
             break;
     }
+    
+    full_word |= ((1 << UART_TX_IFB) - 1) << pos;
     
     /* mask off word to uart word length */
     full_word = (((1 << uart_tx_channel[channel_id].uart_word_len) - 1) & full_word);

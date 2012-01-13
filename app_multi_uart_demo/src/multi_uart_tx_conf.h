@@ -41,3 +41,8 @@
  */
 #define UART_TX_CHAN_COUNT  8
 
+/**
+ * Define the number of interframe bits
+ */
+#define UART_TX_IFB     2
+
