@@ -156,6 +156,7 @@ void uart_rx_test(streaming chanend cUART)
         
         select
         {
+            #if 0
             case t when timerafter(ts) :> ts:
                 /* pause */
                 cUART <: 0;
@@ -170,6 +171,7 @@ void uart_rx_test(streaming chanend cUART)
                 t :> ts;
                 ts += 5 * 100000000; // 20 second
                 break;
+            #endif
             
             case cUART :>  chan_id:
                 /* get character over channel */
@@ -177,23 +179,85 @@ void uart_rx_test(streaming chanend cUART)
         
                 /* process received value */
                 temp = uart_char;
-        
+                
                 if (chan_id == 0)
                 {
                     if (uart_rx_validate_char( chan_id, uart_char ) == 0)
                     {
-                        buffer[wr_ptr] = (char)uart_char;
-                        printhexln((uart_char>>2));
+                        printchar(uart_char);
+                        /*buffer[wr_ptr] = (char)uart_char;
+                        wr_ptr++;
                         if ((char)uart_char == '\n')
                             printstr(buffer);
+                        if (wr_ptr == 255)
+                        {
+                            buffer[255] = '\0';
+                            wr_ptr = 0;
+                            printstr(buffer);
+                        }*/
                     }
                 }
                 break;
-                
-            default:
+        }
+    }
+}
+
+void uart_rxtx_echo_test( streaming chanend cTxUART, streaming chanend cRxUART )
+{
+
+    unsigned chan_id, uart_char, temp;
+    unsigned baud_rate = 115200;
+    
+    printstr("Running echo test...\n");
+    
+    /* configure UARTs */
+    for (int i = 0; i < 8; i++)
+    {
+        if ((int)baud_rate <= 225)
+            baud_rate = 225;
+        
+        if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+        {
+            printstr("Invalid baud rate for tx channel ");
+            printintln(i);
+        }
+        
+        if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
+        {
+            printstr("Invalid baud rate for rx channel ");
+            printintln(i);
+        }
+        
+        printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
+        
+        baud_rate /= 2;
+    }
+    
+    /* release UART rx thread */
+    do { cRxUART :> temp; } while (temp != MULTI_UART_GO);
+    cRxUART <: 1;
+    
+    /* release UART tx thread */
+    do {cTxUART :> temp; } while (temp != MULTI_UART_GO);
+    cTxUART <: 1;
+    
+    /* main echo loop */
+    while (1)
+    {
+        select
+        {
+            case cRxUART :>  chan_id:
+                /* get character over channel */
+                cRxUART :> uart_char;
+            
+                /* process received value */
+                if (uart_rx_validate_char( chan_id, uart_char ) == 0)
+                    uart_tx_put_char(chan_id, (unsigned int)uart_char);
                 break;
         }
     }
+        
+    
 }
 
 void dummy()
@@ -204,6 +268,7 @@ void dummy()
 /**
  * Top level main for multi-UART demonstration
  */
+#define ECHO_TEST
 int main(void)
 {
     streaming chan cTxUART;
@@ -217,12 +282,18 @@ int main(void)
         dummy();
         dummy();
         
+        #ifdef SIMPLE_TEST
         /* TX test thread */
         uart_tx_test(cTxUART);
         
-        
         /* RX test thread */
         uart_rx_test(cRxUART);
+        #endif
+        
+        #ifdef ECHO_TEST
+        dummy();
+        uart_rxtx_echo_test( cTxUART, cRxUART );
+        #endif
         
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
         run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
