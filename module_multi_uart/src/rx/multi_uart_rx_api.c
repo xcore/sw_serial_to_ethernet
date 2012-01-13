@@ -1,5 +1,5 @@
 #include "multi_uart_rx.h"
-#include <print.h>
+#include "multi_uart_helper.h"
 
 s_multi_uart_rx_channel uart_rx_channel[UART_RX_CHAN_COUNT];
 
@@ -175,4 +175,23 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
     return 0;
 }
 
+/**
+ * Pause the UART via channel
+ * @param   cUART   streaming channel end to RX server
+ */
+void uart_rx_reconf_pause( chanend cUART )
+{
+    send_streaming_int(cUART, 0);
+}
 
+/**
+ * Release the UART into normal operation - must be called after uart_rx_reconf_pause
+ * @param cUART channel end to RX UART
+ */
+void uart_rx_reconf_enable( chanend cUART )
+{
+    unsigned temp;
+    
+    do { temp = get_streaming_uint(cUART); } while (temp != MULTI_UART_GO);
+    send_streaming_int(cUART, 1);
+}

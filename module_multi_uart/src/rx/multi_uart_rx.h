@@ -97,5 +97,16 @@ int uart_rx_validate_char( int chan_id, REFERENCE_PARAM(unsigned,uart_word) );
  */
 void run_multi_uart_rx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_rx_ports, tx_ports), clock uart_clock );
 
+/**
+ * Pause the UART via channel
+ * @param   cUART   streaming channel end to RX server
+ */
+void uart_rx_reconf_pause( streaming chanend cUART );
+
+/**
+ * Release the UART into normal operation - must be called after uart_rx_reconf_pause
+ * @param cUART channel end to RX UART
+ */
+void uart_rx_reconf_enable( streaming chanend cUART );
  
 #endif /* __MULTI_UART_RX_H__ */
