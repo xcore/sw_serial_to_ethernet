@@ -8,14 +8,16 @@ s_multi_uart_tx_ports uart_tx_ports =
 {    
     XS1_PORT_8A,
 };
+in port uart_ref_ext_clk = XS1_PORT_1A;
+clock uart_clock_tx = XS1_CLKBLK_1;
 
 s_multi_uart_rx_ports uart_rx_ports =
 {    
     XS1_PORT_8B,
 };
+clock uart_clock_rx = XS1_CLKBLK_2;
 
-in port uart_ref_ext_clk = XS1_PORT_1A;
-clock uart_clock = XS1_CLKBLK_1;
+
 
 
 void uart_tx_test(streaming chanend cUART)
@@ -223,7 +225,7 @@ int main(void)
         uart_rx_test(cRxUART);
         
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        run_ext_clk_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_ref_ext_clk, uart_clock);
+        run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
     }
     return 0;
 }

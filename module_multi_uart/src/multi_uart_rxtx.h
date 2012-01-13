@@ -14,6 +14,6 @@
  * @param   uart_clock          Clock block to run the ports from
  */
 
-void run_ext_clk_multi_uart_rxtx( streaming chanend cTxUart, s_multi_uart_tx_ports &uart_tx_ports, streaming chanend cRxUart, s_multi_uart_rx_ports &uart_rx_ports, in port uart_ext_clk_pin, clock uart_clock);
+void run_multi_uart_rxtx( streaming chanend cTxUart, s_multi_uart_tx_ports &uart_tx_ports, streaming chanend cRxUart, s_multi_uart_rx_ports &uart_rx_ports, clock uart_clock_rx, in port uart_ext_clk_pin, clock uart_clock_tx);
 
 #endif /* __MULTI_UART_RXTX_H__ */
