@@ -165,7 +165,6 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
         case space:
             if ((*uart_word&1) != uart_rx_calc_parity(chan_id, *uart_word>>1))
             {
-                printhexln(uart_rx_calc_parity(chan_id, *uart_word>>1));
                 error = 1;
             }
             *uart_word >>= 1;
