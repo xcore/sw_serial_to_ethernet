@@ -165,14 +165,13 @@ void uart_rx_test(streaming chanend cUART)
             #if 0
             case t when timerafter(ts) :> ts:
                 /* pause */
-                cUART <: 0;
+                uart_rx_reconf_pause( cUART );
             
                 /* reconfigure */
                 // TODO...
             
                 /* release UART rx thread */
-                do { cUART :> temp; } while (temp != MULTI_UART_GO);
-                cUART <: 1;
+                uart_rx_reconf_enable( cUART )
             
                 t :> ts;
                 ts += 5 * 100000000; // 20 second
@@ -191,16 +190,6 @@ void uart_rx_test(streaming chanend cUART)
                     if (uart_rx_validate_char( chan_id, uart_char ) == 0)
                     {
                         printchar(uart_char);
-                        /*buffer[wr_ptr] = (char)uart_char;
-                        wr_ptr++;
-                        if ((char)uart_char == '\n')
-                            printstr(buffer);
-                        if (wr_ptr == 255)
-                        {
-                            buffer[255] = '\0';
-                            wr_ptr = 0;
-                            printstr(buffer);
-                        }*/
                     }
                 }
                 break;
