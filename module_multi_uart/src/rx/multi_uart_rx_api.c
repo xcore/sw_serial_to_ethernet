@@ -169,6 +169,8 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
     }
     
     if (error) return -1;
+    
+    *uart_word = (bitrev(*uart_word) >> 24);
        
     return 0;
 }
