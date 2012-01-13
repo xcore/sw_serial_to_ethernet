@@ -14,9 +14,9 @@
 #define UART_RX_CHAN_COUNT  8
  
  /**
- * Define the external clock rate
+ * Define the system clock rate
  */
-#define UART_RX_CLOCK_RATE_HZ      1843200
+#define UART_RX_CLOCK_RATE_HZ      100000000
 
 /**
  * Define the max baud rate - validated to 115200 baud
