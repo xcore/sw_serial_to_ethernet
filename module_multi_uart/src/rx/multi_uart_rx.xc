@@ -17,12 +17,10 @@ static unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
 void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports, clock uart_clock )
 {
     
-    #ifndef UART_RX_USE_EXTERNAL_CLOCK
     if (UART_RX_CLOCK_DIVIDER > 1)
     {
         configure_clock_ref( uart_clock, UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE));	
     }
-    #endif
     
     configure_in_port(	rx_ports.pUart, uart_clock); // TODO honour stop bit polarity
     

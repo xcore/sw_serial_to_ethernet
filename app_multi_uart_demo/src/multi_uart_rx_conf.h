@@ -3,11 +3,6 @@
  */
 
 /**
- * Define to use external clock reference
- */
-#define UART_RX_USE_EXTERNAL_CLOCK
-
-/**
  * Define the buffer size in UART word entries - needs to be a power of 2 (i.e. 1,2,4,8,16,32)
  */
 #define UART_RX_BUF_SIZE    16
