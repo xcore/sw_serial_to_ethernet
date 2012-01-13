@@ -17,11 +17,6 @@ static int uart_rx_calc_baud( int baud )
     /* check we are not requesting a value greater than the max */
     if (baud > max_baud)
     	return 0;
-
-    
-    /* check we divide exactly */
-    if (max_baud % baud != 0)
-        return 0;
     
     // return clock divider - this is the number of port ticks per bit
     return ((max_baud / baud) * UART_RX_OVERSAMPLE); 
