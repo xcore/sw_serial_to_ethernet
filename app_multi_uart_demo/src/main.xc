@@ -202,6 +202,7 @@ void uart_rxtx_echo_test( streaming chanend cTxUART, streaming chanend cRxUART )
 
     unsigned chan_id, uart_char, temp;
     unsigned baud_rate = 115200;
+    timer t;
     
     printstr("Running echo test...\n");
     
@@ -225,8 +226,9 @@ void uart_rxtx_echo_test( streaming chanend cTxUART, streaming chanend cRxUART )
         
         printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
         
-        baud_rate /= 2;
     }
+    
+    baud_rate /= 2;
     
     /* release UART rx thread */
     do { cRxUART :> temp; } while (temp != MULTI_UART_GO);
@@ -247,12 +249,45 @@ void uart_rxtx_echo_test( streaming chanend cTxUART, streaming chanend cRxUART )
             
                 /* process received value */
                 if (uart_rx_validate_char( chan_id, uart_char ) == 0)
+                {
                     uart_tx_put_char(chan_id, (unsigned int)uart_char);
+                    if ((char)uart_char == 'r')
+                    {
+                        printstr("Reconfiguring...\n");
+                        
+                        uart_tx_reconf_pause( cTxUART, t );
+                        uart_rx_reconf_pause( cRxUART );
+                        
+                        /* configure UARTs */
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if ((int)baud_rate <= 225)
+                                baud_rate = 225;
+                            
+                            if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+                            {
+                                printstr("Invalid baud rate for tx channel ");
+                                printintln(i);
+                            }
+                            
+                            if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
+                            {
+                                printstr("Invalid baud rate for rx channel ");
+                                printintln(i);
+                            }
+                            
+                            printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
+                        }
+                        
+                        baud_rate /= 2;
+                        
+                        uart_tx_reconf_enable( cTxUART );
+                        uart_rx_reconf_enable( cRxUART );
+                    }
+                }
                 break;
         }
     }
-        
-    
 }
 
 void dummy()
