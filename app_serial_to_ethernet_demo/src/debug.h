@@ -3,11 +3,11 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 /*===========================================================================
-Filename:
-Project :
-Author  :
-Version :
-Purpose
+Filename: debug.h
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file control level of debug trace
 -----------------------------------------------------------------------------
 
 ===========================================================================*/
@@ -23,14 +23,17 @@ include files
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
-// Remove this to prevent some information being displayed on the debug console
+/* Remove this to prevent some information being
+ * displayed on the debug console */
 #define XTCP_VERBOSE_DEBUG (1)
 
-/* Enable this macro for high level flow debug trace */
+/* Enable this macro for tracing high level code flow */
 //#define DEBUG_LEVEL_1	1
-/* Enable this macro for function level debugging, overflow/underflow scenarios */
+/* Enable this macro for function level debugging,
+ * overflow/underflow scenarios */
 //#define DEBUG_LEVEL_2	1
-/* Enable this macro for detailed function level debugging, with parameters tracing enabled */
+/* Enable this macro for detailed function level debugging,
+ * with some parameters tracing enabled */
 //#define DEBUG_LEVEL_3	1
 
 /* Enable this macro to simulate MUART component data */

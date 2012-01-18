@@ -3,67 +3,74 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 
-#include <xs1.h>
-#include <platform.h>
-#include <print.h>
+/*===========================================================================
+Filename: web_server.xc
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file implements web server functionality, handling application
+specific TCP/IP events, managing client data for communication
+-----------------------------------------------------------------------------
+
+
+===========================================================================*/
+
+/*---------------------------------------------------------------------------
+include files
+---------------------------------------------------------------------------*/
 #include "httpd.h"
-#include "xtcp_client.h"
 #include "telnetd.h"
 #include "xtcp_buffered_client.h"
 #include "web_server.h"
-#include "multi_uart_tx.h"
 #include "app_manager.h"
 #include "telnet_app.h"
-
-/* This value determines the rate at which UART RX data to be sent to telnet client */
+#include "debug.h"
+/*---------------------------------------------------------------------------
+constants
+---------------------------------------------------------------------------*/
+/* This value determines the rate at which UART RX data to be
+ * sent to telnet client */
 #define CLIENT_TX_TMR_EVENT_INTERVAL	5000 //TODO: Needs to be based on calculation
 
+/*---------------------------------------------------------------------------
+ports and clocks
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+typedefs
+---------------------------------------------------------------------------*/
 typedef enum {
 	TYPE_HTTP_PORT,
 	TYPE_TELNET_PORT,
 	TYPE_UNSUPP_PORT,
 } AppPorts;
 
-/* Forward declarations */
+/*---------------------------------------------------------------------------
+global variables
+---------------------------------------------------------------------------*/
 
-// Web server thread
-void web_server(chanend tcp_svr)
-{
-  xtcp_connection_t conn;
-  /* Client data */
-  timer ClientTxTimer;
-  unsigned ClientTxTimeStamp;
+/*---------------------------------------------------------------------------
+static variables
+---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------
+implementation
+---------------------------------------------------------------------------*/
 
-  // Initiate the HTTP and telnet state
-  httpd_init(tcp_svr);
-  //telnetd_init(tcp_svr);
-  telnetd_init_conn(tcp_svr);
-  uart_channel_init();
-
-  ClientTxTimer :> ClientTxTimeStamp;
-  ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL + 100000;
-
-  // Loop forever processing TCP events
-  while(1)
-    {
-      select
-        {
-        case xtcp_event(tcp_svr, conn):
-          web_server_handle_event(tcp_svr, conn);
-          break;
-        case ClientTxTimer when timerafter (ClientTxTimeStamp) :> void :
-        	//Read data from TX queue and send it to telnet client
-        	telnetd_send_client_data(tcp_svr);
-			ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL;
-			break ;
-        default:
-          break;
-        }
-    }
-}
-
-// Uart manager event handler
+/** =========================================================================
+*  web_server_handle_event
+*
+*  Uart manager event handler is a state machine to handle valid XTCP events,
+*  specific for HTTP and telnet clients
+*
+*  \param	chanend tcp_svr		channel end sharing uip_server thread
+*
+*  \param	xtcp_connection_t conn	reference to TCP client conn state mgt
+*  									structure
+*
+*  \return	None
+*
+**/
 void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
 {
 	AppPorts app_port_type = TYPE_UNSUPP_PORT;
@@ -71,7 +78,7 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
   // We have received an event from the TCP stack, so respond
   // appropriately
 #ifdef DEBUG_LEVEL_3
-	printstr("Got event: ");printintln(conn.event);
+	printstr("Got TCP event @ Web server: ");printintln(conn.event);
 #endif	//DEBUG_LEVEL_3
 
   // Ignore events that are not directly relevant to http and telnet
@@ -85,7 +92,7 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
       break;
     }
 
-  // Check if the connection is a http connection
+  // Check if the connection is a http or telnet connection
   if (HTTP_PORT == conn.local_port)
   {
 	  app_port_type=TYPE_HTTP_PORT;
@@ -104,8 +111,12 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
     		  httpd_init_state(tcp_svr, conn);
     	  else if (app_port_type==TYPE_TELNET_PORT)
     	  {
-    		  /* To be supported only after Uart config */
+    		  /* This shall be supported only after Uart config */
+    		  /* Initialize and manage telnet connection state
+    		   * and set tx buffers */
     		  telnetd_init_state(tcp_svr, conn);
+    		  /* Update telnet client connection id for the configured
+    		   * telnet port */
     		  update_uart_channel_config_conn_id(conn.local_port, conn.id);
     	  }
         break;
@@ -141,5 +152,54 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
   }
 
   return;
+}
+
+/** =========================================================================
+*  web_server
+*
+*  Web server thread. This thread handles
+*  (i) TCP events meant for the application and sends to web server state m/c
+*  (ii) Periodically sends telnet data to telnet clients
+*
+*  \param	chanend tcp_svr		channel end sharing uip_server thread
+*
+*  \return	None
+*
+**/
+void web_server(chanend tcp_svr)
+{
+  xtcp_connection_t conn;
+  /* Timer to send client (telnet) data periodically */
+  timer ClientTxTimer;
+  unsigned ClientTxTimeStamp;
+
+
+  /* Initiate HTTP and telnet connection state management */
+  httpd_init(tcp_svr);
+  telnetd_init_conn(tcp_svr);
+  /* Initiate uart channel configuration with default values */
+  uart_channel_init();
+
+  ClientTxTimer :> ClientTxTimeStamp;
+  ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL + 100000;
+
+  // Loop forever processing TCP events
+  while(1)
+    {
+      select
+        {
+        case xtcp_event(tcp_svr, conn):
+          web_server_handle_event(tcp_svr, conn);
+          break;
+        case ClientTxTimer when timerafter (ClientTxTimeStamp) :> void :
+        	/* Upon timer event, read data from app manager's TX queue and
+        	send it to telnet client */
+        	telnetd_send_client_data(tcp_svr);
+			ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL;
+			break ;
+        default:
+          break;
+        }
+    }
 }
 

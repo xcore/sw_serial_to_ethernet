@@ -3,11 +3,11 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 /*===========================================================================
-Filename:
-Project :
-Author  :
-Version :
-Purpose
+Filename: telnet_app.h
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file declares interfaces for telnet application features
 -----------------------------------------------------------------------------
 
 ===========================================================================*/

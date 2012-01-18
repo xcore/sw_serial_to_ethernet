@@ -3,41 +3,115 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 
-#include <platform.h>
-#include "uip_server.h"
-#include "getmac.h"
-#include "ethernet_server.h"
+
+/*===========================================================================
+Filename: telnet_app.c
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file implements telnet extenstions required for application
+to manage telnet client data for uart channels
+-----------------------------------------------------------------------------
+
+===========================================================================*/
+
+/*---------------------------------------------------------------------------
+include files
+---------------------------------------------------------------------------*/
 #include "telnetd.h"
 #include "telnet_app.h"
 #include "app_manager.h"
 #include "debug.h"
 
+/*---------------------------------------------------------------------------
+constants
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+ports and clocks
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+typedefs
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+global variables
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+static variables
+---------------------------------------------------------------------------*/
 static int active_conn = -1;
+/* Flag to indicate whether app callback function utilizing telnet service
+ * has been registered or not */
 static int register_app_callback = 0;
 
-/* This function needs to
- * identify Uart channel from the input data,
- * */
+/*---------------------------------------------------------------------------
+implementation
+---------------------------------------------------------------------------*/
+
+/** =========================================================================
+*  telnetd_recv_line
+*
+*  This function copies telnet data from telnet conn buffer and sends to
+*  client
+*
+*  \param	chanend tcp_svr	channel end sharing uip_server thread
+*
+*  \param	int id			index to connection state member
+*
+*  \param	char line		buffer storing the received line
+*
+*  \param	int	len			length of buffer to access
+*
+*  \return	None
+*
+**/
 void telnetd_recv_line(chanend tcp_svr,
                        int id,
                        char line[],
                        int len)
 {
 #ifdef DEBUG_LEVEL_3
-  //printstrln(line);
+	printstr("Rx telnet line. ");printstrln(line);
 #endif //DEBUG_LEVEL_3
   telnetd_send_line(tcp_svr, id, line);
 }
 
+/** =========================================================================
+*  telnetd_new_connection
+*
+*  set new telnet connection and send welcome message
+*
+*  \param	chanend tcp_svr	channel end sharing uip_server thread
+*
+*  \param	int id			index to connection state member
+*
+*  \return	None
+*
+**/
 void telnetd_new_connection(chanend tcp_svr, int id)
 {
-  char welcome[][50] = {"Welcome to s2e telnet server!",
+  char welcome[][50] = {"Welcome to serial to ethernet telnet server demo!",
                         "(This server config acts as echo server...)"};
   for (int i=0;i<2;i++)
     telnetd_send_line(tcp_svr, id, welcome[i]);
+
   active_conn = id;
 }
 
+/** =========================================================================
+*  telnetd_close_connection
+*
+*  closes the active telnet connection
+*
+*  \param	xtcp_connection_t conn	reference to TCP client conn state mgt
+*  									structure
+*
+*  \return	None
+*
+**/
 void telnetd_close_connection(xtcp_connection_t *conn)
 {
 	int i;
@@ -55,7 +129,19 @@ void telnetd_close_connection(xtcp_connection_t *conn)
 	telnetd_free_state(conn);
 }
 
-// Listen on the telnet port
+/** =========================================================================
+*  telnetd_set_new_session
+*
+*  Listen on the telnet port and register application callback function,
+*   in order to receive telnet data and send it to uart via app manager
+*
+*  \param	chanend tcp_svr		channel end sharing uip_server thread
+*
+*  \param	int 	telnet_port	telnet port number to listen
+*
+*  \return	None
+*
+**/
 void telnetd_set_new_session(chanend tcp_svr, int telnet_port)
 {
   // Listen on the telnet port
@@ -70,11 +156,38 @@ void telnetd_set_new_session(chanend tcp_svr, int telnet_port)
 
 }
 
+/** =========================================================================
+*  telnetd_connection_closed
+*
+*  closes the active telnet connection
+*
+*  \param	chanend tcp_svr	channel end sharing uip_server thread
+*
+*  \param	int id			index to connection state member
+*
+*  \return	None
+*
+**/
 void telnetd_connection_closed(chanend tcp_svr, int id)
 {
   active_conn = -1;
 }
 
+/** =========================================================================
+*  telnetd_send_client_data
+*
+*  This function performs the following:
+*  (i) fetches data from a uart channel (round robin fashion)
+*  (ii) identifies telnet connection relevant to uart channel data
+*  (iii) send uart data to this identified telnet socket
+*
+*  \param	chanend tcp_svr		channel end sharing uip_server thread
+*
+*  \return	1		telnet data send is successful
+*  			0		no telnet data to send or unsuccessful call to
+*  					telnetd_send
+*
+**/
 int telnetd_send_client_data(chanend tcp_svr)
 {
 	int success = 0;

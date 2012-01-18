@@ -2,12 +2,15 @@
 // This software is freely distributable under a derivative of the
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
+
 /*===========================================================================
-Filename:
-Project :
-Author  :
-Version :
-Purpose
+Filename: app_manager.h
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file delcares data structures and interfaces required for
+application manager thread to communicate with http and telnet clients,
+and multi-uart tx and rx threads
 -----------------------------------------------------------------------------
 
 ===========================================================================*/
@@ -18,8 +21,8 @@ include files
 #ifndef _app_manager_h_
 #define _app_manager_h_
 #include "multi_uart_tx.h"
-#include "multi_uart_common.h"
 #include "multi_uart_rx.h"
+#include "multi_uart_common.h"
 
 /*---------------------------------------------------------------------------
 constants
@@ -29,9 +32,9 @@ constants
 #define RX_CHANNEL_FIFO_LEN			16
 #define	ERR_UART_CHANNEL_NOT_FOUND	50
 #define	ERR_CHANNEL_CONFIG			60
+
 /* Configure web browser port number */
 #define HTTP_PORT					80
-
 
 #ifndef NUM_HTTPD_CONNECTIONS
 /* Maximum number of concurrent connections */

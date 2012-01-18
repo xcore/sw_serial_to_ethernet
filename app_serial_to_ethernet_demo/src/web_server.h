@@ -3,11 +3,11 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 /*===========================================================================
-Filename:
-Project :
-Author  :
-Version :
-Purpose
+Filename: web_server.h
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file declares interfaces web server functions
 -----------------------------------------------------------------------------
 
 ===========================================================================*/
@@ -17,8 +17,6 @@ include files
 ---------------------------------------------------------------------------*/
 #ifndef _web_server_h_
 #define _web_server_h_
-
-#include "xtcp_client.h"
 
 /*---------------------------------------------------------------------------
 constants
@@ -40,7 +38,5 @@ global variables
 prototypes
 ---------------------------------------------------------------------------*/
 void web_server(chanend tcp_svr);
-void web_server_handle_event(chanend tcp_svr,
-							 REFERENCE_PARAM(xtcp_connection_t, conn));
 
 #endif // _web_server_h_

@@ -3,11 +3,12 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 /*===========================================================================
-Filename:
-Project :
-Author  :
-Version :
-Purpose
+Filename: httpd.h
+Project : app_serial_to_ethernet_demo
+Author  : XMOS Ltd
+Version : 1v0
+Purpose : This file declares interfaces for http client communication
+(mainly application and uart channels configuration) data
 -----------------------------------------------------------------------------
 
 ===========================================================================*/
