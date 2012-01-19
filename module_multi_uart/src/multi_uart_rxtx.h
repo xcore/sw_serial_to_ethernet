@@ -14,6 +14,17 @@
  * @param   uart_clock          Clock block to run the ports from
  */
 
-void run_multi_uart_rxtx( streaming chanend cTxUart, s_multi_uart_tx_ports &uart_tx_ports, streaming chanend cRxUart, s_multi_uart_rx_ports &uart_rx_ports, clock uart_clock_rx, in port uart_ext_clk_pin, clock uart_clock_tx);
+#ifdef __XC__
+void run_multi_uart_rxtx( streaming chanend cTxUart, REFERENCE_PARAM(s_multi_uart_tx_ports, uart_tx_ports), streaming chanend cRxUart, REFERENCE_PARAM(s_multi_uart_rx_ports, uart_rx_ports), clock uart_clock_rx, in port uart_ext_clk_pin, clock uart_clock_tx);
+#else
+void run_multi_uart_rxtx( streaming chanend cTxUart, REFERENCE_PARAM(s_multi_uart_tx_ports, uart_tx_ports), streaming chanend cRxUart, REFERENCE_PARAM(s_multi_uart_rx_ports, uart_rx_ports), clock uart_clock_rx, unsigned uart_ext_clk_pin, clock uart_clock_tx);
+#endif
+
+
+#ifdef __XC__
+void run_multi_uart_rxtx_int_clk( streaming chanend cTxUart, REFERENCE_PARAM(s_multi_uart_tx_ports, uart_tx_ports), streaming chanend cRxUart, REFERENCE_PARAM(s_multi_uart_rx_ports, uart_rx_ports), clock uart_clock_rx, clock uart_clock_tx);
+#else
+void run_multi_uart_rxtx_int_clk( streaming chanend cTxUart, REFERENCE_PARAM(s_multi_uart_tx_ports, uart_tx_ports), streaming chanend cRxUart, REFERENCE_PARAM(s_multi_uart_rx_ports, uart_rx_ports), clock uart_clock_rx, clock uart_clock_tx);
+#endif
 
 #endif /* __MULTI_UART_RXTX_H__ */

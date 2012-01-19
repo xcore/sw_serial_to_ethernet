@@ -10,7 +10,7 @@
 /**
  * Define the master clock rate
  */
-#define UART_TX_CLOCK_RATE_HZ      1843200
+#define UART_TX_CLOCK_RATE_HZ      100000000
 
 
 /**
@@ -44,5 +44,5 @@
 /**
  * Define the number of interframe bits
  */
-#define UART_TX_IFB     2
+#define UART_TX_IFB     0
 

@@ -112,8 +112,6 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
         
         /* run ASM function - will exit on reconfiguration request over the channel */
         uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
-        
-        printstr("RX pause\n");
     }
 }
 
