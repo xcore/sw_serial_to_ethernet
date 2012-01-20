@@ -4,6 +4,8 @@
 #include "multi_uart_common.h"
 #include "multi_uart_rxtx.h"
 
+#include "echo_test.h"
+
 s_multi_uart_tx_ports uart_tx_ports =
 {    
     XS1_PORT_8A,
@@ -18,13 +20,13 @@ s_multi_uart_rx_ports uart_rx_ports =
 clock uart_clock_rx = XS1_CLKBLK_2;
 
 /* do a loopback test with the internal reference clock only - uses non-standard baud rates*/
-#define LOOP_REF_TEST
+//#define LOOP_REF_TEST
 
 /* do echo test */
-//#define ECHO_TEST
+#define ECHO_TEST
 
 /* do simple test */
-#define SIMPLE_TEST
+//#define SIMPLE_TEST
 
 /* Reconfiguration enabled for simple test */
 //#define SIMPLE_TEST_DO_RECONF
@@ -246,6 +248,8 @@ int main(void)
         #endif
         
         #ifdef ECHO_TEST
+        rx_buffering( cRxUART, cRxBuf );
+        uart_rxtx_echo_test( cTxUART, cRxBuf );
         #endif
         
         #ifdef LOOP_REF_TEST
