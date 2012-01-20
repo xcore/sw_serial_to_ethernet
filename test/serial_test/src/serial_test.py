@@ -30,7 +30,7 @@ def process_args():
     
     parser.add_argument('--multi-speed-echo-test', const=True, default=False, action='store_const', help='Do the simple echo test at multiple speeds using the auto-reconfiguration command to halve the baud rate')
 
-    parser.add_argument('--burst-test', const=True, default=False, action='store_const', help='Do the simple bust test at a single speed')
+    parser.add_argument('--burst-test', const=True, default=False, action='store_const', help='Do the simple burst test at a single speed')
     
     parser.add_argument('--multi-speed-burst-test', const=True, default=False, action='store_const', help='Do the burst test at multiple speeds using the auto-reconfiguration command to halve the baud rate')
     
@@ -279,7 +279,7 @@ def main():
             else:
                 config_string = args.config_strings[i]
             
-            simple_echo_test( port_id, config_string, seed )
+            simple_echo_test( port_id, config_string, seed, test_len=2048 )
             i += 1
     
     if args.multi_speed_echo_test:    
@@ -298,7 +298,7 @@ def main():
        
             while (baud_rate >= 225):
                 built_config = str(baud_rate)+"-"+config[1]+"-"+config[2]+"-"+config[3]
-                simple_echo_test( port_id, built_config, seed, reconfigure=True )
+                simple_echo_test( port_id, built_config, seed, reconfigure=True, test_len=2048 )
                 baud_rate = baud_rate / 2
        
             i += 1
@@ -318,13 +318,14 @@ def main():
             if args.log_file is not None:
                 lf = args.log_file[0]
                 
-            data_burst_test( port_id, config_string, seed, burst_len=1024, log_file=lf )
+            data_burst_test( port_id, config_string, seed, burst_len=3, test_len=2048, log_file=lf )
             i += 1
         
         
     if args.multi_speed_burst_test:
         print "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
-        
+        print "NOT IMPLEMENTED"
+        print "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
         
         
         
