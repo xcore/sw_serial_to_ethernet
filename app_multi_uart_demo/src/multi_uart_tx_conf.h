@@ -10,7 +10,11 @@
 /**
  * Define the master clock rate
  */
+#ifdef UART_TX_USE_EXTERNAL_CLOCK
+#define UART_TX_CLOCK_RATE_HZ        1843200
+#else
 #define UART_TX_CLOCK_RATE_HZ      100000000
+#endif
 
 
 /**
