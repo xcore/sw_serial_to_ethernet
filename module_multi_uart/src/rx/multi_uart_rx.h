@@ -93,6 +93,13 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
 int uart_rx_validate_char( int chan_id, REFERENCE_PARAM(unsigned,uart_word) );
 
 /**
+ * Get the value from a RX slot
+ * @param   chan_id     channel id to grab
+ * @return              value in slot
+ */
+unsigned uart_rx_grab_char( unsigned chan_id );
+
+/**
  * Multi UART Receive Thread
  * @param   cUART       channel interface for RX UART
  * @param   tx_ports    port structure

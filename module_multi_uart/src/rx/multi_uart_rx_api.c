@@ -3,6 +3,8 @@
 
 s_multi_uart_rx_channel uart_rx_channel[UART_RX_CHAN_COUNT];
 
+unsigned rx_char_slots[UART_RX_CHAN_COUNT];
+
 unsigned crc8_helper(unsigned *checksum, unsigned data, unsigned poly);
 
 /**
@@ -12,7 +14,7 @@ unsigned crc8_helper(unsigned *checksum, unsigned data, unsigned poly);
  */
 static int uart_rx_calc_baud( int baud )
 {
-    int max_baud = UART_RX_MAX_BAUD; //UART_RX_CLOCK_RATE_HZ / (UART_RX_CLOCK_DIVIDER);
+    int max_baud = UART_RX_MAX_BAUD; 
     
     /* check we are not requesting a value greater than the max */
     if (baud > max_baud)
@@ -150,7 +152,7 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
             break;
     }
     
-    if (error) return -1;
+    if (error) { return -1;}
     
     switch (uart_rx_channel[chan_id].parity_mode)
     {
@@ -168,11 +170,21 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
             break;
     }
     
-    if (error) return -1;
+    if (error) { return -1;}
     
     *uart_word = (bitrev(*uart_word) >> 24);
        
     return 0;
+}
+
+/**
+ * Get the value from a RX slot
+ * @param   chan_id     channel id to grab
+ * @return              value in slot
+ */
+unsigned uart_rx_grab_char( unsigned chan_id )
+{
+    return rx_char_slots[chan_id];
 }
 
 /**

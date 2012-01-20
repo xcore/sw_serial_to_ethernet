@@ -39,3 +39,12 @@ unsigned get_streaming_uint( streaming chanend c )
     return i;
 }
 
+char get_streaming_token( streaming chanend c )
+{
+    char i;
+    
+    c :> i;
+    
+    return i;
+}
+

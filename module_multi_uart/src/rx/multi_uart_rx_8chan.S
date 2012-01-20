@@ -19,7 +19,7 @@
 #define CHAN_COUNT UART_RX_CHAN_COUNT
 
 /* function prototype:
- * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  )
+ * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART, unsigned rx_char_slots[]  )
  */
  
 .globl uart_rx_loop_8.nstackwords
@@ -53,7 +53,7 @@ uart_rx_loop_8:
      * sp[10] => bit_count pointer
      * sp[STACK_SIZE+1] => uart_word pointer
      * sp[STACK_SIZE+2] => cUART channel
-     * sp[STACK_SIZE+3] => clocks_per_bit array pointer
+     * sp[STACK_SIZE+3] => rx_char buffer pointer
      */
 
     /* callee save */
@@ -237,10 +237,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -394,10 +399,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -551,10 +561,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -708,10 +723,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -865,10 +885,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -1022,10 +1047,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -1179,10 +1209,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1
@@ -1336,10 +1371,15 @@ data_process:
     bt r10, dp_calc_tick    
     stw r10, r1[r5] // set state to idle - r10 is 0
     
-    /* send data word out */
+    /* send data word out */    
     ldw r9, sp[STACK_SIZE+2]
-    out res[r9], r5
-    out res[r9], r11
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* store rx'd data in memory - means we don't block */
+    ldw r9, sp[STACK_SIZE+3]
+    stw r11, r9[r5] // write data into array
+    
+    //out res[r9], r11
     
     /* shift port_val and advance to next channel */
     shr r6, r6, 1

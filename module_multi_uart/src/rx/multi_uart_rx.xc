@@ -7,6 +7,8 @@
 
 extern s_multi_uart_rx_channel uart_rx_channel[UART_RX_CHAN_COUNT];
 
+extern unsigned rx_char_slots[UART_RX_CHAN_COUNT];
+
 #define increment(a, inc)  { a = (a+inc); a *= !(a == UART_RX_BUF_SIZE); }
 
 static unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
@@ -41,7 +43,7 @@ typedef enum ENUM_UART_RX_CHAN_STATE
     data_bits = 0x1,
 } e_uart_rx_chan_state;
 
-void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  );
+void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART, unsigned rx_char_slots[]  );
 
 // global for access by ASM
 unsigned fourBitLookup[16];
@@ -111,7 +113,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
         rx_ports.pUart :> port_val; // junk data
         
         /* run ASM function - will exit on reconfiguration request over the channel */
-        uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART );
+        uart_rx_loop_8( rx_ports.pUart, state, tickcount, bit_count, uart_word, cUART, rx_char_slots );
     }
 }
 
@@ -130,16 +132,16 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 
 
 #pragma xta command "echo --------------------------------------------------"
-#pragma xta command "echo Idle"
+#pragma xta command "echo Idle-idle_process_0-1"
 #pragma xta command "analyze endpoints idle_process_0 idle_process_1"
 #pragma xta command "print nodeinfo - -"
-#pragma xta command "set required - 542.5 ns"
+//#pragma xta command "set required - 1.085 us"
 
 #pragma xta command "echo --------------------------------------------------"
-#pragma xta command "echo Data"
+#pragma xta command "echo Data-data_process_0-data_process_1"
 #pragma xta command "analyze endpoints data_process_0 data_process_1"
 #pragma xta command "print nodeinfo - -"
-#pragma xta command "set required - 542.5 ns"
+//#pragma xta command "set required - 1.085 us"
 #endif
 
 

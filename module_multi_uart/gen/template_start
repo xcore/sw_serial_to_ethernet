@@ -14,7 +14,7 @@
 #define CHAN_COUNT UART_RX_CHAN_COUNT
 
 /* function prototype:
- * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART  )
+ * void uart_rx_loop( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART, unsigned rx_char_slots[]  )
  */
  
 .globl uart_rx_loop_8.nstackwords
@@ -48,7 +48,7 @@ uart_rx_loop_8:
      * sp[10] => bit_count pointer
      * sp[STACK_SIZE+1] => uart_word pointer
      * sp[STACK_SIZE+2] => cUART channel
-     * sp[STACK_SIZE+3] => clocks_per_bit array pointer
+     * sp[STACK_SIZE+3] => rx_char buffer pointer
      */
 
     /* callee save */

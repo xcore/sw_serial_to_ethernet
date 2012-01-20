@@ -46,4 +46,11 @@ void send_streaming_int( streaming_chanend c, int i );
  */
 unsigned get_streaming_uint( streaming_chanend c );
 
+/**
+ * Get token from streaming chanend
+ * @param   c       chanend to use
+ * @return          token received over channel
+ */
+char get_streaming_token( streaming_chanend c );
+
 #endif /* __MULTI_UART_HELPER_H__ */
