@@ -96,25 +96,31 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		            current_word[i] >>= 1;
 		            current_word_pos[i] -= 1;
 		            tick_count[i] = clocks_per_bit[i];
-		        } 
+		        }
+		        
+		        j=i;
+		        if (current_word_pos[j] == 0 && uart_tx_channel[j].nelements)
+		        {
+		            int rd_ptr = uart_tx_channel[j].rd_ptr;
+		            current_word[j] = uart_tx_channel[j].buf[rd_ptr];
+		            rd_ptr++;
+		            rd_ptr &= (UART_TX_BUF_SIZE-1);
+		            uart_tx_channel[j].rd_ptr = rd_ptr;
+		            uart_tx_channel[j].nelements--;
+		            
+		            current_word_pos[j] = uart_tx_channel[j].uart_word_len;
+		            tick_count[j] = clocks_per_bit[j];
+		        }
 		    }
 		
 		    /* check if UART channel needs a value from the buffer */
-		    if (current_word_pos[j] == 0 && uart_tx_channel[j].nelements)
-		    {
-		        int rd_ptr = uart_tx_channel[j].rd_ptr;
-		        current_word[j] = uart_tx_channel[j].buf[rd_ptr];
-		        rd_ptr++;
-		        rd_ptr &= (UART_TX_BUF_SIZE-1);
-		        uart_tx_channel[j].rd_ptr = rd_ptr;
-		        uart_tx_channel[j].nelements--;
+		    //for (j = 0; j < UART_TX_CHAN_COUNT; j++)
+		    //{
 		        
-		        current_word_pos[j] = uart_tx_channel[j].uart_word_len;
-		        tick_count[j] = clocks_per_bit[j];
-		    }
-		
-		    j++;
-		    j &= (UART_TX_CHAN_COUNT-1);
+		        
+		        //j++;
+		        //j &= (UART_TX_CHAN_COUNT-1);
+		    //}
 		
 		    /* check for request to pause for reconfigure */
 		    select
