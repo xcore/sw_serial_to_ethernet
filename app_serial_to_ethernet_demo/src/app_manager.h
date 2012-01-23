@@ -44,6 +44,24 @@ constants
 /*---------------------------------------------------------------------------
 typedefs
 ---------------------------------------------------------------------------*/
+/** Aplication manager event type.
+ *  The event type represents list of actions that need to be performed by
+ *  application manager thread for various client requests
+ *
+ **/
+typedef enum app_mgr_event_type_t {
+	/* Update telnet client connection id for the configured telnet port */
+	ADD_TELNET_CONN_ID = 1,
+	/* Reconfigure a uart channel */
+	RECONF_UART_CHANNEL,
+	/* Set up a new telnet client session */
+	SET_NEW_TELNET_SESSION,
+	/* Close existing telnet session and set up a new telnet client session */
+	RESET_TELNET_SESSION,
+	/* No more channel data is required for the current transaction */
+	CHNL_TRAN_END,
+} app_mgr_event_type_t;
+
 typedef enum ENUM_BOOL
 {
     FALSE = 0,
@@ -86,9 +104,9 @@ typedef struct STRUCT_UART_CHANNEL_CONFIG
 	int 					char_len;				//Length of a character in bits (e.g. 8 bits)
 	e_uart_polarity			polarity;				//polarity of bits
 	int						telnet_port;			//User configured telnet port
-	int 					conn_id;				//telnet connection id telnetd_state_t.conn_id ~= xtcp_connection_t.id
-	e_bool 					is_configured;			//whether channel is configured or not
-	e_bool 					is_active;				//whether channel is active or not
+	int 					telnet_conn_id;			//telnet connection id telnetd_state_t.conn_id ~= xtcp_connection_t.id
+	e_bool 					is_configured;			//whether channel is configured or not//TODO: To chk if this is still reqd, provided a default uart config if applied initially, b4 web configuring
+	e_bool 					is_telnet_active;		//whether telnet client is active or not
 }s_uart_channel_config;
 
 /*---------------------------------------------------------------------------
@@ -105,20 +123,15 @@ global variables
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
-void uart_channel_init(void);
-int valid_telnet_port(unsigned int port_num);
-int configure_uart_channel(unsigned int channel_id);
 void fill_uart_channel_data(
 		REFERENCE_PARAM(xtcp_connection_t, conn),
 		char data);
 void app_manager_handle_uart_data(
+		streaming chanend cWbSvr2AppMgr,//TODO: Chk for real necessity of a streaming chnl
 		streaming chanend cTxUART,
 		streaming chanend cRxUART);
 //int get_uart_channel_id(unsigned int remote_port);
 void fill_uart_channel_data_from_queue();
-int update_uart_channel_config_conn_id(
-		unsigned int telnet_port,
-		int conn_id);
 int get_uart_channel_data(
 		REFERENCE_PARAM(int, channel_id),
 		REFERENCE_PARAM(int, conn_id),

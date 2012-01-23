@@ -76,7 +76,7 @@ void telnetd_recv_line(chanend tcp_svr,
 #ifdef DEBUG_LEVEL_3
 	printstr("Rx telnet line. ");printstrln(line);
 #endif //DEBUG_LEVEL_3
-  telnetd_send_line(tcp_svr, id, line);
+  //telnetd_send_line(tcp_svr, id, line); //TODO: Dont echo for temp case
 }
 
 /** =========================================================================
@@ -102,6 +102,31 @@ void telnetd_new_connection(chanend tcp_svr, int id)
 }
 
 /** =========================================================================
+*  valid_telnet_port
+*
+*  checks whether port_num is a valid and configured telnet port
+
+*  \param unsigned int	telnet port number
+*
+*  \return		1 		on success
+*
+**/
+int valid_telnet_port(unsigned int port_num)
+{
+	int i;
+
+	/* Look up for configured telnet ports */
+	for (i=0;i<UART_TX_CHAN_COUNT;i++)
+	{
+		if ((uart_channel_config[i].telnet_port == port_num) &&
+			(uart_channel_config[i].is_configured == TRUE))
+			return 1;
+	}
+
+	return 0;
+}
+
+/** =========================================================================
 *  telnetd_close_connection
 *
 *  closes the active telnet connection
@@ -119,10 +144,10 @@ void telnetd_close_connection(xtcp_connection_t *conn)
 
 	for (i=0;i<UART_TX_CHAN_COUNT;i++)
 	{
-		if (uart_channel_config[i].conn_id == conn->id)
+		if (uart_channel_config[i].telnet_conn_id == conn->id)
 		{
 			/* Update client state to inactive */
-			uart_channel_config[i].is_active = FALSE;
+			uart_channel_config[i].is_telnet_active = FALSE;
 			break;
 		}
 	}

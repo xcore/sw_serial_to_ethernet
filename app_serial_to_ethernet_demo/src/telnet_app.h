@@ -29,15 +29,26 @@ extern variables
 /*---------------------------------------------------------------------------
 typedefs
 ---------------------------------------------------------------------------*/
+/* Data structure to telnet connection details */
+typedef struct STRUCT_TELNET_CONN_INFO
+{
+	unsigned int 	channel_id; 		//Uart Channel identifier
+    int 			prev_telnet_conn_id;	//Previous telnet conn identifier
+    int 			prev_telnet_port;	//Previous telnet port number
+    /* Set when new uart cfg data is availbl */
+    int 			pending_config_update;
+}s_telnet_conn_info;
 
 /*---------------------------------------------------------------------------
 global variables
 ---------------------------------------------------------------------------*/
+extern s_telnet_conn_info telnet_conn_details;
 
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
 void telnetd_set_new_session(chanend tcp_svr, int telnet_port);
+int valid_telnet_port(unsigned int port_num);
 int telnetd_send_client_data(chanend tcp_svr);
 void telnetd_close_connection(REFERENCE_PARAM(xtcp_connection_t, conn));
 
