@@ -24,7 +24,7 @@ void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports, clock uart_clock 
         configure_clock_ref( uart_clock, UART_RX_CLOCK_DIVIDER/(2*UART_RX_OVERSAMPLE));	
     }
     
-    configure_in_port(	rx_ports.pUart, uart_clock); // TODO honour stop bit polarity
+    configure_in_port(	rx_ports.pUart, uart_clock); 
     
     start_clock( uart_clock );
 }
