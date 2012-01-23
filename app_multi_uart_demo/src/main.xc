@@ -108,7 +108,11 @@ void uart_tx_test(streaming chanend cUART)
                printstr("reconf\n");
            
                /* configure UARTs - channels 4-7 get changed*/
+               #ifdef LOOP_REF_TEST
+               baud_rate = 50000;
+               #else
                baud_rate = 57600;
+               #endif
                if ((int)baud_rate <= 225)
                    baud_rate = 225;
                for (int i = 4; i < 8; i++)
