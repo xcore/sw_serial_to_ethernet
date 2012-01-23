@@ -29,7 +29,7 @@ constants
                                         len--; \
                                       } while (0!=len)
 #define DEF_TELNET_PORT_START_VALUE		46
-#define	MAX_BIT_RATE					115200		//bits per sec
+#define	MAX_BIT_RATE					100000 //115200		//bits per sec
 #define TIMER_FREQUENCY					100000000	//100 Mhz
 /* Default length of a uart character in bits */
 #define	DEF_CHAR_LEN					8
@@ -69,7 +69,7 @@ implementation
 *  \return		None
 *
 **/
-void uart_channel_init(void)
+static void uart_channel_init(void)
 {
   int i;
 
@@ -77,16 +77,16 @@ void uart_channel_init(void)
     {
 	  // Initialize Uart channels configuration data structure
 	  uart_channel_config[i].channel_id = 0;
-	  uart_channel_config[i].parity = none;
+	  uart_channel_config[i].parity = even;
 	  uart_channel_config[i].stop_bits = sb_1;
 	  uart_channel_config[i].baud = MAX_BIT_RATE;
 	  uart_channel_config[i].char_len = DEF_CHAR_LEN;
 	  uart_channel_config[i].polarity = start_0;
 	  uart_channel_config[i].telnet_port = DEF_TELNET_PORT_START_VALUE + i;
 	  //conn_id is available only during active telnet session establishment
-	  uart_channel_config[i].conn_id = 0;
+	  uart_channel_config[i].telnet_conn_id = 0;
 	  uart_channel_config[i].is_configured = FALSE;
-	  uart_channel_config[i].is_active = FALSE;
+	  uart_channel_config[i].is_telnet_active = FALSE;
     }
 }
 
@@ -95,7 +95,7 @@ void uart_channel_init(void)
 *
 *  Initialize Uart channels state to default values
 *
-*  \param
+*  \param			None
 *
 *  \return			None
 *
@@ -148,31 +148,6 @@ static void init_uart_channel_state(void)
 }
 
 /** =========================================================================
-*  valid_telnet_port
-*
-*  checks whether port_num is a valid and configured telnet port
-
-*  \param unsigned int	telnet port number
-*
-*  \return		1 		on success
-*
-**/
-int valid_telnet_port(unsigned int port_num)
-{
-	int i;
-
-	/* Look up for configured telnet ports */
-	for (i=0;i<UART_TX_CHAN_COUNT;i++)
-	{
-		if ((uart_channel_config[i].telnet_port == port_num) &&
-			(uart_channel_config[i].is_configured == TRUE))
-			return 1;
-	}
-
-	return 0;
-}
-
-/** =========================================================================
 *  configure_uart_channel
 *  invokes MUART component api's to initialze MUART Tx and Rx threads
 *
@@ -181,7 +156,7 @@ int valid_telnet_port(unsigned int port_num)
 *  \return		0 		on success
 *
 **/
-int configure_uart_channel(unsigned int channel_id)
+static int configure_uart_channel(unsigned int channel_id)
 {
   int chnl_config_status = ERR_CHANNEL_CONFIG;
 
@@ -203,11 +178,62 @@ int configure_uart_channel(unsigned int channel_id)
 }
 
 /** =========================================================================
-*  update_uart_channel_config_conn_id
+*  apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads
 *
-*  Identifies active telnet client connection id and maps it to corresponding
-*  uart channel's config structure
+*  Apply default uart channels configuration and wait for
+*  MULTI_UART_GO signal from MUART_RX and MUART_RX threads
+*
+*  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
+*
+*  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
+*
+*  \return			None
+*
+**/
+static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
+		streaming chanend cTxUART,
+		streaming chanend cRxUART)
+{
+	int channel_id;
+	int chnl_config_status = 0;
+	unsigned temp;
 
+	for (channel_id=0;channel_id<UART_TX_CHAN_COUNT;channel_id++)
+	{
+		chnl_config_status = configure_uart_channel(channel_id);
+		if (0 != chnl_config_status)
+		{
+			printstr("Uart configuration failed for channel: ");
+			printintln(channel_id);
+			chnl_config_status = 0;
+		}
+		else
+		{
+			printstr("Successful Uart configuration for channel: ");
+			printintln(channel_id);
+			/* Successfully configured uart channel */
+			uart_channel_config[channel_id].is_configured = TRUE;
+		}
+	}
+
+    /* Release UART rx thread */
+    do { cRxUART :> temp; } while (temp != MULTI_UART_GO);
+    cRxUART <: 1;
+
+    /* Release UART tx thread */
+    do {cTxUART :> temp; } while (temp != MULTI_UART_GO);
+    cTxUART <: 1;
+
+	printstrln("Out of initial config loop wait");
+
+}
+
+/** =========================================================================
+*  add_telnet_conn_id_for_uart_channel
+*
+*  Updates tcp client connection id to configured telnet port
+*   Note: we wont have uart channel id info at this event
+*
 *  \param unsigned int	telnet_port : telnet client port number
 *
 *  \param unsigned int	conn_id : current active telnet client conn identifir
@@ -215,7 +241,7 @@ int configure_uart_channel(unsigned int channel_id)
 *  \return			1
 *
 **/
-int update_uart_channel_config_conn_id(
+static int add_telnet_conn_id_for_uart_channel(
 		unsigned int telnet_port,
 		int conn_id)
 {
@@ -229,10 +255,10 @@ int update_uart_channel_config_conn_id(
 			/* As telnet connection id is not available during
 			 * uart channel config, it is updated only when active telnet
 			 * connection is established */
-			if (FALSE == uart_channel_config[i].is_active)
+			if (FALSE == uart_channel_config[i].is_telnet_active)
 			{
-				uart_channel_config[i].conn_id = conn_id;
-				uart_channel_config[i].is_active = TRUE;
+				uart_channel_config[i].telnet_conn_id = conn_id;
+				uart_channel_config[i].is_telnet_active = TRUE;
 #ifdef DEBUG_LEVEL_3
 				printstr("App_manager-");printintln(conn_id);
 #endif	//DEBUG_LEVEL_3
@@ -307,8 +333,10 @@ void fill_uart_channel_data(
 			/* Transmit to uart directly */
 			buffer_space = uart_tx_put_char(channel_id, (unsigned int)data);
 
-			if (buffer_space < UART_TX_BUF_SIZE)
+			if (-1 != buffer_space)
 			{
+				//printstr("uart_tx_put_char success for chnl id");
+				//printintln(channel_id); //TODO: tbr
 				/* Data is successfully sent to MUART TX */
 				return;
 			}
@@ -482,7 +510,7 @@ int get_uart_channel_data(
 	if ((buf_depth > 0) && (buf_depth <= RX_CHANNEL_FIFO_LEN))
 	{
 		/* Store client connection id pertaining to this uart channel */
-		conn_id = uart_channel_config[channel_id].conn_id;
+		conn_id = uart_channel_config[channel_id].telnet_conn_id;
 		local_read_index = read_index;
 		local_buf_depth = buf_depth;
 
@@ -507,21 +535,10 @@ int get_uart_channel_data(
 		printstr("conn_id-");
 		printint(conn_id);
 		printstr("isActive?-");
-		printintln(uart_channel_config[channel_id].is_active);
+		printintln(uart_channel_config[channel_id].is_telnet_active);
 #endif	//DEBUG_LEVEL_3
 		ret_value = 1;
 	}
-#ifdef DEBUG_LEVEL_1
-	else
-	{
-		printstr("RX App Buffer full for ChnlId-");
-		printint(channel_id);
-		printstr("conn_id-");
-		printint(conn_id);
-		printstr("isActive?-");
-		printintln(uart_channel_config[channel_id].is_active);
-	}
-#endif	//DEBUG_LEVEL_1
 
 	return ret_value;
 }
@@ -614,7 +631,7 @@ void fill_uart_channel_data_from_queue()
 		/* Manually force a value MUART Tx thread consumes the data */
 		buffer_space = 0;
 #endif
-		if (buffer_space < UART_TX_BUF_SIZE)
+		if (-1 != buffer_space)
 		{
 			/* Data is pushed to uart successfully */
 			read_index++;
@@ -633,8 +650,91 @@ void fill_uart_channel_data_from_queue()
 	}
 }
 
-/* The multi-uart application manager thread to handle uart
- * data communication to web server clients */
+/** =========================================================================
+*  re_apply_uart_channel_config
+*
+*  This function either configures or reconfigures a uart channel
+*  A crude way to determing whether it is config or reconfig is to check
+*  for valid values of prev_telnet_conn_id and prev_telnet_port; if yes,
+*  then it is a reconfig request
+*
+*  \param	chanend cWbSvr2AppMgr channel end sharing web server thread
+*
+*  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
+*
+*  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
+*
+*  \return			None
+*
+**/
+static void re_apply_uart_channel_config(
+		streaming chanend cWbSvr2AppMgr,
+		streaming chanend cTxUART,
+		streaming chanend cRxUART)
+{
+    int channel_id = 0;
+    int prev_telnet_conn_id = 0;
+    int prev_telnet_port = 0;
+    int chnl_config_status = 0;
+    timer t;
+
+	//Read uart reconfig details from web server thread
+    /* Other config params are already stored in global structure */
+    cWbSvr2AppMgr :> channel_id;
+    cWbSvr2AppMgr :> prev_telnet_conn_id;
+    cWbSvr2AppMgr :> prev_telnet_port;
+#if 0
+	if ((0 == prev_telnet_conn_id) && (0 == prev_telnet_port))
+	{
+		/* This is a fresh uart configuration. */
+		/* Configure Uart channel */
+	    chnl_config_status = configure_uart_channel(channel_id);
+	    if (0 == chnl_config_status)
+	    {
+    		cWbSvr2AppMgr <: SET_NEW_TELNET_SESSION;
+    		cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
+	    }
+	}
+	else if (((0 != prev_telnet_conn_id) && (0 != prev_telnet_port)) &&
+		(uart_channel_config[channel_id].telnet_port != prev_telnet_port)) //TODO: This chk may hinder when reconfig does not modify telnet port; so chk this
+#endif
+	if (1) //TODO: to add a valid condition check here
+	{
+		/* Reconfigure Uart channel request */
+		//TODO: add reconf api's: these r not working currently
+//        uart_tx_reconf_pause( cTxUART, t );
+//        uart_rx_reconf_pause( cRxUART );
+
+	    chnl_config_status = configure_uart_channel(channel_id);
+	    if (0 == chnl_config_status)
+	    {
+	    	if (0 == prev_telnet_conn_id)
+	    	{
+	    		cWbSvr2AppMgr <: SET_NEW_TELNET_SESSION;
+	    	}
+	    	else
+	    	{
+	    		/* Close this active telnet client session and establish a
+	    		 *  new session on new telnet port */
+	    		cWbSvr2AppMgr <: RESET_TELNET_SESSION;
+	    	}
+	    	//cWbSvr2AppMgr <: prev_telnet_conn_id;
+	    	//cWbSvr2AppMgr <: prev_telnet_port;
+	    	/* Send new telnet port */
+	    	cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
+	    }
+
+//        uart_tx_reconf_enable( cTxUART );
+//        uart_rx_reconf_enable( cRxUART );
+	}
+    else
+    {
+		/* Signal the end of current transaction */
+		cWbSvr2AppMgr <: CHNL_TRAN_END;
+    }
+
+}
+
 /** =========================================================================
 *  app_manager_handle_uart_data
 *
@@ -643,22 +743,35 @@ void fill_uart_channel_data_from_queue()
 *  transmit to telnet clients
 *  (ii) waits for channel data from MUART Rx thread
 *
-*  \param	chanend cTxUART		channel end sharing channel to MUART TX thread
+*  \param	chanend cWbSvr2AppMgr channel end sharing web server thread
 *
-*  \param	chanend cRxUART		channel end sharing channel to MUART RX thread
+*  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
+*
+*  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
 *
 *  \return	None
 *
 **/
 void app_manager_handle_uart_data(
+		streaming chanend cWbSvr2AppMgr,
 		streaming chanend cTxUART,
 		streaming chanend cRxUART)
 {
 	timer txTimer;
 	unsigned txTimeStamp;
-	int channel_id;
+	int rx_channel_id;
+	unsigned int local_port = 0;
+	int conn_id  = 0;
+	int WbSvr2AppMgr_chnl_data = 9999;
 
+
+	/* Initiate uart channel configuration with default values */
+	uart_channel_init();
 	init_uart_channel_state();
+
+	apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
+			cTxUART,
+			cRxUART);
 
 	txTimer :> txTimeStamp;
 	txTimeStamp += MGR_TX_TMR_EVENT_INTERVAL;
@@ -672,11 +785,33 @@ void app_manager_handle_uart_data(
     		  //Read data from App TX queue
     		  fill_uart_channel_data_from_queue();
 			  //txTimeStamp += MGR_TX_TMR_EVENT_INTERVAL;
-			  txTimeStamp += 1000;
+			  txTimeStamp += 4000;
 			  break ;
-    	  case cRxUART :> channel_id :
+    	  case cWbSvr2AppMgr :> WbSvr2AppMgr_chnl_data :
+    		  printstr("Got cWbSvr2AppMgr channel data: ");
+			  printintln(WbSvr2AppMgr_chnl_data);
+    		  if (RECONF_UART_CHANNEL == WbSvr2AppMgr_chnl_data)
+    		  {
+    			  /* Update uart channels with new uart config */
+    			  re_apply_uart_channel_config(
+    					  cWbSvr2AppMgr,
+    					  cTxUART,
+    					  cRxUART);
+    		  }
+    		  else if (ADD_TELNET_CONN_ID == WbSvr2AppMgr_chnl_data)
+    		  {
+    			  /* There is a telnet client connection.
+    			   * Update local connection state */
+    			  cWbSvr2AppMgr :> local_port;
+    			  cWbSvr2AppMgr :> conn_id;
+    			  add_telnet_conn_id_for_uart_channel(local_port, conn_id);
+    		  }
+			  break ;
+    	  case cRxUART :> rx_channel_id :
     		  //Read data from MUART RX thread
-    		  receive_uart_channel_data(cRxUART, channel_id);
+    		  //printstr("RXd-");// char for chl id: ");
+			  //printintln(rx_channel_id);
+    		  receive_uart_channel_data(cRxUART, rx_channel_id);
 			  break ;
     	  default:
     		  break;
