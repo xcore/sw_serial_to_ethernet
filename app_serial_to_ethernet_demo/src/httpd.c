@@ -94,8 +94,6 @@ void httpd_init(chanend tcp_svr)
 *  \param	xtcp_connection_t conn	reference to TCP client conn state mgt
 *  									structure
 *
-*  \param	chanend tcp_svr	channel end sharing uip_server thread
-*
 *  \param	httpd_state_t	hs		reference to http state mgt structure
 *
 *  \param	char data		reference to data buffer to hold and process
@@ -108,15 +106,13 @@ void httpd_init(chanend tcp_svr)
 **/
 void parse_http_request(
 		xtcp_connection_t *conn,
-		chanend tcp_svr,
 		httpd_state_t *hs,
 		char *data,
 		int len)
 {
     int channel_id = 0;
-    int prev_conn_id = 0;
+    int prev_telnet_conn_id = 0;
     int prev_telnet_port = 0;
-    int chnl_config_status = 0;
     char http_response[WPAGE_HTTP_RESPONSE_LENGTH];
     int request_type;
 
@@ -142,50 +138,21 @@ void parse_http_request(
 							&http_response[0],
 							len,
 							&channel_id,
-							&prev_conn_id,
+							&prev_telnet_conn_id,
 							&prev_telnet_port);
 
         if (request_type == WPAGE_CONFIG_SET)
         {
-        	/* This is a uart config set/update request.
-        	 * Close any current active telnet session */
-        	xtcp_connection_t conn_release;
-        	if ((0 != prev_conn_id) && (0 != prev_telnet_port))
-        	{
-        		conn_release.id = prev_conn_id;
-        		conn_release.local_port = prev_telnet_port;
+        	/* Active loop to ensure there is no pending
+        	 * uart configuration is in place */
+        	while (telnet_conn_details.pending_config_update); //TODO: To remove active loop wait condition
 
-        		xtcp_unlisten(tcp_svr, conn_release.local_port);
-        		xtcp_abort(tcp_svr, &conn_release);
-        	}
-
-        	/* Configure Uart channel */
-            chnl_config_status = configure_uart_channel(channel_id);
-#ifdef SIMULATION
-            //TODO: to be removed when MUART reconfig is in place
-            chnl_config_status = 0;
-#endif //SIMULATION
-            if (0 == chnl_config_status)
-            {
-                telnetd_set_new_session(
-                		tcp_svr,
-                		uart_channel_config[channel_id].telnet_port);
-#ifdef DEBUG_LEVEL_3
-	    	  printstr("Configured uart_channel: ");
-	    	  printint(channel_id);
-	    	  printstr(" Telnet port: ");
-	    	  printintln(uart_channel_config[channel_id].telnet_port);
-#endif //DEBUG_LEVEL_3
-            }
-            else
-            {
-#ifdef DEBUG_LEVEL_2
-	    	  printstr("Failed to configure uart channel: ");
-	    	  printint(channel_id);
-	    	  printstr(" chnl_config_status: ");
-	    	  printintln(chnl_config_status);
-#endif //DEBUG_LEVEL_2
-            }
+            /* Send details to web server in order to send it to
+             * app manager thread for uart configuration */
+            telnet_conn_details.channel_id = channel_id;
+            telnet_conn_details.prev_telnet_conn_id = prev_telnet_conn_id;
+            telnet_conn_details.prev_telnet_port = prev_telnet_port;
+            telnet_conn_details.pending_config_update = 1;
         }
         hs->dptr = &http_response[0];
         hs->dlen = strlen(http_response);
@@ -205,7 +172,9 @@ void parse_http_request(
 *  \return	None
 *
 **/
-void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
+void httpd_recv(
+		chanend tcp_svr,
+		xtcp_connection_t *conn)
 {
     struct httpd_state_t *hs = (struct httpd_state_t *) conn->appstate;
     char data[XTCP_CLIENT_BUF_SIZE];
@@ -221,7 +190,7 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
     }
 
     // Otherwise we have data, so parse it
-    parse_http_request(conn, tcp_svr, hs, &data[0], len);
+    parse_http_request(conn, hs, &data[0], len);
 
     // If we are required to send data
     if (hs->dptr != NULL)

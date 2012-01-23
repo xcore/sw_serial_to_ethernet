@@ -30,7 +30,7 @@ constants
 ---------------------------------------------------------------------------*/
 /* This value determines the rate at which UART RX data to be
  * sent to telnet client */
-#define CLIENT_TX_TMR_EVENT_INTERVAL	5000 //TODO: Needs to be based on calculation
+#define CLIENT_TX_TMR_EVENT_INTERVAL	8000 //TODO: Needs to be based on calculation
 
 /*---------------------------------------------------------------------------
 ports and clocks
@@ -48,6 +48,7 @@ typedef enum {
 /*---------------------------------------------------------------------------
 global variables
 ---------------------------------------------------------------------------*/
+s_telnet_conn_info telnet_conn_details;
 
 /*---------------------------------------------------------------------------
 static variables
@@ -68,12 +69,21 @@ implementation
 *  \param	xtcp_connection_t conn	reference to TCP client conn state mgt
 *  									structure
 *
+*  \param	chanend cWbSvr2AppMgr channel end sharing app manager thread
+*
 *  \return	None
 *
 **/
-void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
+void web_server_handle_event(
+		chanend tcp_svr,
+		xtcp_connection_t &conn,
+		streaming chanend cWbSvr2AppMgr)
 {
 	AppPorts app_port_type = TYPE_UNSUPP_PORT;
+	int WbSvr2AppMgr_chnl_data = 9999;
+    int prev_conn_id = 0;
+    int prev_telnet_port = 0;
+	int new_telnet_port = 0;
 
   // We have received an event from the TCP stack, so respond
   // appropriately
@@ -117,12 +127,74 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
     		  telnetd_init_state(tcp_svr, conn);
     		  /* Update telnet client connection id for the configured
     		   * telnet port */
-    		  update_uart_channel_config_conn_id(conn.local_port, conn.id);
+    		  cWbSvr2AppMgr <: ADD_TELNET_CONN_ID;
+    		  cWbSvr2AppMgr <: conn.local_port;
+    		  cWbSvr2AppMgr <: conn.id;
     	  }
         break;
       case XTCP_RECV_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
+    	  {
     		  httpd_recv(tcp_svr, conn);
+			  if (1 == telnet_conn_details.pending_config_update)
+			  {
+	    		  /* Check if uart channel reconf is required or not */
+	    		  /* Send the uart data to app manager thread */
+	              cWbSvr2AppMgr <: RECONF_UART_CHANNEL;
+	              cWbSvr2AppMgr <: telnet_conn_details.channel_id;
+	              cWbSvr2AppMgr <: telnet_conn_details.prev_telnet_conn_id;
+	              cWbSvr2AppMgr <: telnet_conn_details.prev_telnet_port;
+
+	    		  cWbSvr2AppMgr :> WbSvr2AppMgr_chnl_data;
+
+	    		  //TODO: Telnet sessions are not yet activated by default (with def cfg), unless web conf is done
+	    		  if (SET_NEW_TELNET_SESSION == WbSvr2AppMgr_chnl_data)
+	    		  {
+	    			  /* Receive the channel data */
+	    			  cWbSvr2AppMgr :> new_telnet_port;
+	    			  /* Open a new telnet session */
+	    			  telnetd_set_new_session(
+	    					  tcp_svr,
+	    					  new_telnet_port);
+#ifdef DEBUG_LEVEL_3
+	    			  printstr("Configured Telnet port: ");
+	    			  printintln(new_telnet_port);
+#endif //DEBUG_LEVEL_3
+	    		  }
+	    		  else if (RESET_TELNET_SESSION == WbSvr2AppMgr_chnl_data)
+	    		  {
+	    			  /* Receive the channel data */
+	    			  //cWbSvr2AppMgr :> prev_conn_id;
+	    			  //cWbSvr2AppMgr :> prev_telnet_port;
+	    			  cWbSvr2AppMgr :> new_telnet_port;
+	    			  {
+	    				  xtcp_connection_t conn_release;
+	    				  conn_release.id = telnet_conn_details.prev_telnet_conn_id;
+	    				  conn_release.local_port = telnet_conn_details.prev_telnet_port;
+
+	    				  xtcp_unlisten(tcp_svr, conn_release.local_port);
+	    				  xtcp_abort(tcp_svr, conn_release);
+
+	    				  /* Open a new telnet session */
+	    				  telnetd_set_new_session(
+	    						  tcp_svr,
+	    						  new_telnet_port);
+#ifdef DEBUG_LEVEL_3
+	    				  printstr("Configured fresh Telnet port: ");
+	    				  printintln(new_telnet_port);
+#endif //DEBUG_LEVEL_3
+	    			  }
+	    		  }
+	    		  else if (CHNL_TRAN_END == WbSvr2AppMgr_chnl_data)
+	    		  {
+	    			  /* End of current transaction. Do nothing */
+	    			  ;
+	    		  }
+
+	    		  /* Reset pending config update flag */
+	    		  telnet_conn_details.pending_config_update = 0;
+			  }
+    	  }
     	  else if (app_port_type==TYPE_TELNET_PORT)
     		  telnetd_recv(tcp_svr, conn);
         break;
@@ -163,10 +235,12 @@ void web_server_handle_event(chanend tcp_svr, xtcp_connection_t &conn)
 *
 *  \param	chanend tcp_svr		channel end sharing uip_server thread
 *
+*  \param	chanend cWbSvr2AppMgr channel end sharing app manager thread
+*
 *  \return	None
 *
 **/
-void web_server(chanend tcp_svr)
+void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr)
 {
   xtcp_connection_t conn;
   /* Timer to send client (telnet) data periodically */
@@ -177,8 +251,6 @@ void web_server(chanend tcp_svr)
   /* Initiate HTTP and telnet connection state management */
   httpd_init(tcp_svr);
   telnetd_init_conn(tcp_svr);
-  /* Initiate uart channel configuration with default values */
-  uart_channel_init();
 
   ClientTxTimer :> ClientTxTimeStamp;
   ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL + 100000;
@@ -189,7 +261,7 @@ void web_server(chanend tcp_svr)
       select
         {
         case xtcp_event(tcp_svr, conn):
-          web_server_handle_event(tcp_svr, conn);
+          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr);
           break;
         case ClientTxTimer when timerafter (ClientTxTimeStamp) :> void :
         	/* Upon timer event, read data from app manager's TX queue and

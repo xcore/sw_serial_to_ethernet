@@ -152,7 +152,7 @@ static int wpage_process_cfg(char *response, int *channel_id, int *prev_conn_id,
     	if (TRUE == uart_channel_config[index_uart].is_configured)
     	{
         	/* Store the previous valid config values */
-    		*prev_conn_id = uart_channel_config[index_uart].conn_id;
+    		*prev_conn_id = uart_channel_config[index_uart].telnet_conn_id;
     		*prev_telnet_port = uart_channel_config[index_uart].telnet_port;
     	}
     	else
@@ -170,8 +170,8 @@ static int wpage_process_cfg(char *response, int *channel_id, int *prev_conn_id,
     	uart_channel_config[index_uart].telnet_port = wpage_cfg[6];
 
         uart_channel_config[index_uart].is_configured = TRUE;
-        uart_channel_config[index_uart].conn_id = 0;
-        uart_channel_config[index_uart].is_active = FALSE;
+        uart_channel_config[index_uart].telnet_conn_id = 0; //TODO: THis can still be active, if telnet port is not changed for config
+        uart_channel_config[index_uart].is_telnet_active = FALSE;//TODO: THis can still be active, if telnet port is not changed for config
     }
 
     for(i = 1; i < WPAGE_NUM_HTTP_DYNAMIC_VAR; i++)

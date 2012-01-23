@@ -43,6 +43,9 @@ ports and clocks
 #define PORT_RX_TEMP_2 on stdcore[1]: XS1_PORT_1B
 #define PORT_RX_TEMP_3 on stdcore[1]: XS1_CLKBLK_2
 
+on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
+on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
+
 /* Ethernet Ports configuration */
 on stdcore[2]: port otp_data = XS1_PORT_32B; // OTP_DATA_PORT
 on stdcore[2]: out port otp_addr = XS1_PORT_16C; // OTP_ADDR_PORT
@@ -82,15 +85,15 @@ global variables
 s_multi_uart_tx_ports uart_tx_ports =
 {
 	PORT_TX_TEMP_1,
-	PORT_TX_TEMP_2,
-	PORT_TX_TEMP_3
+//	PORT_TX_TEMP_2,
+//	PORT_TX_TEMP_3
 };
 
 s_multi_uart_rx_ports uart_rx_ports =
 {
 	PORT_RX_TEMP_1,
-	PORT_RX_TEMP_2,
-	PORT_RX_TEMP_3
+//	PORT_RX_TEMP_2,
+//	PORT_RX_TEMP_3
 };
 
 /* IP Config - change this to suit your network.
@@ -132,12 +135,12 @@ implementation
 *  \return	0
 *
 **/
-// Program entry point
 int main(void) {
 	chan mac_rx[1];
 	chan mac_tx[1];
 	chan xtcp[1];
 	chan connect_status;
+	streaming chan cWbSvr2AppMgr;
 	streaming chan cTxUART;
 	streaming chan cRxUART;
 
@@ -187,17 +190,17 @@ int main(void) {
 
 		/* web server thread for handling and servicing http requests
 		 * and telnet data communication */
-		on stdcore[1]: web_server(xtcp[0]);
+		on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr);
 
 		/* The multi-uart application manager thread to handle uart
 		 * data communication to web server clients */
-		on stdcore[1]: app_manager_handle_uart_data(cTxUART, cRxUART);
+		on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cTxUART, cRxUART);
 
 		/* Multi-uart transmit thread */
-		on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports );
+		on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
 
 		/* Multi-uart receive thread */
-		on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports );
+		on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports, uart_clock_rx );
 
 	}
 	return 0;
