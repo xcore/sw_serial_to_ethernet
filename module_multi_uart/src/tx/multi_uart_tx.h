@@ -92,7 +92,7 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char );
 /**
  * Insert a UART Word into the appropriate UART buffer
  * @param channel_id    Channel identifier
- * @param uart_char     UART Word
+ * @param uart_word     UART Word
  * @return              Buffer fill level, -1 for full
  */
 int uart_tx_put_uart_word( int channel_id, unsigned int uart_word );
