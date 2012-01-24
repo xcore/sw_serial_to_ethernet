@@ -8,7 +8,7 @@ TARGET ?= XC-2
 # not include the .xe postfix. If left blank the name will default to 
 # the project name
 
-APP_NAME =
+APP_NAME = s2e_demo
 
 # The flags passed to xcc when building the application
 # You can also set the following to override flags for a particular language:
