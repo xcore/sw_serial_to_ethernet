@@ -59,6 +59,11 @@ Data Validation Functions
 
 .. doxygenfunction:: uart_rx_validate_char
 
+Data Fetch Functions
+---------------------
+
+.. doxygenfunction:: uart_rx_grab_char
+
 .. _sec_rx_server_func:
 
 Multi-UART RX Server
