@@ -16,6 +16,9 @@
 #error "No UART TX configuration header file"
 #endif /* __multi_uart_tx_conf_h_exists__ */
 
+/**
+ * Structure used to hold ports - used to enable extensibility in the future
+ */
 #ifdef __XC__
 typedef struct STRUCT_MULTI_UART_TX_PORTS
 {
@@ -28,22 +31,33 @@ typedef struct STRUCT_MULTI_UART_TX_PORTS
 } s_multi_uart_tx_ports;
 #endif
 
-typedef struct STRUCT_MUTI_UART_TX_CHANNEL
+/**
+ * Structure to hold configuration information and data for the UART channel TX side - 
+ * this should only be interacted with via the API and not accessed directly.
+ */
+typedef struct STRUCT_MULTI_UART_TX_CHANNEL
 {
-    /* configuration constants */
-    int uart_char_len; // length of the UART char
-    int uart_word_len; // number of bits in UART word e.g. Start bit + 8 bit data + parity + 2 stop bits is 12 bit UART word
-    int clocks_per_bit; // define baud rate in relation to max baud rate
-    int invert_output; // define if output is inverted (set to 1)
+    /*@{*/
+    /** Configuration constants */
+    int uart_char_len; /**< length of the UART char */
+    int uart_word_len; /**< number of bits in UART word e.g. Start bit + 8 bit data + parity + 2 stop bits is 12 bit UART word */
+    int clocks_per_bit; /**< define baud rate in relation to max baud rate */
+    int invert_output; /**< define if output is inverted (set to 1) */
+    /*@}*/
     
-    /* mode definition */
+    /*@{*/
+    /** Mode definition */
     e_uart_config_stop_bits sb_mode;
     e_uart_config_parity parity_mode;
+    /*@}*/
     
-    int wr_ptr;
-    int rd_ptr;
-    unsigned nelements;
-    unsigned buf[UART_TX_BUF_SIZE];
+    /*@{*/
+    /** Buffering variables */
+    int wr_ptr; /**< Write pointer */
+    int rd_ptr; /**< Read pointer */
+    unsigned nelements; /**< Number of valid entries in the buffer */
+    unsigned buf[UART_TX_BUF_SIZE]; /**< Buffer array */
+    /*@}*/
     
 } s_multi_uart_tx_channel;
 
@@ -51,7 +65,8 @@ typedef struct STRUCT_MUTI_UART_TX_CHANNEL
 /**
  * Configure the UART channel
  * @param channel_id    Channel Identifier
- * @param op_mode       Mode of operation
+ * @param parity        Parity configuration
+ * @param stop_bits     Stop bit configuration
  * @param baud          Required baud rate
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
@@ -67,10 +82,9 @@ int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
 unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
 
 /**
- * Insert a UART Character into the appropriate UART buffer
+ * Assemble UART word from UART Character and insert into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
- * @param uart_clock    Clock block to run the port from
  * @return              Buffer fill level, -1 for full
  */
 int uart_tx_put_char( int channel_id, unsigned int uart_char );

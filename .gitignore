@@ -11,3 +11,12 @@
 *.vcd
 *.log
 *.xe
+*/_build/*
+*/.doxygen/*
+*/.linked_dirs/*
+*/.sources/*
+*/.support/*
+Doxyfile-e
+.DS_Store
+*.pyc
+*.pdf

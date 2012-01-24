@@ -28,138 +28,255 @@
                                 <inputType id="com.xmos.cdt.linker.xtaInput.621753651" name="XTA input" superClass="com.xmos.cdt.linker.xtaInput" />
                             </tool>
                             <tool id="com.xmos.cdt.c.compiler.base.372649012" name="XMOS C Compiler" superClass="com.xmos.cdt.c.compiler.base">
-                                <option id="gnu.c.compiler.option.include.paths.11111" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
-                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
                                 <inputType id="com.xmos.cdt.c.compiler.input.1533247653" superClass="com.xmos.cdt.c.compiler.input" />
                                 <inputType id="com.xmos.cdt.c.compilerXNInput.818861648" name="XN File" superClass="com.xmos.cdt.c.compilerXNInput" />
+                                <option id="gnu.c.compiler.option.include.paths.11111" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
+                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
                             </tool>
                             <tool id="com.xmos.cdt.cpp.compiler.base.1161396055" name="XMOS C++ Compiler" superClass="com.xmos.cdt.cpp.compiler.base">
-                                <option id="gnu.c.compiler.option.include.paths.11111" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
-                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
                                 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1553804963" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input" />
+                                <option id="gnu.c.compiler.option.include.paths.11111" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
+                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
                             </tool>
                             <tool id="com.xmos.cdt.xc.compiler.base.86146009" name="XMOS XC Compiler" superClass="com.xmos.cdt.xc.compiler.base">
-                                <option id="gnu.c.compiler.option.include.paths.11111" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
-                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
                                 <inputType id="com.xmos.cdt.xc.compiler.input.679575792" name="XC Sources" superClass="com.xmos.cdt.xc.compiler.input" />
                                 <inputType id="com.xmos.cdt.core.xcCompilerXNInput.258588578" name="XN File" superClass="com.xmos.cdt.core.xcCompilerXNInput" />
+                                <option id="gnu.c.compiler.option.include.paths.11111" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
+                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
                             </tool>
                             <tool id="com.xmos.cdt.core.assembler.base.839004633" name="XMOS Assembler" superClass="com.xmos.cdt.core.assembler.base">
-                                <option id="gnu.c.compiler.option.include.paths.11111" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
-                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath">
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
-                                </option>
                                 <inputType id="cdt.managedbuild.tool.gnu.assembler.input.1797700444" superClass="cdt.managedbuild.tool.gnu.assembler.input" />
                                 <inputType id="com.xmos.cdt.core.asmXNInput.1869517701" name="XN File" superClass="com.xmos.cdt.core.asmXNInput" />
+                                <option id="gnu.c.compiler.option.include.paths.11111" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
+                                <option id="com.xmos.c.compiler.option.include.paths.11111" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart_tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/client}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src/server}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_ethernet}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_ethernet/module_locks}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/gen}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/rx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src/tx}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_multi_uart/module_multi_uart}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console/src}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_telnet_console}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/mac_custom_filter}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/autoip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/dhcpc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/apps/igmp}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/uip}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/uip/xcore}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/sc_xtcp/module_xtcp/src/xtcp}&quot;' />
+                                </option>
                             </tool>
                             <tool id="com.xmos.cdt.archiver.base.730151905" name="Archiver" superClass="com.xmos.cdt.archiver.base" />
                         </toolChain>
                     </folderInfo>
-                    <sourceEntries>
-                        <entry excluding="app_serial_to_ethernet_demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="" />
-                    </sourceEntries>
                 </configuration>
             </storageModule>
             <storageModule moduleId="scannerConfiguration">
