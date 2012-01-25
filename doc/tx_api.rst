@@ -1,7 +1,7 @@
 .. _sec_tx_api:
 
-Multi-UART Transmit API Description
-===================================
+Multi-UART Transmit API 
+========================
 
 The following describes the public API for use in applications and the API's usage.
 

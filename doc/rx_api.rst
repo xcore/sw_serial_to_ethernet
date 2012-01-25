@@ -1,7 +1,7 @@
 .. _sec_rx_api:
 
-Multi-UART Receive API Description
-===================================
+Multi-UART Receive API 
+=======================
 
 The following describes the public API for use in applications and the API's usage.
 

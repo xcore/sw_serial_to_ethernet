@@ -1,7 +1,7 @@
 .. _sec_common_api:
 
-Multi-UART Common API Description
-===================================
+Multi-UART Common API 
+======================
 
 The following describes the shared API between the RX and TX code.
 
