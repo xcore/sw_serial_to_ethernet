@@ -19,17 +19,35 @@ s_multi_uart_rx_ports uart_rx_ports =
 };
 clock uart_clock_rx = XS1_CLKBLK_2;
 
-/* do a loopback test with the internal reference clock only - uses non-standard baud rates*/
+//:demo_app_config
+/* Do a loopback test with the internal reference clock only - uses non-standard baud rates*/
 //#define LOOP_REF_TEST
 
-/* do echo test */
+/* Do echo test */
 #define ECHO_TEST
 
-/* do simple test */
+/* Do simple test */
 //#define SIMPLE_TEST
 
 /* Reconfiguration enabled for simple test */
 //#define SIMPLE_TEST_DO_RECONF
+//:
+
+/* check the defines */
+#ifdef ECHO_TEST
+#ifdef SIMPLE_TEST
+#error "Invalid build configuration - you defined ECHO_TEST and SIMPLE_TEST!"
+#endif
+#ifdef SIMPLE_TEST_DO_RECONF
+#warning "SIMPLE_TEST_DO_RECONF has no effect on ECHO_TEST"
+#endif
+#endif
+
+#ifndef ECHO_TEST
+#ifndef SIMPLE_TEST
+
+#endif
+#endif
 
 /**
  * Basic test of the TX server - will transmit an identifying message on each UART channel
@@ -86,6 +104,7 @@ void uart_tx_test(streaming chanend cUART)
 
    while (1)
    {
+       //:example_tx_buf_fill
        /* fill buffers with test strings */
        buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[chan_id][rd_ptr[chan_id]]);
        
@@ -98,6 +117,7 @@ void uart_tx_test(streaming chanend cUART)
        }
        chan_id++;
        chan_id &= UART_TX_CHAN_COUNT-1;
+       //:
        
        /* test reconfiguration every 10s */
        #ifdef SIMPLE_TEST_DO_RECONF
@@ -162,19 +182,21 @@ void uart_rx_test(streaming chanend cUART)
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
     {
+        if ((int)baud_rate <= 225)
+            baud_rate = 225;
         if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
         {
             printstr("Invalid baud rate for rx channel ");
             printintln(i);
         }
         //baud_rate /= 2;
-        if ((int)baud_rate <= 225)
-            baud_rate = 225;
     }
     
+    //:xc_release_uart
     /* release UART rx thread */
     do { cUART :> temp; } while (temp != MULTI_UART_GO);
     cUART <: 1;
+    //:
     
     t :> ts;
     ts += 20 * 100000000; // 20 second

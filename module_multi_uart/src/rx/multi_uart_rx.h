@@ -14,7 +14,7 @@
 #include "multi_uart_rx_conf.h"
 // this is not required to be defined, but is used in the code
 #ifndef UART_RX_BUF_SIZE 
-#define UART_RX_BUF_SIZE    0
+#define UART_RX_BUF_SIZE    1
 #endif
 #else
 #error "No RX UART Configuration file"

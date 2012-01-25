@@ -22,6 +22,7 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
     
     printstr("Running echo test...\n");
     
+    //:config_example
     /* configure UARTs */
     for (int i = 0; i < 8; i++)
     {
@@ -42,9 +43,11 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
         
         printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
     }
+    //:
     
     baud_rate /= 2;
     
+    //:thread_start_helper_funcs
     /* release UART rx thread */
     do { temp = get_streaming_uint(cRxBuf); } while (temp != MULTI_UART_GO);
     send_streaming_int(cRxBuf, 1);
@@ -52,6 +55,7 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
     /* release UART tx thread */
     do { temp = get_streaming_uint(cTxUART); } while (temp != MULTI_UART_GO);
     send_streaming_int(cTxUART, 1);
+    //:
     
     /* main echo loop */
     while (1)
@@ -61,58 +65,49 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
             if (rx_elements[i] > 0) // check if anything in buffer
             {
                 uart_char = rx_buffer[i][rx_rd_ptr[i]];
-                if (uart_rx_validate_char( i, &uart_char ) == 0)
+                if (uart_tx_put_char(i, uart_char) != -1)
                 {
-                    if (uart_tx_put_char(i, uart_char) != -1)
-                    {
-                        rx_rd_ptr[i]++;
-                        rx_rd_ptr[i] = (rx_rd_ptr[i] < ECHO_BUF_SIZE) * rx_rd_ptr[i];
-                        rx_elements[i]--;
-                    }
-                    
-                    
-                    #if 0
-                    if ((char)uart_char == 'r')
-                    {
-                        printstr("Reconfiguring...\n");
-                        
-                        uart_tx_reconf_pause( cTxUART, t );
-                        uart_rx_reconf_pause( cRxBuf );
-                        
-                        /* configure UARTs */
-                        for (int i = 0; i < 8; i++)
-                        {
-                            if ((int)baud_rate <= 225)
-                                baud_rate = 115200;
-                            
-                            if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
-                            {
-                                printstr("Invalid baud rate for tx channel ");
-                                printintln(i);
-                            }
-                            
-                            if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
-                            {
-                                printstr("Invalid baud rate for rx channel ");
-                                printintln(i);
-                            }
-                            
-                            printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
-                        }
-                        
-                        baud_rate /= 2;
-                        
-                        uart_tx_reconf_enable( cTxUART );
-                        uart_rx_reconf_enable( cRxBuf );
-                    }
-                    #endif
-                } else 
-                {
-                    /* handle validation failure */
                     rx_rd_ptr[i]++;
                     rx_rd_ptr[i] = (rx_rd_ptr[i] < ECHO_BUF_SIZE) * rx_rd_ptr[i];
                     rx_elements[i]--;
                 }
+                
+                
+                #if 0
+                if ((char)uart_char == 'r')
+                {
+                    printstr("Reconfiguring...\n");
+                    
+                    uart_tx_reconf_pause( cTxUART, t );
+                    uart_rx_reconf_pause( cRxBuf );
+                    
+                    /* configure UARTs */
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if ((int)baud_rate <= 225)
+                            baud_rate = 115200;
+                        
+                        if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+                        {
+                            printstr("Invalid baud rate for tx channel ");
+                            printintln(i);
+                        }
+                        
+                        if (uart_rx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
+                        {
+                            printstr("Invalid baud rate for rx channel ");
+                            printintln(i);
+                        }
+                        
+                        printint(i); printstr(" => "); printint(baud_rate); printstr(" bps 8-E-1\n");
+                    }
+                    
+                    baud_rate /= 2;
+                    
+                    uart_tx_reconf_enable( cTxUART );
+                    uart_rx_reconf_enable( cRxBuf );
+                }
+                #endif
             }
         }
     }
@@ -131,6 +126,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
     
     printstr("RX Buf running\n");
     
+    //:rx_echo_example
     while (1)
     {
         chan_id = (unsigned)get_streaming_token(cRxUART);
@@ -139,7 +135,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
         uart_char = (unsigned)uart_rx_grab_char(chan_id);
         
         /* process received value */
-        //if (uart_rx_validate_char( chan_id, uart_char ) == 0)
+        if (uart_rx_validate_char( chan_id, &uart_char ) == 0)
         {
             if (rx_elements[chan_id] < ECHO_BUF_SIZE)
             {
@@ -151,5 +147,6 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
             } else printstr("RX Buf Full\n");
         }
     }
+    //:
 }
 
