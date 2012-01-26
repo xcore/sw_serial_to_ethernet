@@ -132,7 +132,7 @@ The above examples use the helper functions that are described in Multi-UART Hel
     :start-after: //:xc_release_uart
     :end-before:  //:
 
-
+.. _sec_interfacing_tx:
     
 Interfacing to the TX Server
 -----------------------------
@@ -144,6 +144,8 @@ To transmit data using the TX server the application should make use of :c:func:
     :end-before:  //:
 
 This operation must be completed on the same core as the TX server thread as the communication modeul utilises shared memory.
+
+.. _sec_interfacing_rx:
 
 Interfacing to the RX Server
 -----------------------------
@@ -157,6 +159,8 @@ The echo test example implements an application level buffering for receiving da
     :end-before:  //:
 
 Once the token is received over the channel informing the application of the UART channel which has data ready the application uses the :c:func:`uart_rx_grab_char` function to collect the data from the receive slot. This provides an unvalidated word. The application then utilises the :c:func:`uart_rx_validate_char` to ensure that the UART word fits the requirements of the configuration (parity, stop bits etc) and provides the data upon return in the ``uart_char`` variable. This data is then inserted into a buffer.
+
+.. _sec_reconf_rxtx:
 
 Reconfiguration of RX & TX Server
 ----------------------------------
