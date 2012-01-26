@@ -43,6 +43,27 @@ Configuration is done utilising the defines listed out below.
 **SIMPLE_TEST_DO_RECONF**
 
     Enable reconfiguration on the simple test application - after a specified time within the application the UART will be reconfigured for a different baud rate.
+    
+Echo Test Application Description
+==================================
+
+The Echo Test demonstration application shows a typical structure of an application that might be implemented by the user of this module. The diagram in :ref:`fig_echo_struct` shows the structure of the demonstration application.
+
+In addition to the two multi-UART threads the application utilises two further threads - one providing buffering for the UART RX and one handling to the pushing of data to the TX buffer. The RX buffering is implemented as an example only and is not strictly necessary in this application as the TX thread already provides some buffering.
+
+When the RX thread receives a character over the UART it saves it into the local single entry buffer and puts a data token into the channel. This data token is received by RX buffering thread and tells it which UART channel a character has been received on. The RX buffering thread then grabs this character out of the buffer slot, validates it utilising the provided validation function and inserts it into a larger, more comprehensive buffer.
+
+The TX thread operates by polling the buffer between the RX buffering thread and the Echo Application thread. When an entry is seen it pulls it from the buffer and utilises the API to push the value into the TX thread buffer. From there the TX thread will send that value on the correct UART channel on the 8 bit port.
+
+The channel for the TX thread is primarily used for reconfiguration. This is discussed in more detail in :ref:`sec_reconf_rxtx`.
+
+Specific usage of the API is discussed in :ref:`sec_interfacing_tx` and :ref:`sec_interfacing_rx`.
+
+.. _fig_echo_struct:
+
+.. figure:: images/EchoSoftwareDiagram.pdf
+
+    Echo Test Application Structure
 
 Programming Guide
 ==================
