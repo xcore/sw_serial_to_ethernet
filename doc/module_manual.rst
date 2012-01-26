@@ -143,7 +143,7 @@ To transmit data using the TX server the application should make use of :c:func:
     :start-after: //:example_tx_buf_fill
     :end-before:  //:
 
-This operation must be completed on the same core as the TX server thread as the communication modeul utilises shared memory.
+This operation must be completed on the same core as the TX server thread as the communication module utilises shared memory.
 
 .. _sec_interfacing_rx:
 
@@ -170,7 +170,7 @@ TO BE COMPLETED
 Resource Requirements
 ======================
 
-This section provides an overview of the required resources of the module so that the application designer can operate within these contraints accordingly.
+This section provides an overview of the required resources of the module so that the application designer can operate within these constraints accordingly.
 
 Threads
 --------
