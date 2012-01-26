@@ -72,7 +72,7 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                     rx_elements[i]--;
                 }
                 
-                
+                // not built at the moment due to data errors occasionally causing this to trigger
                 #if 0
                 
                 if ((char)uart_char == 'r')
