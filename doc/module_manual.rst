@@ -165,8 +165,18 @@ Once the token is received over the channel informing the application of the UAR
 Reconfiguration of RX & TX Server
 ----------------------------------
 
-TO BE COMPLETED
+The method for reconfiguring the UART software is the same for both the RX and the TX servers. When the application requires a reconfiguration then a call to :c:func:`uart_tx_reconf_pause` or :c:func:`uart_rx_reconf_pause` needs to be made. When reconfiguring the RX side the server thread will pause immediately, however when pausing the TX side the server thread will pause the application thread to allow the buffers to empty in the TX thread. 
 
+Once the functions exit the server threads will be paused. Configuration is then done utilising the same methodology as initial configuration using a function such as the :c:func:`uart_tx_initialise_channel` or :c:func:`uart_rx_initialise_channel`.
+
+Following the reconfiguration the application must then call :c:func:`uart_tx_reconf_enable` and :c:func:`uart_rx_reconf_enable` to re-enable the TX and RX threads respectively.
+
+The listing below gives an example of reconfiguration that is taken from the echo test demonstration and test application.
+
+.. literalinclude:: app_multi_uart_demo/src/echo_test.c
+    :start-after: //:reconf_example
+    :end-before:  //:
+    
 Resource Requirements
 ======================
 

@@ -74,10 +74,12 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                 
                 
                 #if 0
+                
                 if ((char)uart_char == 'r')
                 {
                     printstr("Reconfiguring...\n");
-                    
+                
+                    //:reconf_example
                     uart_tx_reconf_pause( cTxUART, t );
                     uart_rx_reconf_pause( cRxBuf );
                     
@@ -106,7 +108,9 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                     
                     uart_tx_reconf_enable( cTxUART );
                     uart_rx_reconf_enable( cRxBuf );
+                    //:
                 }
+                
                 #endif
             }
         }
