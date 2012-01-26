@@ -191,21 +191,37 @@ Threads
 Memory
 -------
 
+The following is a summary of memory usage of the module for all functionality utilised by the echo test application when compiled at optimisation level 3. It assumes a TX buffer of 16 slots and operating at the maximum of 8 UART channels. This is deemed to be a guide only and memory usage may differ according how much of the API is utilised.
+
+Stack usage is estimated at 460 bytes.
+
 .. list-table::
     :header-rows: 1
     
     * - Operation
-      - Code
-      - Data
-      - Stack
-    * - Receive
-      - TBD
-      - TBD
-      - TBD
-    * - Transmit
-      - TBD
-      - TBD
-      - TBD
+      - Code (bytes)
+      - Data (bytes)
+      - Total Usage (bytes)
+    * - Receive Thread
+      - 316
+      - 424
+      - 740
+    * - Receive API
+      - 410
+      - 0
+      - 410
+    * - Transmit Thread
+      - 1322
+      - 940
+      - 2262
+    * - Transmit API
+      - 480
+      - 0
+      - 480
+    * - **Total**
+      - **2159**
+      - **1364**
+      - **3523**
       
 Channel Usage
 --------------
