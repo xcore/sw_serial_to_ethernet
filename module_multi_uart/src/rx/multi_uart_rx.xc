@@ -29,13 +29,6 @@ void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports, clock uart_clock 
     start_clock( uart_clock );
 }
 
-#pragma unsafe arrays
-void multi_uart_rx_buffer_put( int chan_id, unsigned int uart_word )
-{
-    
-}
-
-
 typedef enum ENUM_UART_RX_CHAN_STATE
 {
     idle = 0x0,
