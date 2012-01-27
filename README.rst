@@ -1,66 +1,51 @@
-XCore Template HOWTO
-====================
+Multi-UART Component
+......................
 
-This repository provides a template for new repositories on the XCore
-open source github repository site.
-To create a new repository using this template
-use the following steps. 
+:Stable release:  unreleased
 
-You can use these steps to create a local project to start coding your
-own stuff. Later you may create an  empty repository on the XCore open
-source github site (see
-https://github.com/xcore/Community/wiki/Repository-management on how 
-to do this) to share this with the world.
+:Status:  beta
 
-Requirements
-------------
+:Maintainer:  `Paul Hampson <https://github.com/paul-xmos>`_ 
 
-* Git installed locally
-* Python installed locally (version 2.7)
-* An new empty github repository
-* A github account with ssh keys generated (see "Generate a Keypair" at http://help.github.com/)
-
-Steps for creating a new repository/project
--------------------------------------------
-
-#. Create a working directory (or use an existing one with other repositories in).
-
-#. If it does not already exist, clone the xcommon repository from github::
-
-     git clone ssh://git@github.com/xcore/xcommon.git
-
-#. Clone the xcore_template repository from github::
-
-     git clone ssh://git@github.com/xcore/xcore_template.git
-
-#. Use the rename_repository script to rename xcore_template to your repository name. Run this script from the working directory above the xcore_template directory. For example to change the name to my_repo::
-
-     python xcommon/util/rename_repository.py xcore_template my_repo
-
-#. You can now change into the new my_repo directory::
-
-     cd my_repo
-
-   this will have its origin pointing at xcore/my_repo on github.
-
-#. Either copy/modify the app_template, plugin_template and module_template directories to contain the source code for the apps, modules and plugins of the repository. Or copy in existing apps and modules from elsewhere. Make sure that any copied in directories have Makefiles/module_build_infos in a similar form to the template examples. Pay particular attention to the include part of an application Makefile. It should look like this::
-
-   -include ../module_xcommon/build/Makefile.common
-   -include ../../xcommon/module_xcommon/build/Makefile.common
-
-#. Once you have your specific modules set up you can remove the template directories.
- 
-#. Code away.
-
-#. If you want to sync this with an XCore open source repository you
-   need to request a new repo with the same name (see https://github.com/xcore/Community/wiki/Repository-management on how 
-   to do this) to share this with the world.Now you can stage all the new files and do the repositories first commit and push it to a newly created github repo with the same name. You can do that like this::
-
-	git add -A
-	git commit -am "First commit"
-	git push -u origin master
-
-#. Now you can remove this README.rst file, rename the README_template.rst file to README.rst, and fill in the blanks. Use ``git commit`` and ``git push`` as normal.
+:Description:  A brief description of the repo
 
 
+Key Features
+============
 
+* Support for 8 channels of UART RX & TX on 8 bit ports
+* Reconfigurable at runtime
+* Supports upto 115200kbps in both directions
+* Support for a variety of data lenghts, parity configurations and stop bit configurations
+
+To Do
+=====
+
+* Support for inverted signals
+
+Firmware Overview
+=================
+
+There are two apps within this module.
+
+	* app_multi_uart_demo - This is a self contained test application for test and verification of the multi-uart component
+	* app_serial_to_ethernet_demo - This is a demonstration application that integrates the multi-uart component with the ethernet and TCP components and provides and ethernet to UART solution over HTTP and Telnet
+
+The primary module is module_multi_uart. This contains the multi-uart module and provides both receive and transmit functionality along with an API for using them.
+
+Known Issues
+============
+
+* Implementation will currently fail to receive burst data correctly
+
+Required Repositories
+================
+
+* xcommon git\@github.com:xcore/xcommon.git
+* sc_xtcp git\@github.com:xcore/sc_xtcp.git
+* sc_ethernet git\@github.com:xcore/sc_ethernet.git
+
+Support
+=======
+
+Issues may be submitted via the Issues tab in this github repo. Response to any issues submitted as at the discretion of the maintainer for this line.
