@@ -7,7 +7,7 @@ Multi-UART Component
 
 :Maintainer:  `Paul Hampson <https://github.com/paul-xmos>`_ 
 
-:Description:  A brief description of the repo
+:Description:  Component for creating applications with multiple UART interfaces
 
 
 Key Features
