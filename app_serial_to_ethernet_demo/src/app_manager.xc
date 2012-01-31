@@ -76,7 +76,7 @@ static void uart_channel_init(void)
   for (i=0;i<UART_TX_CHAN_COUNT;i++)
     {
 	  // Initialize Uart channels configuration data structure
-	  uart_channel_config[i].channel_id = 0;
+	  uart_channel_config[i].channel_id = i;
 	  uart_channel_config[i].parity = even;
 	  uart_channel_config[i].stop_bits = sb_1;
 	  uart_channel_config[i].baud = MAX_BIT_RATE;
@@ -110,7 +110,7 @@ static void init_uart_channel_state(void)
     {
 	  {
 		  /* TX initialization */
-		  uart_tx_channel_state[i].channel_id = 0;
+		  uart_tx_channel_state[i].channel_id = i;
 		  uart_tx_channel_state[i].pending_tx_data = FALSE;
 		  uart_tx_channel_state[i].read_index = 0;
 		  uart_tx_channel_state[i].write_index = 0;
@@ -129,7 +129,7 @@ static void init_uart_channel_state(void)
 
 	  {
 		  /* RX initialization */
-		  uart_rx_channel_state[i].channel_id = 0;
+		  uart_rx_channel_state[i].channel_id = i;
 		  uart_rx_channel_state[i].read_index = 0;
 		  uart_rx_channel_state[i].write_index = 0;
 		  uart_rx_channel_state[i].buf_depth = 0;
@@ -209,8 +209,10 @@ static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
 		}
 		else
 		{
+#ifdef DEBUG_LEVEL_3
 			printstr("Successful Uart configuration for channel: ");
 			printintln(channel_id);
+#endif //DEBUG_LEVEL_3
 			/* Successfully configured uart channel */
 			uart_channel_config[channel_id].is_configured = TRUE;
 		}
@@ -223,8 +225,6 @@ static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
     /* Release UART tx thread */
     do {cTxUART :> temp; } while (temp != MULTI_UART_GO);
     cTxUART <: 1;
-
-	printstrln("Out of initial config loop wait");
 
 }
 
@@ -335,8 +335,6 @@ void fill_uart_channel_data(
 
 			if (-1 != buffer_space)
 			{
-				//printstr("uart_tx_put_char success for chnl id");
-				//printintln(channel_id); //TODO: tbr
 				/* Data is successfully sent to MUART TX */
 				return;
 			}
@@ -788,8 +786,6 @@ void app_manager_handle_uart_data(
 			  txTimeStamp += 4000;
 			  break ;
     	  case cWbSvr2AppMgr :> WbSvr2AppMgr_chnl_data :
-    		  printstr("Got cWbSvr2AppMgr channel data: ");
-			  printintln(WbSvr2AppMgr_chnl_data);
     		  if (RECONF_UART_CHANNEL == WbSvr2AppMgr_chnl_data)
     		  {
     			  /* Update uart channels with new uart config */
@@ -809,8 +805,6 @@ void app_manager_handle_uart_data(
 			  break ;
     	  case cRxUART :> rx_channel_id :
     		  //Read data from MUART RX thread
-    		  //printstr("RXd-");// char for chl id: ");
-			  //printintln(rx_channel_id);
     		  receive_uart_channel_data(cRxUART, rx_channel_id);
 			  break ;
     	  default:

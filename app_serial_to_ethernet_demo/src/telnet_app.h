@@ -49,6 +49,7 @@ prototypes
 ---------------------------------------------------------------------------*/
 void telnetd_set_new_session(chanend tcp_svr, int telnet_port);
 int valid_telnet_port(unsigned int port_num);
+void listen_on_default_telnet_ports(chanend tcp_svr);
 int telnetd_send_client_data(chanend tcp_svr);
 void telnetd_close_connection(REFERENCE_PARAM(xtcp_connection_t, conn));
 

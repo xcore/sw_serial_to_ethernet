@@ -127,6 +127,41 @@ int valid_telnet_port(unsigned int port_num)
 }
 
 /** =========================================================================
+*  listen_on_default_telnet_ports
+*
+*  Uses uart config structures to listen on default configured telnet ports
+*
+*  \param chanend tcp_svr	channel end sharing uip_server thread
+*
+*  \return		None
+*
+**/
+void listen_on_default_telnet_ports(chanend tcp_svr)
+{
+	int i;
+
+	/* Look up for configured telnet ports */
+	for (i=0;i<UART_TX_CHAN_COUNT;i++)
+	{
+		if ((uart_channel_config[i].telnet_port != 0) &&
+			(uart_channel_config[i].is_configured == TRUE))
+		{
+			telnetd_set_new_session(
+					  tcp_svr,
+					  uart_channel_config[i].telnet_port);
+
+			if (0 == register_app_callback)
+			{
+				/* Register application callback function */
+				register_callback(&fill_uart_channel_data);
+				register_app_callback = 1;
+			}
+
+		}
+	}
+}
+
+/** =========================================================================
 *  telnetd_close_connection
 *
 *  closes the active telnet connection
