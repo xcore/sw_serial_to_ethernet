@@ -72,6 +72,10 @@ implementation
 static void uart_channel_init(void)
 {
   int i;
+#ifdef SET_VARIABLE_BAUD_RATE
+  int baud_rate = MAX_BIT_RATE;
+  int baud_rate_reset = 0;
+#endif //SET_VARIABLE_BAUD_RATE
 
   for (i=0;i<UART_TX_CHAN_COUNT;i++)
     {
@@ -79,7 +83,11 @@ static void uart_channel_init(void)
 	  uart_channel_config[i].channel_id = i;
 	  uart_channel_config[i].parity = even;
 	  uart_channel_config[i].stop_bits = sb_1;
+#ifdef SET_VARIABLE_BAUD_RATE
+	  uart_channel_config[i].baud = baud_rate;
+#else //SET_VARIABLE_BAUD_RATE
 	  uart_channel_config[i].baud = MAX_BIT_RATE;
+#endif //SET_VARIABLE_BAUD_RATE
 	  uart_channel_config[i].char_len = DEF_CHAR_LEN;
 	  uart_channel_config[i].polarity = start_0;
 	  uart_channel_config[i].telnet_port = DEF_TELNET_PORT_START_VALUE + i;
@@ -87,6 +95,23 @@ static void uart_channel_init(void)
 	  uart_channel_config[i].telnet_conn_id = 0;
 	  uart_channel_config[i].is_configured = FALSE;
 	  uart_channel_config[i].is_telnet_active = FALSE;
+
+#ifdef SET_VARIABLE_BAUD_RATE
+  if (1 == baud_rate_reset)
+  {
+	  /* Reset to max baud rate for next channel */
+	  baud_rate = 200000;
+	  baud_rate_reset = 0;
+  }
+
+  baud_rate = baud_rate / 2;
+
+  if (baud_rate < 10000)
+  {
+	  baud_rate = 10000;
+	  baud_rate_reset = 1;
+  }
+#endif //SET_VARIABLE_BAUD_RATE
     }
 }
 
