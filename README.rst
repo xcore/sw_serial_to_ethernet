@@ -15,8 +15,8 @@ Key Features
 
 * Support for 8 channels of UART RX & TX on 8 bit ports
 * Reconfigurable at runtime
-* Supports upto 115200kbps in both directions
-* Support for a variety of data lenghts, parity configurations and stop bit configurations
+* Supports upto 115200bps in both directions
+* Support for a variety of data lengths, parity configurations and stop bit configurations
 
 To Do
 =====
