@@ -11,11 +11,11 @@
 *.vcd
 *.log
 *.xe
-*/_build/*
-*/.doxygen/*
-*/.linked_dirs/*
-*/.sources/*
-*/.support/*
+doc/*/_build/*
+doc/*/.doxygen/*
+doc/*/.linked_dirs/*
+doc/*/.sources/*
+doc/*/.support/*
 Doxyfile-e
 .DS_Store
 *.pyc
