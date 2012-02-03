@@ -1,0 +1,16 @@
+[timestart] 0
+[size] 1600 1152
+[pos] -1 -1
+*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+@23
+stdcore[0]_CYCLES[31:0]
+@22
+stdcore[0]_XS1_PORT_8A[7:0]
+@28
+stdcore[0]_XS1_PORT_8A_tWaiting
+@22
+stdcore[0]_XS1_PORT_8B[7:0]
+@28
+stdcore[0]_XS1_PORT_8B_tWaiting
+[pattern_trace] 1
+[pattern_trace] 0
