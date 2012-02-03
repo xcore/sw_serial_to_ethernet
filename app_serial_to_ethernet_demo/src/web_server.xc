@@ -118,7 +118,12 @@ void web_server_handle_event(
       {
       case XTCP_NEW_CONNECTION:
     	  if (app_port_type==TYPE_HTTP_PORT)
+    	  {
     		  httpd_init_state(tcp_svr, conn);
+
+			  /* Listen on default telnet ports */
+    		  listen_on_default_telnet_ports(tcp_svr);
+    	  }
     	  else if (app_port_type==TYPE_TELNET_PORT)
     	  {
     		  /* This shall be supported only after Uart config */
