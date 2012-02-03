@@ -159,4 +159,6 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == `chan_count`
+    bu rx_bit_ep
+    #endif

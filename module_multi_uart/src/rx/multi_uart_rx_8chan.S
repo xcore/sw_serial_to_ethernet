@@ -192,7 +192,7 @@ idle_process:
     eq r8, r8, r10
     bt r8, invalid_start
     
-    /* store new state - at this point r8 == 1*/
+    /* store new state */
     ldc r8, 1
     stw r8, r1[r5] 
     
@@ -272,7 +272,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 1
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -434,7 +436,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 2
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -596,7 +600,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 3
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -758,7 +764,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 4
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -920,7 +928,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 5
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -1082,7 +1092,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 6
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -1244,7 +1256,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 7
+    bu rx_bit_ep
+    #endif
 #undef process_loop	
 #undef idle_process
 #undef data_process
@@ -1406,7 +1420,9 @@ dp_calc_tick:
     /* shift port_val, and advance to next channel */
     shr r6, r6, 1
     
-    
+    #if CHAN_COUNT == 8
+    bu rx_bit_ep
+    #endif
 	/* check if this is the last channel */
     bu next_channel
 
