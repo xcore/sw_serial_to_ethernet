@@ -144,8 +144,8 @@ void parse_http_request(
         if (request_type == WPAGE_CONFIG_SET)
         {
         	/* Active loop to ensure there is no pending
-        	 * uart configuration is in place */
-        	while (telnet_conn_details.pending_config_update); //TODO: To remove active loop wait condition
+        	 * uart configuration update is in place */
+        	while (telnet_conn_details.pending_config_update);
 
             /* Send details to web server in order to send it to
              * app manager thread for uart configuration */

@@ -172,6 +172,7 @@ void web_server_handle_event(
 	    			  //cWbSvr2AppMgr :> prev_conn_id;
 	    			  //cWbSvr2AppMgr :> prev_telnet_port;
 	    			  cWbSvr2AppMgr :> new_telnet_port;
+	    			  if (telnet_conn_details.prev_telnet_port != new_telnet_port)
 	    			  {
 	    				  xtcp_connection_t conn_release;
 	    				  conn_release.id = telnet_conn_details.prev_telnet_conn_id;
