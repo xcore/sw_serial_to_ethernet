@@ -36,6 +36,7 @@ Step 1: Add skeleton object in HTML
 
    Add HTML object
 
+
 Step 2: Add this variable in Update.. functions
 
 .. figure:: images/dv_2.png
@@ -43,12 +44,14 @@ Step 2: Add this variable in Update.. functions
 
    Update Java script functions
 
+
 Step 3: Add this variable in HTTP request
 
 .. figure:: images/dv_3.png
    :align: center
 
    Update HTTP Request
+
 
 Changes required in application source code
 -------------------------------------------
