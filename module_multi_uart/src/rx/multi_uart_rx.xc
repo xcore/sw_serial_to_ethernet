@@ -59,23 +59,24 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     /*
      * Four bit look up table that takes the CRC32 with poly 0xf of the masked off 32 bit word 
      * from an 8 bit port and translates it into the 4 desired bits - huzzah!
+     * bit 4-7 indicates whether there could be a start bit and how many are swallowed
      */
-    fourBitLookup[15] = 0;
-    fourBitLookup[7] = 1;
-    fourBitLookup[13] = 2;
-    fourBitLookup[5] = 3;
-    fourBitLookup[0] = 4;
-    fourBitLookup[8] = 5;
-    fourBitLookup[2] = 6;
-    fourBitLookup[10] = 7;
-    fourBitLookup[11] = 8;
-    fourBitLookup[3] = 9;
-    fourBitLookup[9] = 10;
-    fourBitLookup[1] = 11;
-    fourBitLookup[4] = 12;
-    fourBitLookup[12] = 13;
-    fourBitLookup[6] = 14;
-    fourBitLookup[14] = 15;
+    fourBitLookup[15] = 0x00;
+    fourBitLookup[7]  = 0x31;
+    fourBitLookup[13] = 0x02;
+    fourBitLookup[5]  = 0x23;
+    fourBitLookup[0]  = 0x04;
+    fourBitLookup[8]  = 0x05;
+    fourBitLookup[2]  = 0x06;
+    fourBitLookup[10] = 0x17;
+    fourBitLookup[11] = 0x08;
+    fourBitLookup[3]  = 0x09;
+    fourBitLookup[9]  = 0x0a;
+    fourBitLookup[1]  = 0x0b;
+    fourBitLookup[4]  = 0x0c;
+    fourBitLookup[12] = 0x0d;
+    fourBitLookup[6]  = 0x0e;
+    fourBitLookup[14] = 0x0f;
     
     for (int i = 0; i < 16; i++)
     {

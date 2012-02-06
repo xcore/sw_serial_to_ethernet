@@ -36,16 +36,17 @@ uart_rx_loop_8:
     entsp STACK_SIZE
 
     /* stack usage:
-     * sp[1] => callee save r4
-     * sp[2] => callee save r5
-     * sp[3] => callee save r6
-     * sp[4] => callee save r7
-     * sp[5] => callee save r8
-     * sp[6] => callee save r9
-     * sp[7] => callee save r10
-     * sp[8] => state pointer
-     * sp[9] => tick_count pointer
+     * sp[1]  => callee save r4
+     * sp[2]  => callee save r5
+     * sp[3]  => callee save r6
+     * sp[4]  => callee save r7
+     * sp[5]  => callee save r8
+     * sp[6]  => callee save r9
+     * sp[7]  => callee save r10
+     * sp[8]  => state pointer
+     * sp[9]  => tick_count pointer
      * sp[10] => bit_count pointer
+     * sp[11] => potential start indicator
      * sp[STACK_SIZE+1] => uart_word pointer
      * sp[STACK_SIZE+2] => cUART channel
      * sp[STACK_SIZE+3] => rx_char buffer pointer

@@ -41,16 +41,17 @@ uart_rx_loop_8:
     entsp STACK_SIZE
 
     /* stack usage:
-     * sp[1] => callee save r4
-     * sp[2] => callee save r5
-     * sp[3] => callee save r6
-     * sp[4] => callee save r7
-     * sp[5] => callee save r8
-     * sp[6] => callee save r9
-     * sp[7] => callee save r10
-     * sp[8] => state pointer
-     * sp[9] => tick_count pointer
+     * sp[1]  => callee save r4
+     * sp[2]  => callee save r5
+     * sp[3]  => callee save r6
+     * sp[4]  => callee save r7
+     * sp[5]  => callee save r8
+     * sp[6]  => callee save r9
+     * sp[7]  => callee save r10
+     * sp[8]  => state pointer
+     * sp[9]  => tick_count pointer
      * sp[10] => bit_count pointer
+     * sp[11] => potential start indicator
      * sp[STACK_SIZE+1] => uart_word pointer
      * sp[STACK_SIZE+2] => cUART channel
      * sp[STACK_SIZE+3] => rx_char buffer pointer
@@ -115,6 +116,7 @@ rx_bit_ep:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -122,6 +124,7 @@ rx_bit_ep:
 #define process_loop process_loop_0
 #define idle_process idle_process_0
 #define data_process data_process_0
+#define immediate_start_bit immediate_start_bit_0
 #define invalid_start invalid_start_0
 #define dp_calc_tick dp_calc_tick_0
 #if CHAN_COUNT == 1
@@ -132,8 +135,8 @@ rx_bit_ep:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -186,13 +189,15 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
     eq r8, r8, r10
     bt r8, invalid_start
     
-    /* store new state */
+    /* store new state - at this point r8 == 1*/
     ldc r8, 1
     stw r8, r1[r5] 
     
@@ -216,6 +221,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -234,20 +243,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -279,6 +336,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -286,6 +344,7 @@ dp_calc_tick:
 #define process_loop process_loop_1
 #define idle_process idle_process_1
 #define data_process data_process_1
+#define immediate_start_bit immediate_start_bit_1
 #define invalid_start invalid_start_1
 #define dp_calc_tick dp_calc_tick_1
 #if CHAN_COUNT == 2
@@ -296,8 +355,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -350,6 +409,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -380,6 +441,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -398,20 +463,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -443,6 +556,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -450,6 +564,7 @@ dp_calc_tick:
 #define process_loop process_loop_2
 #define idle_process idle_process_2
 #define data_process data_process_2
+#define immediate_start_bit immediate_start_bit_2
 #define invalid_start invalid_start_2
 #define dp_calc_tick dp_calc_tick_2
 #if CHAN_COUNT == 3
@@ -460,8 +575,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -514,6 +629,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -544,6 +661,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -562,20 +683,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -607,6 +776,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -614,6 +784,7 @@ dp_calc_tick:
 #define process_loop process_loop_3
 #define idle_process idle_process_3
 #define data_process data_process_3
+#define immediate_start_bit immediate_start_bit_3
 #define invalid_start invalid_start_3
 #define dp_calc_tick dp_calc_tick_3
 #if CHAN_COUNT == 4
@@ -624,8 +795,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -678,6 +849,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -708,6 +881,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -726,20 +903,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -771,6 +996,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -778,6 +1004,7 @@ dp_calc_tick:
 #define process_loop process_loop_4
 #define idle_process idle_process_4
 #define data_process data_process_4
+#define immediate_start_bit immediate_start_bit_4
 #define invalid_start invalid_start_4
 #define dp_calc_tick dp_calc_tick_4
 #if CHAN_COUNT == 5
@@ -788,8 +1015,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -842,6 +1069,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -872,6 +1101,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -890,20 +1123,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -935,6 +1216,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -942,6 +1224,7 @@ dp_calc_tick:
 #define process_loop process_loop_5
 #define idle_process idle_process_5
 #define data_process data_process_5
+#define immediate_start_bit immediate_start_bit_5
 #define invalid_start invalid_start_5
 #define dp_calc_tick dp_calc_tick_5
 #if CHAN_COUNT == 6
@@ -952,8 +1235,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -1006,6 +1289,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -1036,6 +1321,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -1054,20 +1343,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -1099,6 +1436,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -1106,6 +1444,7 @@ dp_calc_tick:
 #define process_loop process_loop_6
 #define idle_process idle_process_6
 #define data_process data_process_6
+#define immediate_start_bit immediate_start_bit_6
 #define invalid_start invalid_start_6
 #define dp_calc_tick dp_calc_tick_6
 #if CHAN_COUNT == 7
@@ -1116,8 +1455,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -1170,6 +1509,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -1200,6 +1541,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -1218,20 +1563,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
@@ -1263,6 +1656,7 @@ dp_calc_tick:
 #undef idle_process
 #undef data_process
 #undef invalid_start
+#undef immediate_start_bit
 #undef dp_calc_tick
 #undef next_channel
 #undef channel_num
@@ -1270,6 +1664,7 @@ dp_calc_tick:
 #define process_loop process_loop_7
 #define idle_process idle_process_7
 #define data_process data_process_7
+#define immediate_start_bit immediate_start_bit_7
 #define invalid_start invalid_start_7
 #define dp_calc_tick dp_calc_tick_7
 #if CHAN_COUNT == 8
@@ -1280,8 +1675,8 @@ dp_calc_tick:
 
 process_loop:                                   
     /* initialise channel count */              
-	ldc r5, channel_num                         
-	                                            
+	ldc r5, channel_num
+	
 	/* get fourBits */                          
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
@@ -1334,6 +1729,8 @@ idle_process:
     
     /* lookup TC value and check for valid start */
     ldaw r10, dp[startBitLookup]
+    ldc r11, 0xf
+    and r8, r8, r11
     ldw r10, r10[r8]
     /* check if we have invalid SB */
     mkmsk r8, 32
@@ -1364,6 +1761,10 @@ invalid_start:
     bu next_channel
     
 data_process:
+    /* get potential start bit indicator */
+    shr r9, r8, 4
+    stw r9, sp[11]
+    
     /* get bit from fourBits - tick_count still in r10 */
     sub r10, r10, 1
     shr r8, r8, r10
@@ -1382,20 +1783,68 @@ data_process:
     stw r10, r3[r5]
     
     /* if bit_count == 0 then change state and get new tick count else calculate new tick count */
-    bt r10, dp_calc_tick    
-    stw r10, r1[r5] // set state to idle - r10 is 0
-    
-    /* send data word out */    
-    ldw r9, sp[STACK_SIZE+2]
-    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    bt r10, dp_calc_tick
     
     /* store rx'd data in memory - means we don't block */
     ldw r9, sp[STACK_SIZE+3]
     stw r11, r9[r5] // write data into array
     
-    //out res[r9], r11
+    /* send data word out */
+    ldw r9, sp[STACK_SIZE+2]
+    outt res[r9], r5 // using outt means we won't block for up to 8 tokens
+    
+    /* check flag for a start bit in this set of samples */
+    ldw r10, sp[11]    
+    bt r10, immediate_start_bit
+    
+    // set state to idle - r10 is 0
+    stw r10, r1[r5] 
     
     /* shift port_val and advance to next channel */
+    shr r6, r6, 1
+    bu next_channel
+
+immediate_start_bit:
+    /* this handles a start bit transition detected in the stop bit sample */
+    
+    /* initial tc */
+    ldaw r11, dp[uart_rx_channel]
+    ldc r9, CHAN_STRUCT_SIZE
+    mul r10, r5, r9 // get struct pointer for channel
+    add r11, r11, r10
+    
+    /* initialise bit count */
+    ldw r9, r11[1] // word_len
+    stw r9, r3[r5]
+    
+    /* clocks_per_bit */
+    ldw r10, r11[2]
+    
+    /* use_sample */
+    ldw r9, r11[4]
+    
+    /* calculate tick_count */
+    add r9, r9, r10
+    
+    /* get number of bits swallowed */
+    ldw r10, sp[11]
+    
+    /* store new state*/
+    // state doesn't change ?!
+//    ldc r8, 1
+//    stw r8, r1[r5] 
+    
+    /* sub TC value for swallowed bits */
+    sub r9, r9, r10
+    
+    /* zero uart_word entry */
+    ldc r10, 0
+    stw r10, r4[r5]
+    
+    /* store tick_count */
+    stw r9, r2[r5]
+    
+    /* shift port_val, check loop and increment or quit loop */
     shr r6, r6, 1
     bu next_channel
     
