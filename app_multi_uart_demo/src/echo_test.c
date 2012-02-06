@@ -71,10 +71,10 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                     rx_rd_ptr[i] = (rx_rd_ptr[i] < ECHO_BUF_SIZE) * rx_rd_ptr[i];
                     rx_elements[i]--;
                 }
-                
+                else printstr("TX Buf Full\n");
+                    
                 // not built at the moment due to data errors occasionally causing this to trigger
                 #if 0
-                
                 if ((char)uart_char == 'r')
                 {
                     printstr("Reconfiguring...\n");
@@ -110,7 +110,6 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                     uart_rx_reconf_enable( cRxBuf );
                     //:
                 }
-                
                 #endif
             }
         }
@@ -145,7 +144,8 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
             {
                 rx_buffer[chan_id][rx_wr_ptr[chan_id]] = uart_char;
                 rx_wr_ptr[chan_id]++;
-                rx_wr_ptr[chan_id] = (rx_wr_ptr[chan_id] < ECHO_BUF_SIZE) * rx_wr_ptr[chan_id];
+                if (rx_wr_ptr[chan_id] >= ECHO_BUF_SIZE)
+                    rx_wr_ptr[chan_id] = 0;
                 rx_elements[chan_id]++;
                 
             } else printstr("RX Buf Full\n");

@@ -42,5 +42,5 @@ runsim_loop: generate_rx all
 run: generate_rx all
 	xrun --io bin/multi_uart_demo.xe
 
-generate_rx:
+generate_rx: ../module_multi_uart/gen/template ../module_multi_uart/gen/template_start ../module_multi_uart/gen/template_end
 	cd ../module_multi_uart/gen; make all
