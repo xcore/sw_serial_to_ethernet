@@ -19,8 +19,9 @@
 #define ARG_COUNT 4
 /* 500000000/115200 = 4340.277 */
 /* 500000000/115205 = 4340.089 */
-#define CLOCK_TICKS_115KBPS 4340
-#define CLOCK_TICKS_ERROR   277
+/* 500000000/116352 = 4297.305 (1% faster)*/
+#define CLOCK_TICKS_115KBPS 4297
+#define CLOCK_TICKS_ERROR   305
 #define EXT_CLOCK_TICKS_1_8432MHZ 135 // 135.633
 /*
  * Types
@@ -214,10 +215,10 @@ XsiStatus plugin_clock(void *instance)
             parity ^= ((data >> i) & 1);
         
         /* generate UART Word */
-        s_instances[instance_num].current_data_len = 15; // START + DATA + PARITY + STOP + IDLE
+        s_instances[instance_num].current_data_len = 11; // START + DATA(8) + PARITY + STOP
         /* build word */
-        s_instances[instance_num].current_data = 0xFFFFF000;
-        s_instances[instance_num].current_data = (1<<11) | (1<<10) | (parity<<9) | (data<<1) | 0;
+        s_instances[instance_num].current_data = 0xFFFFF800;
+        s_instances[instance_num].current_data |= (1<<11) | (1<<10) | (parity<<9) | (data<<1) | 0;
         
         s_instances[instance_num].tick_count = 0;
         s_instances[instance_num].out_count = 0;
@@ -230,7 +231,7 @@ XsiStatus plugin_clock(void *instance)
         CHECK_STATUS;
         
         /* setup next tick */
-        s_instances[instance_num].tick_error += CLOCK_TICKS_ERROR; //every tick should be 0.277 longer
+        s_instances[instance_num].tick_error += CLOCK_TICKS_ERROR;
         if (s_instances[instance_num].tick_error > 1000)
         {
             s_instances[instance_num].next_tick_count = CLOCK_TICKS_115KBPS+1;
@@ -248,7 +249,7 @@ XsiStatus plugin_clock(void *instance)
         
         if (s_instances[instance_num].tick_count == s_instances[instance_num].next_tick_count) 
         {
-            s_instances[instance_num].tick_error += CLOCK_TICKS_ERROR; //every tick should be 0.277 longer
+            s_instances[instance_num].tick_error += CLOCK_TICKS_ERROR;
             if (s_instances[instance_num].tick_error > 1000)
             {
                 s_instances[instance_num].next_tick_count = CLOCK_TICKS_115KBPS+1;
@@ -257,7 +258,6 @@ XsiStatus plugin_clock(void *instance)
                 s_instances[instance_num].next_tick_count = CLOCK_TICKS_115KBPS+1;
             }
                 
-        
             /* reset bit tick */
             s_instances[instance_num].tick_count = 0;
             
