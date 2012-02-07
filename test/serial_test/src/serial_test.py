@@ -183,19 +183,20 @@ def data_burst_test( port_id, config_string, seed, test_len=16, reconfigure=Fals
     
     print "Waiting for the UART to make sense... sending 'A'"
     uart.write("A")
+    uart.flush()
     sys.stdout.write(".")
     while (uart.read() != "A"):
         uart.write("A")
+        uart.flush()
         sys.stdout.write(".")
         sys.stdout.flush()
     
     print "Cleaning up UART buffers"
-    uart.flush()
-    time.sleep(5)
-    uart.flushInput()
-    
+    while uart.read() != "":
+        print "."
+        
     print ""
-    print "Running test..."
+    print "Running test - "+str(test_len)+" lots of "+str(burst_len)+" byte bursts..."
     pb = progressBar.progressBar(0,test_len,20)
     burst_ok = 0
     burst_fail = 0
@@ -207,6 +208,7 @@ def data_burst_test( port_id, config_string, seed, test_len=16, reconfigure=Fals
             c = random.randint(0,len(characters)-1)
             write_buf += characters[c]
         uart.write(write_buf)
+        uart.flush()
         
         # read buffer and compare
         read_buf = uart.read(len(write_buf))
@@ -223,6 +225,9 @@ def data_burst_test( port_id, config_string, seed, test_len=16, reconfigure=Fals
         pb.updateAmount(i)
         sys.stdout.write(str(pb)+"COMPLETED: "+str(i+1)+" of "+str(test_len)+" PASS: "+str(burst_ok)+" FAIL: "+str(burst_fail)+"\r")
         sys.stdout.flush()
+        
+        # clean out input buffer to ensure things aren't out of sync
+        uart.flushInput()
     
     sys.stdout.write("\nBURST TEST COMPLETED => ")
     if (burst_fail == 0):
@@ -318,7 +323,7 @@ def main():
             if args.log_file is not None:
                 lf = args.log_file[0]
                 
-            data_burst_test( port_id, config_string, seed, burst_len=3, test_len=2048, log_file=lf )
+            data_burst_test( port_id, config_string, seed, burst_len=1024, test_len=500, log_file=lf )
             i += 1
         
         
