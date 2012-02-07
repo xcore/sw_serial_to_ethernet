@@ -68,7 +68,8 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
                 if (uart_tx_put_char(i, uart_char) != -1)
                 {
                     rx_rd_ptr[i]++;
-                    rx_rd_ptr[i] = (rx_rd_ptr[i] < ECHO_BUF_SIZE) * rx_rd_ptr[i];
+                    if (rx_rd_ptr[i] >= ECHO_BUF_SIZE)
+                        rx_rd_ptr[i] = 0;
                     rx_elements[i]--;
                 }
                 else printstr("TX Buf Full\n");
@@ -150,6 +151,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
                 
             } else printstr("RX Buf Full\n");
         }
+        else printstr("RX Validation fail");
     }
     //:
 }

@@ -198,23 +198,19 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
  * Insert a UART Character into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
- * @return              Buffer fill level, -1 for full
+ * @return              0 if OK, -1 for full
  */
 int uart_tx_put_char( int channel_id, unsigned int uart_char )
 {
-    if (uart_tx_channel[channel_id].nelements < UART_TX_BUF_SIZE)
+    if (((uart_tx_channel[channel_id].wr_ptr+1)&(UART_TX_BUF_SIZE-1)) != uart_tx_channel[channel_id].rd_ptr) // ensure this write would not overwrite the current read
     {
         unsigned uart_word = uart_tx_assemble_word( channel_id, uart_char );
         int wr_ptr = uart_tx_channel[channel_id].wr_ptr;
         uart_tx_channel[channel_id].buf[wr_ptr] = uart_word;
-        uart_tx_channel[channel_id].nelements++;
         wr_ptr++;
-        wr_ptr &= (UART_TX_BUF_SIZE-1);
+        if (wr_ptr >= UART_TX_BUF_SIZE)
+            wr_ptr = 0;
         uart_tx_channel[channel_id].wr_ptr = wr_ptr;
-        return uart_tx_channel[channel_id].nelements;
-    }
-    else return -1;
-}
 
 /**
  * Insert a UART Word into the appropriate UART buffer

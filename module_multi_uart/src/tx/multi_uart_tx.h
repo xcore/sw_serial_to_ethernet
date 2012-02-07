@@ -85,7 +85,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char );
  * Assemble UART word from UART Character and insert into the appropriate UART buffer
  * @param channel_id    Channel identifier
  * @param uart_char     Character to be sent over UART
- * @return              Buffer fill level, -1 for full
+ * @return              0 for OK, -1 for buffer full
  */
 int uart_tx_put_char( int channel_id, unsigned int uart_char );
 

@@ -47,7 +47,6 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 {
     unsigned port_val = 0xFF; // TODO honour IDLE/STOP polarity
     unsigned short port_ts;
-    int j = 0;
     int loop = 0;
     
     unsigned current_word[UART_TX_CHAN_COUNT];
@@ -98,18 +97,18 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		            tick_count[i] = clocks_per_bit[i];
 		        }
 		        
-		        j=i;
-		        if (current_word_pos[j] == 0 && uart_tx_channel[j].nelements)
+		        if ((current_word_pos[i] == 0) && 
+		            (uart_tx_channel[i].rd_ptr != uart_tx_channel[i].wr_ptr)) // rd == wr => empty
 		        {
-		            int rd_ptr = uart_tx_channel[j].rd_ptr;
-		            current_word[j] = uart_tx_channel[j].buf[rd_ptr];
+		            int rd_ptr = uart_tx_channel[i].rd_ptr;
+		            current_word[i] = uart_tx_channel[i].buf[rd_ptr];
 		            rd_ptr++;
-		            rd_ptr &= (UART_TX_BUF_SIZE-1);
-		            uart_tx_channel[j].rd_ptr = rd_ptr;
-		            uart_tx_channel[j].nelements--;
+		            if (rd_ptr >= UART_TX_BUF_SIZE)
+		                rd_ptr = 0;
+		            uart_tx_channel[i].rd_ptr = rd_ptr;
 		            
-		            current_word_pos[j] = uart_tx_channel[j].uart_word_len;
-		            tick_count[j] = clocks_per_bit[j];
+		            current_word_pos[i] = uart_tx_channel[i].uart_word_len;
+		            tick_count[i] = clocks_per_bit[i];
 		        }
 		    }
 		

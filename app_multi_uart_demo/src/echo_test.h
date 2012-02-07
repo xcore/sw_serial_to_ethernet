@@ -1,7 +1,7 @@
 #ifndef __ECHO_TEST_H__
 #define __ECHO_TEST_H__
 
-#define ECHO_BUF_SIZE   16
+#define ECHO_BUF_SIZE   256
 
 void uart_rxtx_echo_test( streaming chanend cTxUART, streaming chanend cRxBuf );
 
