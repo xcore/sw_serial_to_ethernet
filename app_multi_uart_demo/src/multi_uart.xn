@@ -23,6 +23,16 @@ xsi:schemaLocation="http://www.xmos.com http://www.xmos.com">
         </Package>
     </Packages>
 
+    <!-- XSCOPE -->
+    <!--
+    <Links>
+        <Link Encoding="2wire" Delays="4,4" Flags="SOD">
+            <LinkEndpoint NodeId="0" Link="X0LC"/>
+            <LinkEndpoint RoutingId="0x8000" Chanend="1"/>
+        </Link>
+    </Links>
+    -->
+    
     <ExternalDevices>
         <Device NodeId="0" Core="0" Class="SPIFlash" Name="bootFlash" Type="AT25FS010">
             <Attribute Name="PORT_SPI_MISO" Value="PORT_SPI_MISO"/>
@@ -31,8 +41,9 @@ xsi:schemaLocation="http://www.xmos.com http://www.xmos.com">
             <Attribute Name="PORT_SPI_MOSI" Value="PORT_SPI_MOSI"/>
         </Device>
     </ExternalDevices>
-  
+    
     <JTAGChain>
         <JTAGDevice NodeId="0"/>
     </JTAGChain>
+    
 </Network>
