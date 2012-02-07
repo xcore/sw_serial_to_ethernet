@@ -211,24 +211,7 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char )
         if (wr_ptr >= UART_TX_BUF_SIZE)
             wr_ptr = 0;
         uart_tx_channel[channel_id].wr_ptr = wr_ptr;
-
-/**
- * Insert a UART Word into the appropriate UART buffer
- * @param channel_id    Channel identifier
- * @param uart_char     UART Word
- * @return              Buffer fill level, -1 for full
- */
-int uart_tx_put_uart_word( int channel_id, unsigned int uart_word )
-{
-    if (uart_tx_channel[channel_id].nelements < UART_TX_BUF_SIZE)
-    {
-        int wr_ptr = uart_tx_channel[channel_id].wr_ptr;
-        uart_tx_channel[channel_id].buf[wr_ptr] = uart_word;
-        uart_tx_channel[channel_id].nelements++;
-        wr_ptr++;
-        wr_ptr &= (UART_TX_BUF_SIZE-1);
-        uart_tx_channel[channel_id].wr_ptr = wr_ptr;
-        return uart_tx_channel[channel_id].nelements;
+        return 0;
     }
     else return -1;
 }

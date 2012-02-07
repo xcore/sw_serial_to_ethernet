@@ -111,16 +111,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		            tick_count[i] = clocks_per_bit[i];
 		        }
 		    }
-		
-		    /* check if UART channel needs a value from the buffer */
-		    //for (j = 0; j < UART_TX_CHAN_COUNT; j++)
-		    //{
-		        
-		        
-		        //j++;
-		        //j &= (UART_TX_CHAN_COUNT-1);
-		    //}
-		
+		    
 		    /* check for request to pause for reconfigure */
 		    select
 		    {
