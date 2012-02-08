@@ -204,11 +204,11 @@ void uart_rx_test(streaming chanend cUART)
     /* main loop */
     while (1)
     {
-        int chan_id;
+        char chan_id;
         
         select
         {
-            #ifdef SIMPLE_TEST_DO_RECONF // reconfiguration is disabled
+            #ifdef SIMPLE_TEST_DO_RECONF 
             case t when timerafter(ts) :> ts:
                 /* pause */
                 uart_rx_reconf_pause( cUART );
@@ -224,9 +224,9 @@ void uart_rx_test(streaming chanend cUART)
                 break;
             #endif
             
-            case cUART :>  chan_id:
+            case cUART :> chan_id:
                 /* get character over channel */
-                cUART :> uart_char;
+                uart_char = (unsigned)uart_rx_grab_char((unsigned)chan_id);
         
                 /* process received value */
                 temp = uart_char;
