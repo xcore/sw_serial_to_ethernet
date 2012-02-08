@@ -29,7 +29,7 @@ constants
                                         len--; \
                                       } while (0!=len)
 #define DEF_TELNET_PORT_START_VALUE		46
-#define	MAX_BIT_RATE					100000 //115200		//bits per sec
+#define	MAX_BIT_RATE					115200 //100000		//bits per sec
 #define TIMER_FREQUENCY					100000000	//100 Mhz
 /* Default length of a uart character in bits */
 #define	DEF_CHAR_LEN					8
@@ -403,22 +403,22 @@ void fill_uart_channel_data(
 *
 *  \param chanend cUART : channel end of data channel from MUART RX thread
 *
-*  \param int channel_id : uart channel identifir
+*  \param unsigned channel_id : uart channel identifir
 *
 *  \return			None
 *
 **/
 static void receive_uart_channel_data(
 		streaming chanend cUART,
-		int channel_id)
+		unsigned channel_id)
 {
 	unsigned uart_char, temp;
-	//int channel_id;
 	int write_index = 0;
 
     /* get character over channel */
-    //cUART :>  channel_id;
-    cUART :> uart_char;
+    uart_char = (unsigned)uart_rx_grab_char(channel_id);
+	//cUART :> uart_char;
+
 
     /* process received value */
     temp = uart_char;
@@ -782,7 +782,7 @@ void app_manager_handle_uart_data(
 {
 	timer txTimer;
 	unsigned txTimeStamp;
-	int rx_channel_id;
+	unsigned rx_channel_id;
 	unsigned int local_port = 0;
 	int conn_id  = 0;
 	int WbSvr2AppMgr_chnl_data = 9999;

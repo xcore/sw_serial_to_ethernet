@@ -5,29 +5,36 @@
 #include "multi_uart_rxtx.h"
 
 #include "echo_test.h"
+#define PORT_TX on stdcore[1]: XS1_PORT_8A
+#define PORT_RX on stdcore[1]: XS1_PORT_8C
 
 s_multi_uart_tx_ports uart_tx_ports =
 {    
-    XS1_PORT_8A,
+	PORT_TX, //XS1_PORT_8A,
 };
-in port uart_ref_ext_clk = XS1_PORT_1A;
-clock uart_clock_tx = XS1_CLKBLK_1;
+//in port uart_ref_ext_clk = XS1_PORT_1A;
+//clock uart_clock_tx = XS1_CLKBLK_1;
+on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
+/* Define 1 bit external clock */
+on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1A;
 
 s_multi_uart_rx_ports uart_rx_ports =
 {    
-    XS1_PORT_8B,
+	PORT_RX, //XS1_PORT_8C,
 };
-clock uart_clock_rx = XS1_CLKBLK_2;
+//clock uart_clock_rx = XS1_CLKBLK_2;
+on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
+
 
 //:demo_app_config
 /* Do a loopback test with the internal reference clock only - uses non-standard baud rates*/
 //#define LOOP_REF_TEST
 
 /* Do echo test */
-#define ECHO_TEST
+//#define ECHO_TEST
 
 /* Do simple test */
-//#define SIMPLE_TEST
+#define SIMPLE_TEST
 
 /* Reconfiguration enabled for simple test */
 //#define SIMPLE_TEST_DO_RECONF
@@ -231,7 +238,7 @@ void uart_rx_test(streaming chanend cUART)
                 /* process received value */
                 temp = uart_char;
                 
-                if (chan_id == 0)
+                if ((chan_id != 0) && (chan_id != 4))
                 {
                     if (uart_rx_validate_char( chan_id, uart_char ) == 0)
                     {
@@ -260,30 +267,30 @@ int main(void)
     par
     {
         /* use all 8 threads */
-        dummy();
-        dummy();
-        dummy();
-        dummy();
+    	on stdcore[1]: dummy();
+    	on stdcore[1]: dummy();
+    	on stdcore[1]: dummy();
+    	on stdcore[1]: dummy();
         
         #ifdef SIMPLE_TEST
         /* TX test thread */
-        uart_tx_test(cTxUART);
+    	on stdcore[1]: uart_tx_test(cTxUART);
         
         /* RX test thread */
-        uart_rx_test(cRxUART);
+    	on stdcore[1]: uart_rx_test(cRxUART);
         #endif
         
         #ifdef ECHO_TEST
-        rx_buffering( cRxUART, cRxBuf );
-        uart_rxtx_echo_test( cTxUART, cRxBuf );
+    	on stdcore[1]: rx_buffering( cRxUART, cRxBuf );
+    	on stdcore[1]: uart_rxtx_echo_test( cTxUART, cRxBuf );
         #endif
         
         #ifdef LOOP_REF_TEST
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        run_multi_uart_rxtx_int_clk( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx,  uart_clock_tx);
+    	on stdcore[1]: run_multi_uart_rxtx_int_clk( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx,  uart_clock_tx);
         #else
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
+        on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
         #endif
     }
     return 0;

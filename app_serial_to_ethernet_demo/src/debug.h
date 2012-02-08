@@ -28,7 +28,7 @@ constants
 #define XTCP_VERBOSE_DEBUG (1)
 
 /* Enable this macro to set variable baud rates at init time */
-#define SET_VARIABLE_BAUD_RATE	(1)
+//#define SET_VARIABLE_BAUD_RATE	(1)
 
 /* Enable this macro for tracing high level code flow */
 //#define DEBUG_LEVEL_1	1

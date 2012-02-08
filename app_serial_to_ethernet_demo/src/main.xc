@@ -26,6 +26,7 @@
 #include "telnetd.h"
 #include "app_manager.h"
 #include "web_server.h"
+#include "multi_uart_rxtx.h"
 
 /*---------------------------------------------------------------------------
  constants
@@ -45,6 +46,9 @@
 //#define PORT_RX_TEMP_3 on stdcore[1]: XS1_CLKBLK_2
 
 on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
+/* Define 1 bit external clock */
+on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1A;
+
 on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
 /* Ethernet Ports configuration */
 on stdcore[0]: port otp_data = XS1_PORT_32B; // OTP_DATA_PORT
@@ -214,13 +218,16 @@ int main(void)
 		/* The multi-uart application manager thread to handle uart
 		 * data communication to web server clients */
 		on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cTxUART, cRxUART);
-
+#if 0
 		/* Multi-uart transmit thread */
 		on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
 
 		/* Multi-uart receive thread */
 		on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports, uart_clock_rx );
-
+#else
+        /* run the multi-uart RX & TX with a common external clock - (2 threads) */
+		on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
+#endif
 		/*
 		on stdcore[1]: dummy();
 		on stdcore[1]: dummy();
