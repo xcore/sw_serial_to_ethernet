@@ -16,7 +16,8 @@ xsi:schemaLocation="http://www.xmos.com http://www.xmos.com">
                     </Boot>
 	                <Core Number="0" Reference="stdcore[0]">
 	                    <Port Location="XS1_PORT_8A"  Name="PORT_UART_TX"/>		                
-	                    <Port Location="XS1_PORT_8B"  Name="PORT_UART_RX"/>		                
+	                    <Port Location="XS1_PORT_8B"  Name="PORT_UART_RX"/>	
+	                    <Port Location="XS1_PORT_1A"  Name="PORT_UART_REF"/>
 	                </Core>
                 </Node>
             </Nodes>

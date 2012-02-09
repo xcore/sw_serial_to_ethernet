@@ -6,18 +6,21 @@
 
 #include "echo_test.h"
 
-s_multi_uart_tx_ports uart_tx_ports =
-{    
-    XS1_PORT_8A,
-};
-in port uart_ref_ext_clk = XS1_PORT_1A;
-clock uart_clock_tx = XS1_CLKBLK_1;
+/* define UART_CORE for Motor Control Board as 1 */
+#define UART_CORE   1
 
-s_multi_uart_rx_ports uart_rx_ports =
+on stdcore[UART_CORE]: s_multi_uart_tx_ports uart_tx_ports =
 {    
-    XS1_PORT_8B,
+    PORT_UART_TX,
 };
-clock uart_clock_rx = XS1_CLKBLK_2;
+on stdcore[UART_CORE]: in port uart_ref_ext_clk = PORT_UART_REF;
+on stdcore[UART_CORE]: clock uart_clock_tx = XS1_CLKBLK_1;
+
+on stdcore[UART_CORE]: s_multi_uart_rx_ports uart_rx_ports =
+{    
+    PORT_UART_RX,
+};
+on stdcore[UART_CORE]: clock uart_clock_rx = XS1_CLKBLK_2;
 
 //:demo_app_config
 /* Do a loopback test with the internal reference clock only - uses non-standard baud rates*/
@@ -40,12 +43,6 @@ clock uart_clock_rx = XS1_CLKBLK_2;
 #endif
 #ifdef SIMPLE_TEST_DO_RECONF
 #warning "SIMPLE_TEST_DO_RECONF has no effect on ECHO_TEST"
-#endif
-#endif
-
-#ifndef ECHO_TEST
-#ifndef SIMPLE_TEST
-
 #endif
 #endif
 
@@ -140,7 +137,7 @@ void uart_tx_test(streaming chanend cUART)
                for (int i = 4; i < 8; i++)
                {
                    printintln(baud_rate);
-                   if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+                   if (uart_tx_initialise_channel( i, none, sb_1, baud_rate, 8 ))
                    {
                        printstr("Invalid baud rate for tx channel ");
                        printintln(i);
@@ -169,6 +166,8 @@ void uart_tx_test(streaming chanend cUART)
 void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char, temp;
+    char receive_buf[100] = {'u'};
+    unsigned int buf_ptr = 0;
     #ifdef LOOP_REF_TEST
     unsigned baud_rate = 100000;
     #else
@@ -235,7 +234,14 @@ void uart_rx_test(streaming chanend cUART)
                 {
                     if (uart_rx_validate_char( chan_id, uart_char ) == 0)
                     {
-                        printchar(uart_char);
+                        receive_buf[buf_ptr] = (char)uart_char;
+                        buf_ptr++;
+                        if (buf_ptr >= 100)
+                        {
+                            buf_ptr = 0;
+                            for (int i = 0; i < 100; i++)
+                                printchar(receive_buf[i]);
+                        }
                     }
                 }
                 break;
@@ -260,31 +266,32 @@ int main(void)
     par
     {
         /* use all 8 threads */
-        dummy();
-        dummy();
-        dummy();
-        dummy();
+        on stdcore[UART_CORE]: dummy();
+        on stdcore[UART_CORE]: dummy();
+        on stdcore[UART_CORE]: dummy();
+        on stdcore[UART_CORE]: dummy();
         
         #ifdef SIMPLE_TEST
         /* TX test thread */
-        uart_tx_test(cTxUART);
+        on stdcore[UART_CORE]: uart_tx_test(cTxUART);
         
         /* RX test thread */
-        uart_rx_test(cRxUART);
+        on stdcore[UART_CORE]: uart_rx_test(cRxUART);
         #endif
         
         #ifdef ECHO_TEST
-        rx_buffering( cRxUART, cRxBuf );
-        uart_rxtx_echo_test( cTxUART, cRxBuf );
+        on stdcore[UART_CORE]: rx_buffering( cRxUART, cRxBuf );
+        on stdcore[UART_CORE]: uart_rxtx_echo_test( cTxUART, cRxBuf );
         #endif
         
         #ifdef LOOP_REF_TEST
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        run_multi_uart_rxtx_int_clk( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx,  uart_clock_tx);
+        on stdcore[UART_CORE]: run_multi_uart_rxtx_int_clk( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx,  uart_clock_tx);
         #else
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
+        on stdcore[UART_CORE]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
         #endif
     }
     return 0;
 }
+
