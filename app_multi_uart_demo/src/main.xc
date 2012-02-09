@@ -27,10 +27,10 @@ on stdcore[UART_CORE]: clock uart_clock_rx = XS1_CLKBLK_2;
 //#define LOOP_REF_TEST
 
 /* Do echo test */
-#define ECHO_TEST
+//#define ECHO_TEST
 
 /* Do simple test */
-//#define SIMPLE_TEST
+#define SIMPLE_TEST
 
 /* Reconfiguration enabled for simple test */
 //#define SIMPLE_TEST_DO_RECONF
