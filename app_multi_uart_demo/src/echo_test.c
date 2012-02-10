@@ -121,6 +121,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
 {
     unsigned chan_id = 0;
     unsigned uart_char, temp;
+    int rv;
     
     do { uart_char = get_streaming_uint(cRxUART); } while (uart_char != MULTI_UART_GO);
     send_streaming_int(cRxBuf, uart_char); // pass up
@@ -141,7 +142,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
         temp = uart_char;
         
         /* process received value */
-        if (uart_rx_validate_char( chan_id, &uart_char ) == 0)
+        if ((rv = uart_rx_validate_char( chan_id, &uart_char )) == 0)
         {
             if (rx_elements[chan_id] < ECHO_BUF_SIZE)
             {
@@ -153,7 +154,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
                 
             } else printstr("RX Buf Full\n");
         }
-        else { printstr("RX Validation fail\n"); printhexln(temp); }
+        else { printstr("RX Validation fail\n"); printhexln(temp); printintln(rv); }
     }
     //:
 }
