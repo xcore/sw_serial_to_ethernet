@@ -3,7 +3,8 @@ Multi-UART Module Usage Manual
 
 .. toctree::
 
-   module_manual   
+   overview
+   programming_guide   
    test
    common_api
    rx_api
