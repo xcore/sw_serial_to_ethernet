@@ -265,7 +265,9 @@ The initialisation and configuration process for both the RX and TX operations i
 .. _fig_uart_init_flow:
 
 .. figure:: images/InitFlow.png
-
+    :align: center
+    :width: 50%
+    
     UART Initialisation Flow
 
 The following working example is taken from `echo_test.c` and shows a typical initial configuration.
