@@ -1,9 +1,8 @@
-====================
 Application Overview 
-====================
+=====================
 
 Introduction
-==============
+------------
 
 The Serial to Ethernet application is used to demonstarte the serial bridging capability of the Multi-UART module. aims to provide a software library that allows the use of 8 bit ports for multiple channel UART communication. This library is dynamically re-configurable for applications that require a level of flexibility during operation.
 

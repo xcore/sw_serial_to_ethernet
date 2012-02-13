@@ -3,13 +3,21 @@ Programming Guide
 
 This section provides information on application interfaces.
 
-.. toctree::
+Web Server
+----------
 
-   Web Server
-   .. Telnet interface
-   .. Http interface
-   Application Manager
-   Web page parser module
+Telnet interface
+++++++++++++++++
+
+Http interface
+++++++++++++++
+
+
+Application Manager
+-------------------
+
+Web page parser module
+----------------------
 
 Web server handles data communication to and from user client interfaces from
 TCP/IP interface. Web server acts as an interface to http and telnet modules by 
@@ -29,11 +37,13 @@ configurable Tx and Rx application buffers in order to handle buffer overflow
 and underflow scenarios.
 <<Include the implementation snippets for timer/event functionality>>
 Following list summarized the functionality of application manager:
+
 Uart and telnet configuration management
 	Applies default uart cofniguration at the start up
 	Enables uart reconfiguration
 	Enables telnet reconfiguration
 	<<Embed sample code snippet here>>
+
 Data structure management
 	Initializing the application buffers
 	State management of application buffers interfacing Multi-UART server and user clients

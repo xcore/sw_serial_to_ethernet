@@ -758,23 +758,18 @@ static void re_apply_uart_channel_config(
 
 }
 
-/** =========================================================================
-*  app_manager_handle_uart_data
-*
-*  The multi uart manager thread. This thread
-*  (i) periodically polls for data on application Tx buffer, in order to
-*  transmit to telnet clients
-*  (ii) waits for channel data from MUART Rx thread
-*
-*  \param	chanend cWbSvr2AppMgr channel end sharing web server thread
-*
-*  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
-*
-*  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
-*
-*  \return	None
-*
-**/
+/** 
+ *  The multi uart manager thread. This thread
+ *  (i) periodically polls for data on application Tx buffer, in order to transmit to telnet clients
+ *  (ii) waits for channel data from MUART Rx thread
+ *
+ *  \param	chanend cWbSvr2AppMgr channel end sharing web server thread
+ *  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
+ *  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
+ *  \return	None
+ *
+ */
+
 void app_manager_handle_uart_data(
 		streaming chanend cWbSvr2AppMgr,
 		streaming chanend cTxUART,
