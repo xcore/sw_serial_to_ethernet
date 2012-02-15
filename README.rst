@@ -36,7 +36,7 @@ The primary module is module_multi_uart. This contains the multi-uart module and
 Known Issues
 ============
 
-* Implementation will currently fail to receive burst data correctly
+* None
 
 Required Repositories
 ================

@@ -25,7 +25,7 @@ void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports, clock uart_clock 
     #ifndef UART_TX_USE_EXTERNAL_CLOCK
     if (UART_TX_CLOCK_DIVIDER > 1)
     {
-        configure_clock_ref( tx_ports.cbUart, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );
+        configure_clock_ref( uart_clock, UART_TX_CLOCK_DIVIDER/(2*UART_TX_OVERSAMPLE) );
     }
     #endif
     

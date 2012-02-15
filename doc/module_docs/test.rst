@@ -1,13 +1,152 @@
+Verification
+==============
+
+This section discusses both the demonstration and test applications that are utilised in verification of the multi-UART module. It also deals with the scripts that are utilised to ensure that the UART is operating under a variety of conditions (such as long streams of burst traffic).
+
+Demonstration and Test Applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Demo Application Hardware
+---------------------------
+
+The echo demonstration application can be run on the XK-1 kit or on the Motor Control Logic Board. The following other parts are required - 
+
+    * External 1.8432MHz oscillator (see :ref:`fig_external_osc_photo`), for more information on clocking see :ref:`sec_ext_clk`.
+    * USB to Serial adapter (e.g. FTDI TTL-232R-3V3 from Farnell)
+    
+.. _fig_external_osc_photo:
+
+.. figure:: images/OscPhoto.JPG
+
+    External 1.8432MHz oscillator
+
+The demo applications will build by default for the Motor Control Board. To build for XK-1 you need to make the following changes.
+
+.. list-table::
+    :header-rows: 1
+    
+    * - File
+      - Original Value
+      - New Value
+    * - ``src/main.xc``
+      - ``#define UART_CORE 1``
+      - ``#define UART_CORE 0``
+    * - ``Makefile``
+      - ``TARGET = MCB_UART``
+      - ``TARGET = XK1_UART``
+
+The IO connections are made to the long connector at the base of the board - labelled JP1. The table in :ref:`table_connector_breakout` shows the IO breakout for the port in relation to the ports that are utilised for the demo applications running with an external oscillator.
+
+.. _table_connector_breakout:
+
+.. table:: Motor Control Board Connector Breakout for Demo & Test Applications 
+
+    +-------------+-----------+--------------------+
+    |  XMOS Port  |  JP1 Pin  |   Demo Function    |
+    +=============+===========+====================+
+    | XS1_PORT_1A |    28     | External Reference |
+    +-------------+-----------+--------------------+
+    |             |    39     | UART TX Channel 0  |
+    |             +-----------+--------------------+
+    |             |    40     | UART TX Channel 1  |
+    |             +-----------+--------------------+
+    |             |    42     | UART TX Channel 2  |
+    |             +-----------+--------------------+
+    |             |    43     | UART TX Channel 3  |
+    | XS1_PORT_8A +-----------+--------------------+
+    |             |    44     | UART TX Channel 4  |
+    |             +-----------+--------------------+
+    |             |    46     | UART TX Channel 5  |
+    |             +-----------+--------------------+
+    |             |    41     | UART TX Channel 6  |
+    |             +-----------+--------------------+
+    |             |    45     | UART TX Channel 7  |
+    +-------------+-----------+--------------------+
+    |             |    19     | UART RX Channel 0  |
+    |             +-----------+--------------------+
+    |             |    20     | UART RX Channel 1  |
+    |             +-----------+--------------------+
+    |             |    22     | UART RX Channel 2  |
+    |             +-----------+--------------------+
+    |             |    23     | UART RX Channel 3  |
+    | XS1_PORT_8C +-----------+--------------------+
+    |             |    24     | UART RX Channel 4  |
+    |             +-----------+--------------------+
+    |             |    47     | UART RX Channel 5  |
+    |             +-----------+--------------------+
+    |             |    21     | UART RX Channel 6  |
+    |             +-----------+--------------------+
+    |             |    NC     | UART RX Channel 7  |
+    +-------------+-----------+--------------------+
+
+
+Demo Application Configuration
+--------------------------------
+
+The demo application can be compiled and run in two different modes.
+
+    * Simple Transmit & Receive Mode
+
+        * This mode of operation produces an application that constantly outputs a string on each UART channel. On the receive side the application will print out via the JTAG interface any characters it receives. This can be looped back by connecting the physical pins together for testing.
+        
+    * Echo Test Mode
+    
+        * This mode of operation produces an application that operates as an echo device. This therefore echos back any characters that it receives via the same transmit UART channel.
+        
+Configuration is done utilising the defines listed out below.
+
+.. literalinclude:: app_multi_uart_demo/src/main.xc
+    :start-after: //:demo_app_config
+    :end-before:  //:
+    
+**LOOP_REF_TEST**
+
+    This configures the tests with internal clocking only. This means that no external clock source is required to conduct testing. However it will only operate at multiples the internal reference clock (e.g. 100000 bps).
+    
+**ECHO_TEST**
+
+    Build the software to run the echo test demo application.
+    
+**SIMPLE_TEST**
+
+    Build the simple test application
+    
+**SIMPLE_TEST_DO_RECONF**
+
+    Enable reconfiguration on the simple test application - after a specified time within the application the UART will be reconfigured for a different baud rate.
+    
+Echo Test Application Description
+-----------------------------------
+
+The Echo Test demonstration application shows a typical structure of an application that might be implemented by the user of this module. The diagram in :ref:`fig_echo_struct` shows the structure of the demonstration application.
+
+In addition to the two multi-UART threads the application utilises two further threads - one providing buffering for the UART RX and one handling to the pushing of data to the TX buffer. The RX buffering is implemented as an example only and is not strictly necessary in this application as the TX thread already provides some buffering.
+
+When the RX thread receives a character over the UART it saves it into the local single entry buffer and puts a data token into the channel. This data token is received by RX buffering thread and tells it which UART channel a character has been received on. The RX buffering thread then grabs this character out of the buffer slot, validates it utilising the provided validation function and inserts it into a larger, more comprehensive buffer.
+
+The TX thread operates by polling the buffer between the RX buffering thread and the Echo Application thread. When an entry is seen it pulls it from the buffer and utilises the API to push the value into the TX thread buffer. From there the TX thread will send that value on the correct UART channel on the 8 bit port.
+
+The channel for the TX thread is primarily used for reconfiguration. This is discussed in more detail in :ref:`sec_reconf_rxtx`.
+
+Specific usage of the API is discussed in :ref:`sec_interfacing_tx` and :ref:`sec_interfacing_rx`.
+
+.. _fig_echo_struct:
+
+.. figure:: images/EchoSoftwareDiagram.png
+
+    Echo Test Application Structure
+    
+
 .. _sec_test:
 
 Module Testing Scripts
-=======================
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The module is provided with a python testing script that utilises the echo test application to verify the operation of the Multi-UART module. It covers two particular traffic types.
 
     * Simple slow speed character traffic
 
-        * This type of traffic is not disimilar to manually typed in characters. They will have a pause in the order of milliseconds between each character.
+        * This type of traffic is not dissimilar to manually typed in characters. They will have a pause in the order of milliseconds between each character.
         
     * Burst data traffic
         
@@ -20,7 +159,7 @@ The test scripts require a Python environment with PySerial installed (see http:
 
 The tests are provided as part of the component repository in `sc_multi_uart/test/serial_test`.
 
-This python script as a number of command line configuration flags that can be utilised to define the test that you want to carry out. These can be seen by passing the ``-h`` flag to the script. A summary is listed below. 
+This python script has a number of command line configuration flags that can be utilised to define the test that you want to carry out. These can be seen by passing the ``-h`` flag to the script. A summary is listed below. 
 
 ::
 

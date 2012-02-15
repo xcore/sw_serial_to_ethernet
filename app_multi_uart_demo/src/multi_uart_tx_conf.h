@@ -18,9 +18,13 @@
 
 
 /**
- * Define the max baud rate - validated to 230kbaud
+ * Define the max baud rate - validated to 115200kbaud
  */
+#ifdef UART_TX_USE_EXTERNAL_CLOCK
 #define UART_TX_MAX_BAUD_RATE   115200
+#else
+#define UART_TX_MAX_BAUD_RATE   100000
+#endif
 
 
 /**
