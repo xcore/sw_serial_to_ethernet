@@ -35,7 +35,7 @@ This file can set the following defines:
 Data Structures
 ---------------
 
-.. doxygenstruct:: s_uart_channel_config
+.. doxygenstruct:: STRUCT_UART_CHANNEL_CONFIG
 
 .. doxygenstruct:: s_uart_tx_channel_fifo
 

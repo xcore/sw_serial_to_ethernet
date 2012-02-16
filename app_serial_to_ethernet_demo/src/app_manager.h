@@ -94,7 +94,7 @@ typedef struct STRUCT_UART_RX_CHANNEL_FIFO
 													// serviced; if T, select next channel
 }s_uart_rx_channel_fifo;
 
-/* Data structure to hold uart config data */
+/** Data structure to hold uart config data */
 typedef struct STRUCT_UART_CHANNEL_CONFIG
 {
 	unsigned int 			channel_id;				//Channel identifier
@@ -107,7 +107,7 @@ typedef struct STRUCT_UART_CHANNEL_CONFIG
 	int 					telnet_conn_id;			//telnet connection id telnetd_state_t.conn_id ~= xtcp_connection_t.id
 	e_bool 					is_configured;			//whether channel is configured or not//TODO: To chk if this is still reqd, provided a default uart config if applied initially, b4 web configuring
 	e_bool 					is_telnet_active;		//whether telnet client is active or not
-}s_uart_channel_config;
+} s_uart_channel_config;
 
 /*---------------------------------------------------------------------------
 extern variables
@@ -126,10 +126,24 @@ prototypes
 void fill_uart_channel_data(
 		REFERENCE_PARAM(xtcp_connection_t, conn),
 		char data);
+
+/** 
+ *  The multi uart manager thread. This thread
+ *  (i) periodically polls for data on application Tx buffer, in order to transmit to telnet clients
+ *  (ii) waits for channel data from MUART Rx thread
+ *
+ *  \param	chanend cWbSvr2AppMgr channel end sharing web server thread
+ *  \param	chanend cTxUART		channel end sharing channel to MUART TX thrd
+ *  \param	chanend cRxUART		channel end sharing channel to MUART RX thrd
+ *  \return	None
+ *
+ */
+
 void app_manager_handle_uart_data(
 		streaming chanend cWbSvr2AppMgr,//TODO: Chk for real necessity of a streaming chnl
 		streaming chanend cTxUART,
 		streaming chanend cRxUART);
+
 //int get_uart_channel_id(unsigned int remote_port);
 void fill_uart_channel_data_from_queue();
 int get_uart_channel_data(

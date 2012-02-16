@@ -3,19 +3,21 @@ System Overview
 
 This section briefly describes the design of the application.
 
-Block diagram and Thread diagram of s2e app:
-	Eth - TCP/IP - Web Server - EM - MUART Tx and Rx
-		Check s2e design doc and update this
+Block diagram and Thread diagram of s2e app
+-------------------------------------------
 
-	Ethernet MII interface supports Ethernet device communication (utilizes 5T eth interface for this implementation)
-	Webserver supports HTTP and Telnet
-	Ethernet-Uart manager thread interfaces with Uart TX and RX server threads in order to configure, and manage Uart specific channel data
-		Utilizes MUART api set to achieve the server communication
-		<<Embed code snippet for a sample case here>>
-	Additionally, this thread interfaces with web server thread to handle the TCP/IP events
+.. figure:: images/s2e_BlockDiagram.png
 
+   * Ethernet MII interface supports Ethernet device communication. This component utilizes five threads for interfacing clients to PHY
+   * XTCP component for TCP/IP stack
+   * Webserver to support HTTP and Telnet client interfaces
+   * Ethernet-Uart application manager thread 
+      * Interfaces with Uart TX and RX server threads in order to configure, and manage Uart specific channel data
+      * Interfaces with web server thread to handle the TCP/IP client events
 	 
-	description of operation
-		include the flow / cross functional diagrams here
-		design of the application
-	pinout.
+Description of Operation
+++++++++++++++++++++++++
+
+Uart Configuration and Data Managemnt
+
+.. figure:: images/FlowDiagram.png
