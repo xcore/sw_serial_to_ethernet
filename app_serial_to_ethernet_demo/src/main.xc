@@ -14,7 +14,7 @@
  -----------------------------------------------------------------------------
 
  ===========================================================================*/
-
+ 
 /*---------------------------------------------------------------------------
  include files
  ---------------------------------------------------------------------------*/
@@ -32,6 +32,11 @@
  constants
  ---------------------------------------------------------------------------*/
 //#define	DHCP_CONFIG	1	/* Set this to use DHCP */
+#define XSCOPE_EN 0     /* set this to 1 for xscope printing */
+
+#if XSCOPE_EN == 1
+#include <xscope.h>
+#endif
 
 /*---------------------------------------------------------------------------
  ports and clocks
@@ -180,62 +185,73 @@ int main(void)
 	streaming chan cTxUART;
 	streaming chan cRxUART;
 
-    par
-    {
-        /* The ethernet server */
-        on stdcore[0]: init_ethernet_server(otp_data,
-                                            otp_addr,
-                                            otp_ctrl,
-                                            clk_smi,
-                                            smi,
-                                            mii,
-                                            mac_rx,
-                                            mac_tx,
-                                            connect_status,
-                                            reset);
-
-        /* The TCP/IP server thread */
-        on stdcore[0]: uip_server(mac_rx[0],
-                                  mac_tx[0],
-                                  xtcp,
-                                  1,
-                                  ipconfig,
-                                  connect_status);
-
-        /*
-        on stdcore[0]: dummy();
-        on stdcore[0]: dummy();
-        on stdcore[0]: dummy();
-        on stdcore[0]: dummy();
-        on stdcore[0]: dummy();
-        on stdcore[0]: dummy();
-        */
-
-		/* web server thread for handling and servicing http requests
-		 * and telnet data communication */
-		on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr);
-
-		/* The multi-uart application manager thread to handle uart
-		 * data communication to web server clients */
-		on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cTxUART, cRxUART);
-#if 0
-		/* Multi-uart transmit thread */
-		on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
-
-		/* Multi-uart receive thread */
-		on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports, uart_clock_rx );
-#else
-        /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-		on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
-#endif
-		/*
-		on stdcore[1]: dummy();
-		on stdcore[1]: dummy();
-		on stdcore[1]: dummy();
-		on stdcore[1]: dummy();
-		*/
-
-    } // par
+	par
+	{
+	    {
+	        par
+	        {
+	            /* The ethernet server */
+	            on stdcore[0]: init_ethernet_server(otp_data,
+	                otp_addr,
+	                otp_ctrl,
+	                clk_smi,
+	                smi,
+	                mii,
+	                mac_rx,
+	                mac_tx,
+	                connect_status,
+	                reset);
+	            
+	            /* The TCP/IP server thread */
+	            on stdcore[0]: uip_server(mac_rx[0],
+	                mac_tx[0],
+	                xtcp,
+	                1,
+	                ipconfig,
+	                connect_status);
+	            
+	            #if XSCOPE_EN == 1
+	            on stdcore[0]: {
+	                xscope_register (0 , 0 , " " , 0, " " );
+	                xscope_config_io ( XSCOPE_IO_BASIC );
+	                dummy();
+	            }
+	            #endif
+	            /*
+	            on stdcore[0]: dummy();
+	            on stdcore[0]: dummy();
+	            on stdcore[0]: dummy();
+	            on stdcore[0]: dummy();
+	            on stdcore[0]: dummy();
+	            */
+	            
+	            /* web server thread for handling and servicing http requests
+	            * and telnet data communication */
+	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr);
+	            
+	            /* The multi-uart application manager thread to handle uart
+	            * data communication to web server clients */
+	            on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cTxUART, cRxUART);
+	            #if 0
+	            /* Multi-uart transmit thread */
+	            on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
+	            
+	            /* Multi-uart receive thread */
+	            on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports, uart_clock_rx );
+	            #else
+	            /* run the multi-uart RX & TX with a common external clock - (2 threads) */
+	            on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
+	            #endif
+	            
+	            
+	            on stdcore[1]: dummy();
+	            on stdcore[1]: dummy();
+	            on stdcore[1]: dummy();
+	            on stdcore[1]: dummy();
+	            
+	        } // par
+	    }
+	}
 
     return 0;
 }

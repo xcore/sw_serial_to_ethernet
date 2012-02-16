@@ -137,18 +137,19 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
 int uart_rx_validate_char( int chan_id, unsigned *uart_word )
 {
     int error = 0;
+    unsigned word = *uart_word;
         
     switch (uart_rx_channel[chan_id].sb_mode)
     {
         case sb_1:
-            if ((*uart_word & 1) != 1) // TODO respect polarity
+            if ((word & 1) != 1) // TODO respect polarity
                 error = 1;
-            *uart_word >>= 1;
+            word >>= 1;
             break;
         case sb_2:
-            if ((*uart_word & 0x3) != 0x3) // TODO respect polarity
+            if ((word & 0x3) != 0x3) // TODO respect polarity
                 error = 1;
-            *uart_word >>= 2;
+            word >>= 2;
             break;
     }
     
@@ -160,11 +161,11 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
         case even:
         case mark:
         case space:
-            if ((*uart_word&1) != uart_rx_calc_parity(chan_id, *uart_word>>1))
+            if ((word&1) != uart_rx_calc_parity(chan_id, (word>>1)&0xFF))
             {
                 error = 1;
             }
-            *uart_word >>= 1;
+            word >>= 1;
             break;
         case none:
             break;
@@ -172,7 +173,7 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
     
     if (error) { return -2;}
     
-    *uart_word = (bitrev(*uart_word) >> 24);
+    *uart_word = (bitrev(word) >> 24);
        
     return 0;
 }

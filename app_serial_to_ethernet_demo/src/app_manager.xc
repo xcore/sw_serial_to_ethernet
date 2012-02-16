@@ -782,7 +782,7 @@ void app_manager_handle_uart_data(
 {
 	timer txTimer;
 	unsigned txTimeStamp;
-	unsigned rx_channel_id;
+	char rx_channel_id;
 	unsigned int local_port = 0;
 	int conn_id  = 0;
 	int WbSvr2AppMgr_chnl_data = 9999;
@@ -828,12 +828,10 @@ void app_manager_handle_uart_data(
     			  add_telnet_conn_id_for_uart_channel(local_port, conn_id);
     		  }
 			  break ;
-    	  case cRxUART :> rx_channel_id :
+		  case cRxUART :> rx_channel_id:
     		  //Read data from MUART RX thread
     		  receive_uart_channel_data(cRxUART, rx_channel_id);
 			  break ;
-    	  default:
-    		  break;
         }
     }
 }
