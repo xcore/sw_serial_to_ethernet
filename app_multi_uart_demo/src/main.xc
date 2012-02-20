@@ -7,7 +7,7 @@
 #include "echo_test.h"
 
 /* define UART_CORE for Motor Control Board as 1 */
-#define UART_CORE   1
+#define UART_CORE   0
 
 on stdcore[UART_CORE]: s_multi_uart_tx_ports uart_tx_ports =
 {    
