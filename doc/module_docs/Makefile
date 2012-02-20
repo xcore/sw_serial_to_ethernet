@@ -1,3 +1,5 @@
+all: xmospdf
+
 SPHINX_PROJECT_NAME = Multi-UART Module Usage
 VERSION = 0.1
 DOXYGEN_DIRS = ../../module_multi_uart
