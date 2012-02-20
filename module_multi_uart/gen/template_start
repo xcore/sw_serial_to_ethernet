@@ -9,7 +9,7 @@
 #endif
 
 #define STACK_SIZE  12
-#define CHAN_STRUCT_SIZE 0x6C
+#define CHAN_STRUCT_SIZE 0x20
 // TODO this needs to come from the configuration header
 #define CHAN_COUNT UART_RX_CHAN_COUNT
 

@@ -53,13 +53,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
     e_uart_config_stop_bits sb_mode; /**< Stop bit configuration */
     e_uart_config_parity parity_mode; /**< Parity mode configuration */
     e_uart_polarity polarity_mode; /**< Polarity mode (unused) */
-    
-    int wr_ptr; /**< currently unused */
-    int rd_ptr; /**< currently unused */
-    unsigned nelements; /**< currently unused */
-    unsigned buf[UART_RX_BUF_SIZE]; /**< currently unused */
-    /*@}*/
-    
+
 } s_multi_uart_rx_channel;
 
 

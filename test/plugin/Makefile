@@ -21,5 +21,12 @@ clean:
 	rm -rf $(OBJS)
 	rm -rf $(BINDIR)/$(PLUGIN_NAME).*
 
-runsim:
+runsim_uart0:
 	xsim -t --trace-to uart_trace.log --plugin uart_test.so "0 X0D14 0 X0D00" --vcd-tracing "-o uart_sim.vcd -cycles -ports -ports-detailed" ../../app_multi_uart_demo/bin/$(APP_NAME).xe
+
+runsim_uart1:
+	xsim -t --trace-to uart_trace.log --plugin uart_test.so "0 X0D15 0 X0D00" --vcd-tracing "-o uart_sim.vcd -cycles -ports -ports-detailed" ../../app_multi_uart_demo/bin/$(APP_NAME).xe
+
+runsim_uart2:
+	xsim -t --trace-to uart_trace.log --plugin uart_test.so "0 X0D16 0 X0D00" --vcd-tracing "-o uart_sim.vcd -cycles -ports -ports-detailed" ../../app_multi_uart_demo/bin/$(APP_NAME).xe
+

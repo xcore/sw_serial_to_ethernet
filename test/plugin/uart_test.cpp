@@ -142,22 +142,30 @@ XsiStatus plugin_clock(void *instance)
   unsigned int parity;
   
   static unsigned int char_count = 0;
+
+  static unsigned int first_time_flg = 0;
   
-  /* drive other pins on 8B */
-  status = xsi->drive_pin("0", "X0D15", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D16", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D17", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D18", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D19", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D20", 1);
-  CHECK_STATUS;
-  status = xsi->drive_pin("0", "X0D21", 1);
-  CHECK_STATUS;
+  if (first_time_flg == 0)
+  {
+  	first_time_flg = 1;
+	/* drive other pins on 8B */
+	status = xsi->drive_pin("0", "X0D14", 1);
+	CHECK_STATUS;
+	status = xsi->drive_pin("0", "X0D15", 1);
+	CHECK_STATUS;
+        status = xsi->drive_pin("0", "X0D16", 1);
+        CHECK_STATUS;
+        status = xsi->drive_pin("0", "X0D17", 1);
+	CHECK_STATUS;
+	status = xsi->drive_pin("0", "X0D18", 1);
+	CHECK_STATUS;
+	status = xsi->drive_pin("0", "X0D19", 1);
+	CHECK_STATUS;
+	status = xsi->drive_pin("0", "X0D20", 1);
+	CHECK_STATUS;
+	status = xsi->drive_pin("0", "X0D21", 1);
+	CHECK_STATUS;
+  }
   
   /* external clock */
   if (s_instances[instance_num].ext_clk_src_tick_count < s_instances[instance_num].ext_clk_src_tick_target)
