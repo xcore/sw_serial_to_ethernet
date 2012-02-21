@@ -408,7 +408,7 @@ void fill_uart_channel_data(
 *  \return			None
 *
 **/
-static void receive_uart_channel_data(
+void receive_uart_channel_data(
 		streaming chanend cUART,
 		unsigned channel_id)
 {
@@ -725,8 +725,8 @@ static void re_apply_uart_channel_config(
 	{
 		/* Reconfigure Uart channel request */
 		//TODO: add reconf api's: these r not working currently
-//        uart_tx_reconf_pause( cTxUART, t );
-//        uart_rx_reconf_pause( cRxUART );
+        uart_tx_reconf_pause( cTxUART, t );
+        uart_rx_reconf_pause( cRxUART );
 
 	    chnl_config_status = configure_uart_channel(channel_id);
 	    if (0 == chnl_config_status)
@@ -746,9 +746,14 @@ static void re_apply_uart_channel_config(
 	    	/* Send new telnet port */
 	    	cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
 	    }
+	    else
+	    {
+	    	printint(channel_id);
+	    	printstrln(": Channel reconfig failed");
+	    }
 
-//        uart_tx_reconf_enable( cTxUART );
-//        uart_rx_reconf_enable( cRxUART );
+        uart_tx_reconf_enable( cTxUART );
+        uart_rx_reconf_enable( cRxUART );
 	}
     else
     {
@@ -823,10 +828,14 @@ void app_manager_handle_uart_data(
     			  add_telnet_conn_id_for_uart_channel(local_port, conn_id);
     		  }
 			  break ;
-		  case cRxUART :> rx_channel_id:
+#pragma xta endpoint "ep_1"
+    	  case cRxUART :> rx_channel_id:
     		  //Read data from MUART RX thread
+    		  //receive_uart_channel_data(cRxUART, (unsigned)rx_channel_id);
     		  receive_uart_channel_data(cRxUART, rx_channel_id);
 			  break ;
         }
     }
 }
+
+//#pragma xta command "analyze function receive_uart_channel_data"

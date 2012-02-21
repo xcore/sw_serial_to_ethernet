@@ -1,0 +1,3 @@
+analyze function receive_uart_channel_data
+set required - 8.68 us
+print summary

@@ -25,7 +25,7 @@ constants
 ---------------------------------------------------------------------------*/
 /* Remove this to prevent some information being
  * displayed on the debug console */
-//#define XTCP_VERBOSE_DEBUG (1)
+#define XTCP_VERBOSE_DEBUG (1)
 
 /* Enable this macro to set variable baud rates at init time */
 //#define SET_VARIABLE_BAUD_RATE	(1)
