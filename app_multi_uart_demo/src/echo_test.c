@@ -16,9 +16,6 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
 
     unsigned uart_char, temp;
     unsigned baud_rate = 115200;
-    unsigned flag = 0;
-    
-    timer t;
     
     printstr("Running echo test...\n");
     

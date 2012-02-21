@@ -11,11 +11,6 @@ extern unsigned rx_char_slots[UART_RX_CHAN_COUNT];
 
 #define increment(a, inc)  { a = (a+inc); a *= !(a == UART_RX_BUF_SIZE); }
 
-static unsigned crc8_helper( unsigned &checksum, unsigned data, unsigned poly )
-{
-    return crc8shr(checksum, data, poly);
-}
-
 void multi_uart_rx_port_init( s_multi_uart_rx_ports &rx_ports, clock uart_clock )
 {
     
@@ -48,8 +43,6 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
 
     unsigned port_val;
     e_uart_rx_chan_state state[UART_RX_CHAN_COUNT];
-    unsigned word, fourBits, bit;
-    int tc;
     
     int tickcount[UART_RX_CHAN_COUNT];
     int bit_count[UART_RX_CHAN_COUNT];

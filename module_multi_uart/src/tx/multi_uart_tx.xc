@@ -47,7 +47,6 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 {
     unsigned port_val = 0xFF; // TODO honour IDLE/STOP polarity
     unsigned short port_ts;
-    int loop = 0;
     
     unsigned current_word[UART_TX_CHAN_COUNT];
     unsigned current_word_pos[UART_TX_CHAN_COUNT];
