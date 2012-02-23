@@ -88,7 +88,7 @@ on stdcore[0]: mii_interface_t mii =
     on stdcore[0]: smi_interface_t smi = {PORT_ETH_MDIO, PORT_ETH_MDC, 0};
 #endif
 #else //TWO_THREAD_ETH
-#define PORT_ETH_FAKE    on stdcore[0]: XS1_PORT_8A
+#define PORT_ETH_FAKE    on stdcore[0]: XS1_PORT_8B
 
 on stdcore[0]: struct otp_ports otp_ports = { XS1_PORT_32B, XS1_PORT_16C, XS1_PORT_16D };
 

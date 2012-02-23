@@ -264,6 +264,8 @@ int telnetd_send_client_data(chanend tcp_svr)
 
 	if (1 == valid_data_to_send)
 	{
+		//printint(channel_id); TODO: Bug: Data for chnl 7 is always present
+
 		connection_state_index = fetch_connection_state_index(conn_id);
 
 		if (-1 != connection_state_index)

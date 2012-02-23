@@ -2,12 +2,14 @@
 // This software is freely distributable under a derivative of the
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
+
 /*===========================================================================
-Filename: debug.h
+Filename: user_client.h
 Project : app_serial_to_ethernet_demo
 Author  : XMOS Ltd
 Version : 1v0
-Purpose : This file control level of debug trace
+Purpose : This file delcares data structures and interfaces to contain
+data parsing logic from different client interfaces (web, telnet etc)
 -----------------------------------------------------------------------------
 
 ===========================================================================*/
@@ -15,41 +17,34 @@ Purpose : This file control level of debug trace
 /*---------------------------------------------------------------------------
 include files
 ---------------------------------------------------------------------------*/
-#ifndef _debug_h_
-#define _debug_h_
-
-#include <print.h>
+#ifndef _user_client_h_
+#define _user_client_h_
 
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
-/* Remove this to prevent some information being
- * displayed on the debug console */
-#define XTCP_VERBOSE_DEBUG (1)
-
-/* Enable this macro to set variable baud rates at init time */
-//#define SET_VARIABLE_BAUD_RATE	(1)
-
-/* Enable this macro for tracing high level code flow */
-//#define DEBUG_LEVEL_1	1
-/* Enable this macro for function level debugging,
- * overflow/underflow scenarios */
-//#define DEBUG_LEVEL_2	1
-/* Enable this macro for detailed function level debugging,
- * with some parameters tracing enabled */
-//#define DEBUG_LEVEL_3	1
-
-/* Enable this macro to simulate MUART component data */
-//#define SIMULATION
+/* Length of buffer to hold user command response */
+#define TLNT_CMD_USR_RESP_BUF_LEN	300
+/* User parameter for telnet command */
+#define TLNT_CMD_CHAR_USR_PARAM_LEN	10
+/*---------------------------------------------------------------------------
+typedefs
+---------------------------------------------------------------------------*/
+/** Data structure to hold telnet command response */
+typedef struct STRUCT_USER_CLIENT_CMD_RESPONSE
+{
+	unsigned int 		pending_user_cmd_response;
+	char				user_param_char_1[TLNT_CMD_CHAR_USR_PARAM_LEN];
+	char				user_param_char_2[TLNT_CMD_CHAR_USR_PARAM_LEN];
+	int					user_param_int_1;
+	int					user_param_int_2;
+	char				user_resp_buffer[TLNT_CMD_USR_RESP_BUF_LEN];
+} s_user_client_cmd_response;
 
 /*---------------------------------------------------------------------------
 extern variables
 ---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------
-typedefs
----------------------------------------------------------------------------*/
-
+extern s_user_client_cmd_response	user_client_cmd_resp;
 /*---------------------------------------------------------------------------
 global variables
 ---------------------------------------------------------------------------*/
@@ -57,5 +52,6 @@ global variables
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
+void parse_client_usr_command(char data);
 
-#endif // _debug_h_
+#endif // _user_client_h_

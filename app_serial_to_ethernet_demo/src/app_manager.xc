@@ -20,6 +20,7 @@ include files
 ---------------------------------------------------------------------------*/
 #include "telnetd.h"
 #include "app_manager.h"
+#include "user_client.h"
 #include "debug.h"
 
 /*---------------------------------------------------------------------------
@@ -35,7 +36,6 @@ constants
 #define	DEF_CHAR_LEN					8
 #define MGR_TX_TMR_EVENT_INTERVAL		(TIMER_FREQUENCY /	\
 										(MAX_BIT_RATE * UART_TX_CHAN_COUNT))
-
 /*---------------------------------------------------------------------------
 ports and clocks
 ---------------------------------------------------------------------------*/
@@ -50,7 +50,6 @@ global variables
 s_uart_channel_config	uart_channel_config[UART_TX_CHAN_COUNT];
 s_uart_tx_channel_fifo	uart_tx_channel_state[UART_TX_CHAN_COUNT];
 s_uart_rx_channel_fifo	uart_rx_channel_state[UART_RX_CHAN_COUNT];
-
 /*---------------------------------------------------------------------------
 static variables
 ---------------------------------------------------------------------------*/
@@ -348,51 +347,59 @@ void fill_uart_channel_data(
 	int channel_id;
 	int write_index = 0;
 
-	channel_id = get_uart_channel_id(conn.local_port, conn.id);
-
-	if (ERR_UART_CHANNEL_NOT_FOUND != channel_id)
+	if (TELNET_PORT_USER_CMDS == conn.local_port)
 	{
-		if (uart_tx_channel_state[channel_id].buf_depth == 0)
+		parse_client_usr_command(data);
+	}
+	else
+	{
+		channel_id = get_uart_channel_id(conn.local_port, conn.id);
+
+		if (ERR_UART_CHANNEL_NOT_FOUND != channel_id)
 		{
-			/* There is no pending Uart buffer data */
-			/* Transmit to uart directly */
-			buffer_space = uart_tx_put_char(channel_id, (unsigned int)data);
-
-			if (-1 != buffer_space)
+			if (uart_tx_channel_state[channel_id].buf_depth == 0)
 			{
-				/* Data is successfully sent to MUART TX */
-				return;
-			}
-		}
+				/* There is no pending Uart buffer data */
+				/* Transmit to uart directly */
+				buffer_space = uart_tx_put_char(channel_id, (unsigned int)data);
 
-	    if (uart_tx_channel_state[channel_id].buf_depth < TX_CHANNEL_FIFO_LEN)
-	    {
-			/* Uart buffer is full; fill app buffer of respective uart channel */
-	    	uart_tx_channel_state[channel_id].channel_id = channel_id;
-	    	write_index = uart_tx_channel_state[channel_id].write_index;
-	        uart_tx_channel_state[channel_id].channel_data[write_index] = data;
-	        write_index++;
-	        //write_index &= (TX_CHANNEL_FIFO_LEN-1);
-	        if (write_index >= TX_CHANNEL_FIFO_LEN)
-	        {
-	        	write_index = 0;
-	        }
-	        uart_tx_channel_state[channel_id].write_index = write_index;
-	        uart_tx_channel_state[channel_id].buf_depth++;
+				if (-1 != buffer_space)
+				{
+					/* Data is successfully sent to MUART TX */
+					return;
+				}
+			}
+
+		    if (uart_tx_channel_state[channel_id].buf_depth < TX_CHANNEL_FIFO_LEN)
+		    {
+				/* Uart buffer is full; fill app buffer of respective uart channel */
+		    	uart_tx_channel_state[channel_id].channel_id = channel_id;
+		    	write_index = uart_tx_channel_state[channel_id].write_index;
+		        uart_tx_channel_state[channel_id].channel_data[write_index] = data;
+		        write_index++;
+		        //write_index &= (TX_CHANNEL_FIFO_LEN-1);
+		        if (write_index >= TX_CHANNEL_FIFO_LEN)
+		        {
+		        	write_index = 0;
+		        }
+		        uart_tx_channel_state[channel_id].write_index = write_index;
+		        uart_tx_channel_state[channel_id].buf_depth++;
 #ifdef DEBUG_LEVEL_3
-	        printstr("Added to TX buffer; buf_depth is: ");
-	        printintln(uart_tx_channel_state[channel_id].buf_depth);
+		        printstr("Added to TX buffer; buf_depth is: ");
+		        printintln(uart_tx_channel_state[channel_id].buf_depth);
 #endif	//DEBUG_LEVEL_3
-	    }
+		    }
 #ifdef DEBUG_LEVEL_1
-	    else if (uart_tx_channel_state[channel_id].buf_depth >= TX_CHANNEL_FIFO_LEN)
-	    {
-	    	printstr("Uart App TX buffer full...[data is dropped]. Chnl id: ");
-	        printintln(channel_id);
-	    }
+		    else if (uart_tx_channel_state[channel_id].buf_depth >= TX_CHANNEL_FIFO_LEN)
+		    {
+		    	printstr("Uart App TX buffer full...[data is dropped]. Chnl id: ");
+		        printintln(channel_id);
+		    }
 #endif	//DEBUG_LEVEL_1
+		}
 	}
 }
+
 
 /** =========================================================================
 *  receive_uart_channel_data
@@ -530,6 +537,7 @@ int get_uart_channel_data(
 	read_index = uart_rx_channel_state[channel_id].read_index;
 	buf_depth = uart_rx_channel_state[channel_id].buf_depth;
 
+	//printint(buf_depth); TODO: Bug: Data for chnl 7 is always present
 	if ((buf_depth > 0) && (buf_depth <= RX_CHANNEL_FIFO_LEN))
 	{
 		/* Store client connection id pertaining to this uart channel */
@@ -706,25 +714,10 @@ static void re_apply_uart_channel_config(
     cWbSvr2AppMgr :> channel_id;
     cWbSvr2AppMgr :> prev_telnet_conn_id;
     cWbSvr2AppMgr :> prev_telnet_port;
-#if 0
-	if ((0 == prev_telnet_conn_id) && (0 == prev_telnet_port))
-	{
-		/* This is a fresh uart configuration. */
-		/* Configure Uart channel */
-	    chnl_config_status = configure_uart_channel(channel_id);
-	    if (0 == chnl_config_status)
-	    {
-    		cWbSvr2AppMgr <: SET_NEW_TELNET_SESSION;
-    		cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
-	    }
-	}
-	else if (((0 != prev_telnet_conn_id) && (0 != prev_telnet_port)) &&
-		(uart_channel_config[channel_id].telnet_port != prev_telnet_port)) //TODO: This chk may hinder when reconfig does not modify telnet port; so chk this
-#endif
-	if (1) //TODO: to add a valid condition check here
+
+    if (1) //TODO: to add a valid condition check here
 	{
 		/* Reconfigure Uart channel request */
-		//TODO: add reconf api's: these r not working currently
         uart_tx_reconf_pause( cTxUART, t );
         uart_rx_reconf_pause( cRxUART );
 
@@ -741,8 +734,6 @@ static void re_apply_uart_channel_config(
 	    		 *  new session on new telnet port */
 	    		cWbSvr2AppMgr <: RESET_TELNET_SESSION;
 	    	}
-	    	//cWbSvr2AppMgr <: prev_telnet_conn_id;
-	    	//cWbSvr2AppMgr <: prev_telnet_port;
 	    	/* Send new telnet port */
 	    	cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
 	    }
@@ -760,7 +751,6 @@ static void re_apply_uart_channel_config(
 		/* Signal the end of current transaction */
 		cWbSvr2AppMgr <: CHNL_TRAN_END;
     }
-
 }
 
 /** 
@@ -829,7 +819,7 @@ void app_manager_handle_uart_data(
     		  }
 			  break ;
 #pragma xta endpoint "ep_1"
-    	  case cRxUART :> rx_channel_id:
+		  case cRxUART :> rx_channel_id:
     		  //Read data from MUART RX thread
     		  //receive_uart_channel_data(cRxUART, (unsigned)rx_channel_id);
     		  receive_uart_channel_data(cRxUART, rx_channel_id);

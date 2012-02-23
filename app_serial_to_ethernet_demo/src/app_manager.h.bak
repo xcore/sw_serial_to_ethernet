@@ -35,7 +35,7 @@ constants
 
 /* Configure web browser port number */
 #define HTTP_PORT					80
-#define TELNET_PORT_USER_CMDS		23
+
 #ifndef NUM_HTTPD_CONNECTIONS
 /* Maximum number of concurrent connections */
 #define NUM_HTTPD_CONNECTIONS 10
