@@ -715,41 +715,36 @@ static void re_apply_uart_channel_config(
     cWbSvr2AppMgr :> prev_telnet_conn_id;
     cWbSvr2AppMgr :> prev_telnet_port;
 
-    if (1) //TODO: to add a valid condition check here
-	{
-		/* Reconfigure Uart channel request */
-        uart_tx_reconf_pause( cTxUART, t );
-        uart_rx_reconf_pause( cRxUART );
+	/* Reconfigure Uart channel request */
+    uart_tx_reconf_pause( cTxUART, t );
+    uart_rx_reconf_pause( cRxUART );
 
-	    chnl_config_status = configure_uart_channel(channel_id);
-	    if (0 == chnl_config_status)
-	    {
-	    	if (0 == prev_telnet_conn_id)
-	    	{
-	    		cWbSvr2AppMgr <: SET_NEW_TELNET_SESSION;
-	    	}
-	    	else
-	    	{
-	    		/* Close this active telnet client session and establish a
-	    		 *  new session on new telnet port */
-	    		cWbSvr2AppMgr <: RESET_TELNET_SESSION;
-	    	}
-	    	/* Send new telnet port */
-	    	cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
-	    }
-	    else
-	    {
-	    	printint(channel_id);
-	    	printstrln(": Channel reconfig failed");
-	    }
+    chnl_config_status = configure_uart_channel(channel_id);
 
-        uart_tx_reconf_enable( cTxUART );
-        uart_rx_reconf_enable( cRxUART );
-	}
+    uart_tx_reconf_enable( cTxUART );
+    uart_rx_reconf_enable( cRxUART );
+
+    if (0 == chnl_config_status)
+    {
+    	if (0 == prev_telnet_conn_id)
+    	{
+    		cWbSvr2AppMgr <: SET_NEW_TELNET_SESSION;
+    	}
+    	else
+    	{
+    		/* Close this active telnet client session and establish a
+    		 *  new session on new telnet port */
+    		cWbSvr2AppMgr <: RESET_TELNET_SESSION;
+    	}
+    	/* Send new telnet port */
+    	cWbSvr2AppMgr <: uart_channel_config[channel_id].telnet_port;
+    }
     else
     {
+    	printint(channel_id);
+    	printstrln(": Channel reconfig failed");
 		/* Signal the end of current transaction */
-		cWbSvr2AppMgr <: CHNL_TRAN_END;
+		cWbSvr2AppMgr <: CHNL_TRAN_END; //TODO: Conf reversal should be added
     }
 }
 

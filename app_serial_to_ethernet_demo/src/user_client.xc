@@ -21,6 +21,7 @@ include files
 #include "user_client.h"
 #include "xtcp_client.h"
 #include "app_manager.h"
+#include "telnet_app.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "debug.h"
@@ -29,7 +30,7 @@ include files
 constants
 ---------------------------------------------------------------------------*/
 /* CONFIG CMD FROM USER CLIENTS */
-#define CONFIG_KEY_WORD_LEN				2
+#define CONFIG_KEY_WORD_LEN				3
 #define NUM_CONFIG_PARAM				8
 #define CONFIG_PARAM_LEN				7
 #define CONFIG_DATA_LEN					(NUM_CONFIG_PARAM * CONFIG_PARAM_LEN)
@@ -116,7 +117,7 @@ static void parse_user_data_from_client(char data)
 	static int data_index;
 	int i = 0;
 	int channel_id;
-	int chnl_config_status = 0;
+	//int chnl_config_status = 0;
 
 	if (data == '@')
 	{
@@ -163,8 +164,7 @@ static void parse_user_data_from_client(char data)
 	    	client_uart_channel_config.baud        = atoi(gTelnet_uart_config_data_parsed[param_id++]);
 	    	client_uart_channel_config.char_len    = atoi(gTelnet_uart_config_data_parsed[param_id++]);
 	    	client_uart_channel_config.polarity    = atoi(gTelnet_uart_config_data_parsed[param_id++]);
-	    	printstrln("Telnet port change is not allowed from telnet console");
-	    	//client_uart_channel_config.telnet_port = atoi(gTelnet_uart_config_data_parsed[param_id++]);
+	    	client_uart_channel_config.telnet_port = atoi(gTelnet_uart_config_data_parsed[param_id++]);
 			if (0 == validate_uart_params())
 			{
 				default_usage();
@@ -180,6 +180,7 @@ static void parse_user_data_from_client(char data)
 				uart_channel_config_backup.char_len         = uart_channel_config[channel_id].char_len;
 				uart_channel_config_backup.polarity         = uart_channel_config[channel_id].polarity;
 				uart_channel_config_backup.telnet_port      = uart_channel_config[channel_id].telnet_port;
+				uart_channel_config_backup.telnet_conn_id   = uart_channel_config[channel_id].telnet_conn_id;
 
 		    	/* Modify the config structure with new values */
 		    	uart_channel_config[channel_id].parity      = client_uart_channel_config.parity;
@@ -187,7 +188,7 @@ static void parse_user_data_from_client(char data)
 		    	uart_channel_config[channel_id].baud        = client_uart_channel_config.baud;
 		    	uart_channel_config[channel_id].char_len    = client_uart_channel_config.char_len;
 		    	uart_channel_config[channel_id].polarity    = client_uart_channel_config.polarity;
-		    	//uart_channel_config[channel_id].telnet_port = client_uart_channel_config.telnet_port;
+		    	uart_channel_config[channel_id].telnet_port = client_uart_channel_config.telnet_port;
 
 //#ifdef DEBUG_LEVEL_3
 		    	printintln(uart_channel_config[channel_id].channel_id);
@@ -232,6 +233,19 @@ static void parse_user_data_from_client(char data)
 				else
 #endif //TODO: TBR
 				{
+			        uart_channel_config[channel_id].is_configured = TRUE;
+			        if (uart_channel_config[channel_id].telnet_port !=
+			        		uart_channel_config_backup.telnet_port)
+			        {
+			        	uart_channel_config[channel_id].telnet_conn_id = 0;
+			            uart_channel_config[channel_id].is_telnet_active = FALSE;
+			        }
+
+			        telnet_conn_details.channel_id = channel_id;
+		            telnet_conn_details.prev_telnet_conn_id = uart_channel_config_backup.telnet_conn_id;
+		            telnet_conn_details.prev_telnet_port = uart_channel_config_backup.telnet_port;
+		            telnet_conn_details.pending_config_update = 1;
+
 					user_client_cmd_resp.pending_user_cmd_response = 1;
 			    	sprintf(user_client_cmd_resp.user_resp_buffer, "%s %d %s","Config setting for Uart Channel", channel_id, " Successful");
 				}  //[if (0 != chnl_config_status)]
@@ -305,7 +319,7 @@ void parse_client_usr_command(char data)
 		/* Store telnet data for config key word request */
 		gUsr_Config_KeyWord[local_data_index] = data;
 		local_data_index++;
-		if (local_data_index == CONFIG_KEY_WORD_LEN)
+		if (local_data_index == (CONFIG_KEY_WORD_LEN-1))
 		{
 			int i = 0;
 			int j = 0;
@@ -314,7 +328,7 @@ void parse_client_usr_command(char data)
 			local_data_index = 0;
 
 			/* Received key word len; Check if it is a config request */
-			for (i=0; i<CONFIG_KEY_WORD_LEN; i++)
+			for (i=0; i<(CONFIG_KEY_WORD_LEN-1); i++)
 			{
 				if (gUsr_Config_KeyWord[i] != config_key_word[i])
 				{
@@ -326,7 +340,7 @@ void parse_client_usr_command(char data)
 				}
 			}
 
-			if (j == CONFIG_KEY_WORD_LEN)
+			if (j == (CONFIG_KEY_WORD_LEN-1))
 			{
 				/* This is cconfirmed to be a uart config request from telnet;
 				 * Parse the telnet config data */
