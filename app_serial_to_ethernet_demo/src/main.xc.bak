@@ -291,12 +291,10 @@ int main(void)
 	            /* run the multi-uart RX & TX with a common external clock - (2 threads) */
 	            on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
 #endif
-#if 0
 	            on stdcore[1]: dummy();
 	            on stdcore[1]: dummy();
 	            on stdcore[1]: dummy();
 	            on stdcore[1]: dummy();
-#endif
 	 } // par
 
 	return 0;
