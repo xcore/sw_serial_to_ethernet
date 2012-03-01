@@ -1,23 +1,31 @@
 System Overview
 ===============
 
-This section briefly describes the design of the application.
+This section briefly describes the software components used, thread diagram and data flow for uart configuration and data management.
 
-Block diagram and Thread diagram of s2e app
--------------------------------------------
+Thread diagram of s2e app
+-------------------------
 
 .. figure:: images/s2e_BlockDiagram.png
-
-   * Ethernet MII interface supports Ethernet device communication. This component utilizes five threads for interfacing clients to PHY
-   * XTCP component for TCP/IP stack
-   * Webserver to support HTTP and Telnet client interfaces
-   * Ethernet-Uart application manager thread 
-      * Interfaces with Uart TX and RX server threads in order to configure, and manage Uart specific channel data
-      * Interfaces with web server thread to handle the TCP/IP client events
 	 
+Software components used
+------------------------
+
+   * sc_ethernet
+   Two thread version of the ethernet component is used for ethernet communication
+
+   * sc_xtcp
+   XTCP component api calls are used for implementing Http and telnet client interfaces
+
+   * sc_multi_uart
+   MultiUart transmit and receive server api is used for interfacing the application to MUART component
+
 Description of Operation
 ++++++++++++++++++++++++
 
-Uart Configuration and Data Managemnt
-
 .. figure:: images/FlowDiagram.png
+
+Resource Usage
+++++++++++++++
+
+.. figure:: images/ResourceUsage.png

@@ -9,7 +9,7 @@ Configuration Defines
 ---------------------
 
 The files multi_uart_tx_conf.h and multi_uart_rx_conf.h must be copied from
-app_multi_uart_demo\\src folder to the application rsc folder
+app_multi_uart_demo\\src folder to app_serial_to_ethernet_demo\\src folder
 
 The file app_manager.h delcares data structures and interfaces required for
 application manager thread to communicate with http and telnet clients,
@@ -29,6 +29,22 @@ This file can set the following defines:
 **HTTP_PORT**
 
     Port number for http client connection. Typically set to 80
+    
+**TELNET_PORT_USER_CMDS**
+
+    Port number for uart configuration via telnet connection. Typically set to 23
+    
+Default Uart settings are available in app_manager.xc. Some of the configurable 
+values include the following
+
+**DEF_TELNET_PORT_START_VALUE**
+
+    Port number for telnet connection to uart 0. Typically set to 46
+    This value is incremented for subsequent uarts
+
+**MAX_BIT_RATE**
+
+    Maximum bit rate to be supported for uarts. Typically set to 115200 bps
 
 .. _sec_data_struct:
 
