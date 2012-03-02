@@ -44,7 +44,8 @@ void httpd_recv(
 		REFERENCE_PARAM(xtcp_connection_t, conn));
 void httpd_send(
 		chanend tcp_svr,
-		REFERENCE_PARAM(xtcp_connection_t, conn));
+		REFERENCE_PARAM(xtcp_connection_t, conn),
+		chanend cPersData);
 void httpd_free_state(
 		REFERENCE_PARAM(xtcp_connection_t, conn));
 

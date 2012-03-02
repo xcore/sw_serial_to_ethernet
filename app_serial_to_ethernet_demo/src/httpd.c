@@ -22,13 +22,17 @@ include files
 #include "httpd.h"
 #include "app_manager.h"
 #include "telnet_app.h"
-#include "wpage.h"
 #include "page_access.h"
+#include "flash_app.h"
+#include "flash_common.h"
 #include "debug.h"
 
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
+#define HTTP_REQ_TYPE_ERR        0
+#define HTTP_REQ_TYPE_GET        1
+#define HTTP_REQ_TYPE_POST       2
 
 /*---------------------------------------------------------------------------
 ports and clocks
@@ -38,24 +42,43 @@ ports and clocks
 typedefs
 ---------------------------------------------------------------------------*/
 /* Structure to hold HTTP state */
-typedef struct httpd_state_t
-{
-    int active; 		//< Whether this state structure is being used
-						//  for a connection
-    int conn_id; 		//< The connection id
-    char *dptr; 		//< Pointer to the remaining data to send
-    int dlen; 			//< The length of remaining data to send
-    char *prev_dptr; 	//< Pointer to the previously sent item of data
+typedef struct httpd_state_t {
+    int active;      //< Whether this state structure is being used
+                   //  for a connection
+    int conn_id;     //< The connection id
+    int dptr;      //< Pointer to the remaining data to send
+    int dlen;        //< The length of remaining data to send
+    char *prev_dptr; //< Pointer to the previously sent item of data
+    int  wpage_length;
+    char http_request_type;
+    char wpage_data[FLASH_SIZE_PAGE];
 } httpd_state_t;
 
-/*---------------------------------------------------------------------------
-global variables
----------------------------------------------------------------------------*/
-httpd_state_t http_connection_states[NUM_HTTPD_CONNECTIONS];
+typedef struct
+{
+    char name[32];
+    int  page;
+    int  length;
+}fsdata_t;
 
 /*---------------------------------------------------------------------------
-static variables
----------------------------------------------------------------------------*/
+ global variables
+ ---------------------------------------------------------------------------*/
+httpd_state_t http_connection_states[NUM_HTTPD_CONNECTIONS];
+
+fsdata_t fsdata[] =
+{
+    { "/s2e.html", 0, 4303 },
+    { "/img/xmos_logo.gif", 17, 912 },
+};
+
+/*---------------------------------------------------------------------------
+ static variables
+ ---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+ protoypes
+ ---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------
 implementation
@@ -82,7 +105,9 @@ void httpd_init(chanend tcp_svr)
     for (i = 0; i < NUM_HTTPD_CONNECTIONS; i++)
     {
         http_connection_states[i].active = 0;
-        http_connection_states[i].dptr = NULL;
+        http_connection_states[i].dptr = 0;
+        http_connection_states[i].wpage_length = 0;
+        memset(&http_connection_states[i].wpage_data[0], NULL, sizeof(http_connection_states[i].wpage_data));
     }
 }
 
@@ -104,20 +129,18 @@ void httpd_init(chanend tcp_svr)
 *  \return	None
 *
 **/
-void parse_http_request(
-		xtcp_connection_t *conn,
-		httpd_state_t *hs,
-		char *data,
-		int len)
+void parse_http_request(httpd_state_t *hs, char *data, int len)
 {
     int channel_id = 0;
     int prev_telnet_conn_id = 0;
     int prev_telnet_port = 0;
-    char http_response[WPAGE_HTTP_RESPONSE_LENGTH];
     int request_type;
+    char temp_file_name[32];
+    int i, j;
+    char wpage_error[] = "404 HTTP 1.0\r\nServer: XMOS\r\nContent-type: text/html\r\n\r\n";
 
     // Return if we have data already
-    if (hs->dptr != NULL)
+    if (hs->dptr != 0)
     {
         return;
     }
@@ -125,21 +148,60 @@ void parse_http_request(
     // Test if we received a HTTP GET request
     if (strncmp(data, "GET ", 4) == 0)
     {
-      	// Assign the default page character array as the data to send
-        hs->dptr = &page[0];
-        hs->dlen = strlen(&page[0]);
+        hs->http_request_type = HTTP_REQ_TYPE_GET;
+        for(i = 4; i < 36; i++)
+        {
+            if(data[i] == ' ')
+            {
+                if(i <= 6)
+                {
+                    // did not get a file name, send index.html (s2e.html)
+                    hs->wpage_length = fsdata[0].length;
+                    hs->dptr = fsdata[0].page;
+                }
+                else
+                {
+                    memset(&temp_file_name[0], NULL, sizeof(temp_file_name));
 
+                    for(j = 4; j < i; j++)
+                    {
+                        temp_file_name[j-4] = data[j];
+                    }
+
+                    for(j = 0; j < WPAGE_NUM_FILES; j++)
+                    {
+                        if(strcmp(temp_file_name, fsdata[j].name) == 0)
+                        {
+                            hs->wpage_length = fsdata[j].length;
+                            hs->dptr = fsdata[j].page;
+                            break;
+                        }
+                    } // for
+
+                    if(j >= WPAGE_NUM_FILES)
+                    {
+                        hs->http_request_type = HTTP_REQ_TYPE_ERR;
+                        memcpy(hs->wpage_data, wpage_error, strlen(wpage_error));
+                        hs->dptr = 0;
+                        hs->wpage_length = strlen(wpage_error);
+                    }
+                } // else
+                break;
+            } // if(data[i] = ' ')
     }
-    else
+    } // if GET
+
+    else if (strncmp(data, "POST ", 5) == 0)
     {
-        // We got a 'POST' (or something else - unlikely)
-		request_type = wpage_process_request(
-							&data[0],
-							&http_response[0],
-							len,
-							&channel_id,
-							&prev_telnet_conn_id,
-							&prev_telnet_port);
+        // We got a 'POST'
+        request_type = wpage_process_request(&data[0],
+                                             &hs->wpage_data[0],
+                                             len,
+                                             &channel_id,
+                                             &prev_telnet_conn_id,
+                                             &prev_telnet_port);
+        hs->http_request_type = HTTP_REQ_TYPE_POST;
+        hs->wpage_length = strlen(hs->wpage_data);
 
         if (request_type == WPAGE_CONFIG_SET)
         {
@@ -154,9 +216,15 @@ void parse_http_request(
             telnet_conn_details.prev_telnet_port = prev_telnet_port;
             telnet_conn_details.pending_config_update = 1;
         }
-        hs->dptr = &http_response[0];
-        hs->dlen = strlen(http_response);
     }
+    else
+    {
+        hs->http_request_type = HTTP_REQ_TYPE_ERR;
+        memcpy(hs->wpage_data, wpage_error, strlen(wpage_error));
+        hs->dptr = 0;
+        hs->wpage_length = strlen(wpage_error);
+    }
+
 }
 
 /** =========================================================================
@@ -172,11 +240,9 @@ void parse_http_request(
 *  \return	None
 *
 **/
-void httpd_recv(
-		chanend tcp_svr,
-		xtcp_connection_t *conn)
+void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
 {
-    struct httpd_state_t *hs = (struct httpd_state_t *) conn->appstate;
+    httpd_state_t *hs = (struct httpd_state_t *)conn->appstate;
     char data[XTCP_CLIENT_BUF_SIZE];
     int len;
 
@@ -184,16 +250,16 @@ void httpd_recv(
     len = xtcp_recv(tcp_svr, data);
 
     // If we already have data to send, return
-    if (hs == NULL || hs->dptr != NULL)
+    if (hs == NULL || hs->wpage_length != 0)
     {
         return;
     }
 
     // Otherwise we have data, so parse it
-    parse_http_request(conn, hs, &data[0], len);
+    parse_http_request(hs, &data[0], len);
 
     // If we are required to send data
-    if (hs->dptr != NULL)
+    if (hs->wpage_length != 0)
     {
         // Initate a send request with the TCP stack.
         // It will then reply with event XTCP_REQUEST_DATA
@@ -215,39 +281,74 @@ void httpd_recv(
 *  \return	None
 *
 **/
-void httpd_send(chanend tcp_svr, xtcp_connection_t *conn)
+void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
 {
-    struct httpd_state_t *hs = (struct httpd_state_t *) conn->appstate;
+    //int i;
+    int length_page;
 
-    // Check if we need to resend previous data
-    if (conn->event == XTCP_RESEND_DATA)
+    httpd_state_t *hs = (httpd_state_t *)conn->appstate;
+    length_page = (hs->wpage_length < FLASH_SIZE_PAGE) ? hs->wpage_length : FLASH_SIZE_PAGE;
+
+    switch(conn->event)
     {
-        xtcp_send(tcp_svr, hs->prev_dptr, (hs->dptr - hs->prev_dptr));
-        return;
-    }
+        case XTCP_RESEND_DATA:
+        {
+            xtcp_send(tcp_svr, hs->wpage_data, length_page);
+            break;
+        }
 
-    // Check if we have no data to send
-    if (hs->dlen == 0 || hs->dptr == NULL)
-    {
-        // Terminates the send process
-        xtcp_complete_send(tcp_svr);
-        // Close the connection
-        xtcp_close(tcp_svr, conn);
-    }
-    // We need to send some new data
-    else
-    {
-        int len = hs->dlen;
+        case XTCP_REQUEST_DATA:
+        {
+            if(hs->http_request_type == HTTP_REQ_TYPE_GET)
+            {
+                flash_data_read(cPersData, hs->wpage_data, hs->dptr);
+            }
 
-        if (len > conn->mss)
-            len = conn->mss;
+            xtcp_send(tcp_svr, hs->wpage_data, length_page);
+            break;
+        }
 
-        xtcp_send(tcp_svr, hs->dptr, len);
+        case XTCP_SENT_DATA:
+        {
+            if(hs->http_request_type == HTTP_REQ_TYPE_GET)
+            {        
+                hs->wpage_length -= FLASH_SIZE_PAGE;
+                if(hs->wpage_length <= 0)
+                {
+                    xtcp_complete_send(tcp_svr);
+                    xtcp_close(tcp_svr, conn);
+                }
+                else
+                {
+                    hs->dptr++;
+                    flash_data_read(cPersData, hs->wpage_data, hs->dptr);
+                    xtcp_send(tcp_svr, hs->wpage_data, length_page);
+                }
+            }
+            else if(hs->http_request_type == HTTP_REQ_TYPE_POST)
+            {
+                xtcp_complete_send(tcp_svr);
+                xtcp_close(tcp_svr, conn);
+            }
+            else if(hs->http_request_type == HTTP_REQ_TYPE_ERR)
+            {
+                xtcp_complete_send(tcp_svr);
+                xtcp_close(tcp_svr, conn);
+            }
+            else
+            {
+                printstrln("unidentified request - should not get here");
+                xtcp_complete_send(tcp_svr);
+                xtcp_close(tcp_svr, conn);
+            }
 
-        hs->prev_dptr = hs->dptr;
-        hs->dptr += len;
-        hs->dlen -= len;
-    }
+            break;
+
+        } // case XTCP_SENT_DATA:
+
+        default: break;
+
+    } // switch(conn->event)
 }
 
 /** =========================================================================
@@ -279,16 +380,16 @@ void httpd_init_state(chanend tcp_svr, xtcp_connection_t *conn)
     {
         xtcp_abort(tcp_svr, conn);
     }
-    // Otherwise, assign the connection to a slot        //
+    // Otherwise, assign the connection to a slot
     else
     {
         http_connection_states[i].active = 1;
         http_connection_states[i].conn_id = conn->id;
-        http_connection_states[i].dptr = NULL;
-        xtcp_set_connection_appstate(
-        		tcp_svr,
-        		conn,
-        		(xtcp_appstate_t) &http_connection_states[i]);
+        http_connection_states[i].dptr = 0;
+        memset(&http_connection_states[i].wpage_data[0], NULL, sizeof(http_connection_states[i].wpage_data));
+        xtcp_set_connection_appstate(tcp_svr,
+                                     conn,
+                                     (xtcp_appstate_t) &http_connection_states[i]);
     }
 }
 
@@ -309,10 +410,12 @@ void httpd_free_state(xtcp_connection_t *conn)
 
     for (i = 0; i < NUM_HTTPD_CONNECTIONS; i++)
     {
-    	/* Match the connection id */
         if (http_connection_states[i].conn_id == conn->id)
         {
             http_connection_states[i].active = 0;
+            http_connection_states[i].dptr = 0;
+            http_connection_states[i].wpage_length = 0;
+            memset(&http_connection_states[i].wpage_data[0], NULL, sizeof(http_connection_states[i].wpage_data));
         }
     }
 }

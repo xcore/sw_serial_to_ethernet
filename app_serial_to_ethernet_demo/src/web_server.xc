@@ -77,7 +77,8 @@ implementation
 void web_server_handle_event(
 		chanend tcp_svr,
 		xtcp_connection_t &conn,
-		streaming chanend cWbSvr2AppMgr)
+		streaming chanend cWbSvr2AppMgr,
+		chanend cPersData)
 {
 	AppPorts app_port_type = TYPE_UNSUPP_PORT;
 	int WbSvr2AppMgr_chnl_data = 9999;
@@ -225,7 +226,7 @@ void web_server_handle_event(
       case XTCP_REQUEST_DATA:
       case XTCP_RESEND_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
-    		  httpd_send(tcp_svr, conn);
+    		  httpd_send(tcp_svr, conn, cPersData);
     	  else if (app_port_type==TYPE_TELNET_PORT)
     		  telnet_buffered_send_handler(tcp_svr, conn);
           break;
@@ -263,7 +264,7 @@ void web_server_handle_event(
 *  \return	None
 *
 **/
-void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr)
+void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr, chanend cPersData)
 {
   xtcp_connection_t conn;
   /* Timer to send client (telnet) data periodically */
@@ -286,7 +287,7 @@ void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr)
       select
         {
         case xtcp_event(tcp_svr, conn):
-          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr);
+          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr, cPersData);
           break;
         case ClientTxTimer when timerafter (ClientTxTimeStamp) :> void :
         	/* Upon timer event, read data from app manager's TX queue and

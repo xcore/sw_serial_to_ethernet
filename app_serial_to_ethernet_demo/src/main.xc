@@ -28,6 +28,8 @@
 #include "app_manager.h"
 #include "web_server.h"
 #include "multi_uart_rxtx.h"
+#include <flash.h>
+#include "flash_wrapper.h"
 
 /*---------------------------------------------------------------------------
  constants
@@ -43,6 +45,14 @@
 /*---------------------------------------------------------------------------
  ports and clocks
  ---------------------------------------------------------------------------*/
+on stdcore[0] : fl_SPIPorts flash_ports =
+{ PORT_SPI_MISO,
+  PORT_SPI_SS,
+  PORT_SPI_CLK,
+  PORT_SPI_MOSI,
+  XS1_CLKBLK_3
+};
+
 /* MUART TX port configuration */
 #define PORT_TX on stdcore[1]: XS1_PORT_8A
 #define PORT_RX on stdcore[1]: XS1_PORT_8C
@@ -194,6 +204,9 @@ void dummy()
 {
     while (1);
 }
+
+
+
 /** =========================================================================
  *  main
  *
@@ -217,6 +230,7 @@ int main(void)
     chan connect_status;
 #endif //TWO_THREAD_ETH
     chan xtcp[1];
+    chan cPersData;
 	streaming chan cWbSvr2AppMgr;
 	streaming chan cTxUART;
 	streaming chan cRxUART;
@@ -266,6 +280,7 @@ int main(void)
 	            }
 #endif
 
+	            on stdcore[0]: flash_data_access(cPersData);
 	            /*
 	            on stdcore[0]: dummy();
 	            on stdcore[0]: dummy();
@@ -276,7 +291,7 @@ int main(void)
 	            
 	            /* web server thread for handling and servicing http requests
 	            * and telnet data communication */
-	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr);
+	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cPersData);
 	            
 	            /* The multi-uart application manager thread to handle uart
 	            * data communication to web server clients */

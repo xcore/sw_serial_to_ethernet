@@ -18,7 +18,7 @@ APP_NAME = s2e_demo
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to 
 # xcc for the final link (mapping) stage.
 
-XCC_FLAGS = -O3 -lxscope -save-temps -g -report -Xmapper --map -Xmapper MAPFILE
+XCC_FLAGS = -O3 -lxscope -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash
 
 # The USED_MODULES variable lists other module used by the application. 
 #USED_MODULES = module_xtcp module_ethernet module_locks module_telnet_console module_multi_uart
