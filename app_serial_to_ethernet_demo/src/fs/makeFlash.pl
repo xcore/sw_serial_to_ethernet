@@ -36,7 +36,7 @@ foreach my $file ( @files ) {
   my $filedata = <FH>;
 
   # Construct header (must be constructed exactly)
-  my $blob = "100 HTTP 1.0\r\nServer: XMOS\r\nContent-type: $mimetype\r\n\r\n";
+  my $blob = "HTTP/1.0 200 OK\r\nServer: XMOS\r\nContent-type: $mimetype\r\n\r\n";
 
   # Append the file data
   $blob .= $filedata;
