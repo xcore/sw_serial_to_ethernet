@@ -16,6 +16,7 @@
     <location>https://github.com/xcore/sc_multi_uart.git</location>
     <name>sc_multi_uart</name>
     <maintainer>Srinivas-E</maintainer>
+    <release parenthash = "1b7eba1c0d8b620956f7e80bee7e3d7783892766" version = "1.0.0rc0"></release>
     <vendor>XMOS</vendor>
     <xpd_version>1.0</xpd_version>
 </xpd>
