@@ -20,6 +20,9 @@ APP_NAME = s2e_demo
 
 XCC_FLAGS = -O3 -lxscope -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash
 
+XCC_FLAGS_Debug = $(XCC_FLAGS)
+XCC_FLAGS_Release = $(XCC_FLAGS)
+
 # The USED_MODULES variable lists other module used by the application. 
 #USED_MODULES = module_xtcp module_ethernet module_locks module_telnet_console module_multi_uart
 USED_MODULES = module_xtcp module_mii_singlethread module_ethernet_smi module_telnet_console module_multi_uart
