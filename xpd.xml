@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<xpd>
+    <dependency repo = "sc_xtcp">
+        <githash>cb9221d0f4aa3e097db347ace925041ef9cd2697</githash>
+        <uri>git@github.com:xcore/sc_xtcp.git</uri>
+    </dependency>
+    <dependency repo = "xcommon">
+        <githash>f035daf04c248b398925a9ac74a60719d9f194c3</githash>
+        <uri>https://github.com/xcore/xcommon.git</uri>
+    </dependency>
+    <dependency repo = "sc_ethernet">
+        <githash>8b17eb975480f3dd33739a9dd430fb0cd6e7cb0b</githash>
+        <uri>git@github.com:xcore/sc_ethernet.git</uri>
+    </dependency>
+    <description>Multiple UART to Ethernet (TELNET) bridge, plus web server controller</description>
+    <location>https://github.com/xcore/sc_multi_uart.git</location>
+    <name>sc_multi_uart</name>
+    <maintainer>Srinivas-E</maintainer>
+    <vendor>XMOS</vendor>
+    <xpd_version>1.0</xpd_version>
+</xpd>
