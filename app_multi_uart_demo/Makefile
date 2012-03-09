@@ -1,8 +1,8 @@
 # The TARGET variable determines what target system the application is
 # compiled for. It either refers to an XN file in the source directories
 # or a valid argument for the --target option when compiling
-#TARGET = MCB_UART
-TARGET = XK1_UART
+TARGET = MCB_UART
+#TARGET = XK1_UART
 
 # The APP_NAME variable determines the name of the final .xe file. It should
 # not include the .xe postfix. If left blank the name will default to
@@ -35,7 +35,7 @@ runsim_loop: generate_rx all
 	xsim -t --trace-to uart_trace.log --plugin LoopbackPort.dll "-port stdcore[0] XS1_PORT_8A 8 0 -port stdcore[0] XS1_PORT_8B 8 0" --vcd-tracing "-o uart_sim.vcd -ports -ports-detailed" bin/$(APP_NAME).xe
 	
 run: generate_rx all
-	xrun --io bin/multi_uart_demo.xe
+	xrun --io bin/Release/multi_uart_demo.xe
 
 run_xscope: generate_rx all
 	xrun --xscope --io bin/multi_uart_demo.xe
