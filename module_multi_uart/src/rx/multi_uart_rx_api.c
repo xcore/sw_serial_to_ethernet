@@ -173,7 +173,7 @@ int uart_rx_validate_char( int chan_id, unsigned *uart_word )
     
     if (error) { return -2;}
     
-    *uart_word = (bitrev(word) >> 24);
+    *uart_word = (bitrev(word) >> (32-uart_rx_channel[chan_id].uart_char_len));
        
     return 0;
 }
