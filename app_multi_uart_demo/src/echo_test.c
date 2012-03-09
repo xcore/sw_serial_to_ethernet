@@ -151,7 +151,7 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
                 
             } else printstr("RX Buf Full\n");
         }
-        else { printstr("RX Validation fail\n"); printhexln(temp); printintln(rv); }
+        else { printstr("RX Validation fail\n\t0x"); printhex(temp);printstr("\n\t");printintln(rv); }
     }
     //:
 }
