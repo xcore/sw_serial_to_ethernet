@@ -8,7 +8,8 @@ die "makeFlash.pl <web_root_directory>\n" if scalar(@ARGV) != 1;
 die "Error: $ARGV[0] is not a directory\n" if not -d $ARGV[0];
 
 # Open the flash image file and set it to binary mode
-open( OUTPUT, ">flash.img");
+open( OUTPUT, ">webpage_bin.img");
+open( LOC, ">copy_to_httpd.txt");
 binmode(OUTPUT);
 
 # Change to the root of the web file system
@@ -54,7 +55,7 @@ foreach my $file ( @files ) {
   print OUTPUT $blob;
 
   # Print out this files flash image info
-  print "{ \"/$file\", $pageoffset, $blob_length },\n";
+  print (LOC "{ \"/$file\", $pageoffset, $blob_length },\n");
 
   # Keep track of which page we are up to
   $pageoffset += $num_pages;

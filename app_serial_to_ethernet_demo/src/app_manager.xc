@@ -22,6 +22,7 @@ include files
 #include "app_manager.h"
 #include "user_client.h"
 #include "debug.h"
+#include "flash_common.h"
 
 /*---------------------------------------------------------------------------
 constants
@@ -771,12 +772,40 @@ void app_manager_handle_uart_data(
 	unsigned int local_port = 0;
 	int conn_id  = 0;
 	int WbSvr2AppMgr_chnl_data = 9999;
+	char flash_config_valid;
+	int i, j, intdata;
+	char flash_data;
 
+	// Fetch uart configuration data stored in flash
+	cWbSvr2AppMgr :> flash_config_valid;
 
-	/* Initiate uart channel configuration with default values */
-	uart_channel_init();
+	// check if there was a config stored; if not load defaults
+	if(flash_config_valid == FLASH_VALID_CONFIG_PRESENT)
+	{
+	    for(i = 0; i < UART_TX_CHAN_COUNT; i++)
+	    {
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].channel_id     = (int)(flash_data);
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].parity         = (int)(flash_data);
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].stop_bits      = (int)(flash_data);
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].baud           = (int)(flash_data) << 0;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].baud          += (int)(flash_data) << 8;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].baud          += (int)(flash_data) << 16;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].baud          += (int)(flash_data) << 24;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].char_len       = (int)(flash_data);
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].polarity       = (int)(flash_data);
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].telnet_port    = (int)(flash_data) << 0;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].telnet_port   += (int)(flash_data) << 8;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].telnet_port   += (int)(flash_data) << 16;
+	        cWbSvr2AppMgr :> flash_data; uart_channel_config[i].telnet_port   += (int)(flash_data) << 24;
+	    }
+	}
+	else
+	{
+	    /* Initiate uart channel configuration with default values */
+        uart_channel_init();
+	}
+
 	init_uart_channel_state();
-
 	apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
 			cTxUART,
 			cRxUART);

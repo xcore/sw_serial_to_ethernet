@@ -25,6 +25,7 @@ constants
 ---------------------------------------------------------------------------*/
 #define WPAGE_CONFIG_GET 				0
 #define WPAGE_CONFIG_SET 				1
+#define WPAGE_CONFIG_SAVE               2
 #define WPAGE_NUM_CHAR_IN_CONFIG      	15
 #define WPAGE_HTTP_RESPONSE_LENGTH      (WPAGE_NUM_CHAR_IN_CONFIG * 4u)
 

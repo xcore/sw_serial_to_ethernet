@@ -54,13 +54,6 @@ typedef struct httpd_state_t {
     char wpage_data[FLASH_SIZE_PAGE];
 } httpd_state_t;
 
-typedef struct
-{
-    char name[32];
-    int  page;
-    int  length;
-}fsdata_t;
-
 /*---------------------------------------------------------------------------
  global variables
  ---------------------------------------------------------------------------*/
@@ -68,8 +61,8 @@ httpd_state_t http_connection_states[NUM_HTTPD_CONNECTIONS];
 
 fsdata_t fsdata[] =
 {
- { "/s2e.html", 0, 4325 },
- { "/img/xmos_logo.gif", 17, 915 },
+ { "/index.html", 0, 4408 },
+ { "/img/xmos_logo.gif", 18, 915 },
 };
 
 /*---------------------------------------------------------------------------
@@ -79,6 +72,7 @@ fsdata_t fsdata[] =
 /*---------------------------------------------------------------------------
  protoypes
  ---------------------------------------------------------------------------*/
+void pack_flash_config(char *data);
 
 /*---------------------------------------------------------------------------
 implementation
@@ -129,7 +123,7 @@ void httpd_init(chanend tcp_svr)
 *  \return	None
 *
 **/
-void parse_http_request(httpd_state_t *hs, char *data, int len)
+void parse_http_request(httpd_state_t *hs, char *data, int len, chanend cPersData)
 {
     int channel_id = 0;
     int prev_telnet_conn_id = 0;
@@ -137,7 +131,17 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
     int request_type;
     char temp_file_name[32];
     int i, j;
-    char wpage_error[] = "404 HTTP 1.0\r\nServer: XMOS\r\nContent-type: text/html\r\n\r\n";
+    char wpage_error[] = "HTTP/1.0 404\r\n";
+
+    char flash_data[FLASH_SIZE_PAGE];
+    int flash_index_page_config, flash_length_config;
+    int flash_size_config;
+    int config_address = 0;
+
+    // get the location of last file
+    flash_index_page_config = fsdata[WPAGE_NUM_FILES - 1].page;
+    flash_length_config = fsdata[WPAGE_NUM_FILES - 1].length;
+    memset(&flash_data[0], NULL, sizeof(flash_data));
 
     // Return if we have data already
     if (hs->dptr != 0)
@@ -149,11 +153,11 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
     if (strncmp(data, "GET ", 4) == 0)
     {
         hs->http_request_type = HTTP_REQ_TYPE_GET;
-        for(i = 4; i < 36; i++)
+        for (i = 4; i < 36; i++)
         {
-            if(data[i] == ' ')
+            if (data[i] == ' ')
             {
-                if(i <= 6)
+                if (i <= 6)
                 {
                     // did not get a file name, send index.html (s2e.html)
                     hs->wpage_length = fsdata[0].length;
@@ -163,14 +167,14 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
                 {
                     memset(&temp_file_name[0], NULL, sizeof(temp_file_name));
 
-                    for(j = 4; j < i; j++)
+                    for (j = 4; j < i; j++)
                     {
-                        temp_file_name[j-4] = data[j];
+                        temp_file_name[j - 4] = data[j];
                     }
 
-                    for(j = 0; j < WPAGE_NUM_FILES; j++)
+                    for (j = 0; j < WPAGE_NUM_FILES; j++)
                     {
-                        if(strcmp(temp_file_name, fsdata[j].name) == 0)
+                        if (strcmp(temp_file_name, fsdata[j].name) == 0)
                         {
                             hs->wpage_length = fsdata[j].length;
                             hs->dptr = fsdata[j].page;
@@ -178,7 +182,7 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
                         }
                     } // for
 
-                    if(j >= WPAGE_NUM_FILES)
+                    if (j >= WPAGE_NUM_FILES)
                     {
                         hs->http_request_type = HTTP_REQ_TYPE_ERR;
                         memcpy(hs->wpage_data, wpage_error, strlen(wpage_error));
@@ -188,7 +192,7 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
                 } // else
                 break;
             } // if(data[i] = ' ')
-    }
+        } // for (i = 4; i < 36; i++)
     } // if GET
 
     else if (strncmp(data, "POST ", 5) == 0)
@@ -200,22 +204,45 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
                                              &channel_id,
                                              &prev_telnet_conn_id,
                                              &prev_telnet_port);
+
         hs->http_request_type = HTTP_REQ_TYPE_POST;
         hs->wpage_length = strlen(hs->wpage_data);
 
-        if (request_type == WPAGE_CONFIG_SET)
+        switch(request_type)
         {
-        	/* Active loop to ensure there is no pending
-        	 * uart configuration update is in place */
-        	while (telnet_conn_details.pending_config_update);
+            case WPAGE_CONFIG_GET:
+            {
+                // nothing more to do. the data is already present in wpage_data
+                break;
+            }
+            case WPAGE_CONFIG_SET:
+            {
+                /* Active loop to ensure there is no pending
+                 * uart configuration update is in place */
+                while (telnet_conn_details.pending_config_update);
 
-            /* Send details to web server in order to send it to
-             * app manager thread for uart configuration */
-            telnet_conn_details.channel_id = channel_id;
-            telnet_conn_details.prev_telnet_conn_id = prev_telnet_conn_id;
-            telnet_conn_details.prev_telnet_port = prev_telnet_port;
-            telnet_conn_details.pending_config_update = 1;
-        }
+                /* Send details to web server in order to send it to
+                 * app manager thread for uart configuration */
+                telnet_conn_details.channel_id = channel_id;
+                telnet_conn_details.prev_telnet_conn_id = prev_telnet_conn_id;
+                telnet_conn_details.prev_telnet_port = prev_telnet_port;
+                telnet_conn_details.pending_config_update = 1;
+                break;
+            }
+            case WPAGE_CONFIG_SAVE:
+            {
+                // prepare char array that will be stored in flash
+                pack_flash_config(&flash_data[0]);
+                // get the config address. config data will be stored in a new sector above the fs file system
+                // this way the sector can be erased an re-written on 'save' request
+                config_address = get_config_address(flash_index_page_config, flash_length_config, cPersData);
+                // send this data to core 0 to write to flash
+                flash_access(FLASH_CONFIG_WRITE, flash_data, config_address, cPersData);
+                break;
+            }
+            default: break;
+
+        } // switch(request_type)
     }
     else
     {
@@ -240,7 +267,7 @@ void parse_http_request(httpd_state_t *hs, char *data, int len)
 *  \return	None
 *
 **/
-void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
+void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
 {
     httpd_state_t *hs = (struct httpd_state_t *)conn->appstate;
     char data[XTCP_CLIENT_BUF_SIZE];
@@ -256,7 +283,7 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
     }
 
     // Otherwise we have data, so parse it
-    parse_http_request(hs, &data[0], len);
+    parse_http_request(hs, &data[0], len,  cPersData);
 
     // If we are required to send data
     if (hs->wpage_length != 0)
@@ -283,7 +310,7 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn)
 **/
 void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
 {
-    //int i;
+    int i;
     int length_page;
 
     httpd_state_t *hs = (httpd_state_t *)conn->appstate;
@@ -301,9 +328,8 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
         {
             if(hs->http_request_type == HTTP_REQ_TYPE_GET)
             {
-                flash_data_read(cPersData, hs->wpage_data, hs->dptr);
+                flash_access(FLASH_ROM_READ, hs->wpage_data, hs->dptr, cPersData);
             }
-
             xtcp_send(tcp_svr, hs->wpage_data, length_page);
             break;
         }
@@ -321,7 +347,7 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
                 else
                 {
                     hs->dptr++;
-                    flash_data_read(cPersData, hs->wpage_data, hs->dptr);
+                    flash_access(FLASH_ROM_READ, hs->wpage_data, hs->dptr, cPersData);
                     xtcp_send(tcp_svr, hs->wpage_data, length_page);
                 }
             }
@@ -417,5 +443,36 @@ void httpd_free_state(xtcp_connection_t *conn)
             http_connection_states[i].wpage_length = 0;
             memset(&http_connection_states[i].wpage_data[0], NULL, sizeof(http_connection_states[i].wpage_data));
         }
+    }
+}
+
+/** =========================================================================
+*  pack_flash_config
+*
+*
+**/
+void pack_flash_config(char *data)
+{
+    int i;
+    int j = 0;
+
+    // say that there is a config on flash
+    data[j] = FLASH_VALID_CONFIG_PRESENT; j++;
+
+    for(i = 0; i < UART_TX_CHAN_COUNT; i++)
+    {
+        data[j] = uart_channel_config[i].channel_id             & 0xFF; j++;
+        data[j] = uart_channel_config[i].parity                 & 0xFF; j++;
+        data[j] = uart_channel_config[i].stop_bits              & 0xFF; j++;
+        data[j] = (uart_channel_config[i].baud >> 0)            & 0xFF; j++;
+        data[j] = (uart_channel_config[i].baud >> 8)            & 0xFF; j++;
+        data[j] = (uart_channel_config[i].baud >> 16)           & 0xFF; j++;
+        data[j] = (uart_channel_config[i].baud >> 24)           & 0xFF; j++;
+        data[j] = uart_channel_config[i].char_len               & 0xFF; j++;
+        data[j] = uart_channel_config[i].polarity               & 0xFF; j++;
+        data[j] = (uart_channel_config[i].telnet_port >> 0)     & 0xFF; j++;
+        data[j] = (uart_channel_config[i].telnet_port >> 8)     & 0xFF; j++;
+        data[j] = (uart_channel_config[i].telnet_port >> 16)    & 0xFF; j++;
+        data[j] = (uart_channel_config[i].telnet_port >> 24)    & 0xFF; j++;
     }
 }

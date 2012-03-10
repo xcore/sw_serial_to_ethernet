@@ -23,12 +23,19 @@ include files
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
-#define FLASH_SIZE_PAGE                 256
-#define FLASH_INDEX_START_PAGE          800
-#define FLASH_SIZE_FILE                 4541
-#define WPAGE_NUM_FILES                 2
+// required for calculation of config_address and other stuff
+#define FLASH_SIZE_PAGE             256
+#define WPAGE_NUM_FILES             2
 
-#define FLASH_DATA_READ		'@'
+// flash_operation defines
+#define FLASH_ROM_READ		        '@'
+#define FLASH_CONFIG_WRITE          '~'
+#define FLASH_CONFIG_READ           '!'
+#define FLASH_GET_CONFIG_ADDRESS    '#'
+
+// indicate if there is a config present in flash
+#define FLASH_VALID_CONFIG_PRESENT  '$'
+
 /*---------------------------------------------------------------------------
 ports and clocks
 ---------------------------------------------------------------------------*/
@@ -36,14 +43,6 @@ ports and clocks
 /*---------------------------------------------------------------------------
 typedefs
 ---------------------------------------------------------------------------*/
-#if 0
-typedef enum flash_data_event_type_t {
-	/* Read data from flash */
-	FLASH_DATA_READ,
-	/* No more channel data to send for the current transaction */
-	FLASH_DATA_END,
-} flash_data_event_type_t;
-#endif
 
 /*---------------------------------------------------------------------------
 global variables
@@ -62,3 +61,4 @@ implementation
 ---------------------------------------------------------------------------*/
 
 #endif /* FLASH_COMMON_H_ */
+/*=========================================================================*/

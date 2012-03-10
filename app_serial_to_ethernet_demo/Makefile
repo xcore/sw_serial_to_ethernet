@@ -18,7 +18,7 @@ APP_NAME = s2e_demo
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to 
 # xcc for the final link (mapping) stage.
 
-XCC_FLAGS = -O3 -lxscope -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash
+XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash
 
 XCC_FLAGS_Debug = $(XCC_FLAGS)
 XCC_FLAGS_Release = $(XCC_FLAGS)

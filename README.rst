@@ -1,14 +1,9 @@
 Multi-UART Component
 ......................
 
-:Stable release:  unreleased
-
-:Status:  beta
-
-:Maintainer:  `Paul Hampson <https://github.com/paul-xmos>`_ 
-
-:Description:  Component for creating applications with multiple UART interfaces
-
+:Version: 1.0.0rc0
+:Vendor: XMOS
+:Description: Multiple UART to Ethernet (TELNET) bridge, plus web server controller
 
 Key Features
 ============
@@ -38,14 +33,18 @@ Known Issues
 
 * None
 
-Required Repositories
-================
+Required software (dependencies)
+================================
 
-* xcommon git\@github.com:xcore/xcommon.git
-* sc_xtcp git\@github.com:xcore/sc_xtcp.git
-* sc_ethernet git\@github.com:xcore/sc_ethernet.git
+  * sc_xtcp
+  * xcommon (if using develpoment tools earlier than 11.11.0)
+  * sc_ethernet
 
 Support
 =======
 
-Issues may be submitted via the Issues tab in this github repo. Response to any issues submitted as at the discretion of the maintainer for this line.
+  This package is support by XMOS Ltd. Issues can be raised against the software
+  at:
+
+      http://www.xmos.com/support
+

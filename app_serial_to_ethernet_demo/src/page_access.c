@@ -137,7 +137,7 @@ static int wpage_process_cfg(char *response, int *channel_id, int *prev_conn_id,
     /* Update channel id from web page */
     *channel_id = index_uart;
 
-    if(reqtype == WPAGE_CONFIG_GET)
+    if(reqtype == WPAGE_CONFIG_GET) // CAUTION
     {
     	// Get settings and store it in config_structure array
         // config_structure = s_uart_channel_config.abc
@@ -147,7 +147,7 @@ static int wpage_process_cfg(char *response, int *channel_id, int *prev_conn_id,
     	wpage_cfg[5] = uart_channel_config[index_uart].char_len;
     	wpage_cfg[6] = uart_channel_config[index_uart].telnet_port;
     }
-    else
+    else if(reqtype == WPAGE_CONFIG_SET)
     {
     	if (TRUE == uart_channel_config[index_uart].is_configured)
     	{

@@ -26,6 +26,9 @@ include files
 #include "user_client.h"
 #include "telnet_app.h"
 #include "debug.h"
+#include "flash_app.h"
+#include "flash_common.h"
+
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
@@ -140,7 +143,7 @@ void web_server_handle_event(
       case XTCP_RECV_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
     	  {
-    		  httpd_recv(tcp_svr, conn);
+    		  httpd_recv(tcp_svr, conn, cPersData);
     	  }
     	  else if (app_port_type==TYPE_TELNET_PORT)
     	  {
@@ -271,12 +274,38 @@ void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr, chanend cPersD
   timer ClientTxTimer;
   unsigned ClientTxTimeStamp;
 
+  int config_address, flash_index_page_config, flash_length_config, i;
+  char flash_data[FLASH_SIZE_PAGE];
+
 
   /* Initiate HTTP and telnet connection state management */
   httpd_init(tcp_svr);
   telnetd_init_conn(tcp_svr);
   /* Telnet port for executing user commands */
   telnetd_set_new_session(tcp_svr, TELNET_PORT_USER_CMDS);
+
+  // Get configuration from flash
+  // get the location of last file
+  flash_index_page_config = fsdata[WPAGE_NUM_FILES - 1].page;
+  flash_length_config = fsdata[WPAGE_NUM_FILES - 1].length;
+  //memset(&flash_data[0], NULL, sizeof(flash_data));
+
+  // get the configuration address
+  config_address = get_config_address(flash_index_page_config, flash_length_config, cPersData);
+  // get the data from flash
+  flash_access(FLASH_CONFIG_READ, flash_data, config_address, cPersData);
+  // data from flash is now in flash_data[]
+  // send it to app_manager via channel
+  // CAUTION 105
+  cWbSvr2AppMgr <: flash_data[0];
+
+  if(flash_data[0] == FLASH_VALID_CONFIG_PRESENT)
+  {
+      for(i = 1; i < 105; i++)
+      {
+          cWbSvr2AppMgr <: flash_data[i];
+      }
+  }
 
   ClientTxTimer :> ClientTxTimeStamp;
   ClientTxTimeStamp += CLIENT_TX_TMR_EVENT_INTERVAL + 100000;
