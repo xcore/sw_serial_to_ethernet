@@ -61,7 +61,7 @@ httpd_state_t http_connection_states[NUM_HTTPD_CONNECTIONS];
 
 fsdata_t fsdata[] =
 {
- { "/index.html", 0, 4408 },
+ { "/index.html", 0, 4374 },
  { "/img/xmos_logo.gif", 18, 915 },
 };
 

@@ -61,8 +61,8 @@ function createRequest(uartReqType)
 function updateScriptVariables()
 {
    wpdata[1] = document.getElementById('ci').options[document.getElementById('ci').selectedIndex].text;
-   wpdata[2] = document.getElementById('pc').selectedIndex + 1;
-   wpdata[3] = document.getElementById('sb').options[document.getElementById('sb').selectedIndex].text;
+   wpdata[2] = document.getElementById('pc').selectedIndex;
+   wpdata[3] = document.getElementById('sb').selectedIndex;
    wpdata[4] = document.getElementById('br').options[document.getElementById('br').selectedIndex].text;
    wpdata[5] = document.getElementById('cl').options[document.getElementById('cl').selectedIndex].text;
    wpdata[6] = document.getElementById('tp').value;
@@ -70,7 +70,7 @@ function updateScriptVariables()
 function updateWebpageData()
 {
    document.getElementById('ci').selectedIndex = wpdata[1];
-   document.getElementById('pc').selectedIndex = wpdata[2] - 1;
+   document.getElementById('pc').selectedIndex = wpdata[2];
    document.getElementById('sb').selectedIndex = wpdata[3];
    baudRateTextToIndex();
    document.getElementById('cl').selectedIndex = wpdata[5] - 5;
@@ -93,10 +93,10 @@ function baudRateTextToIndex()
 <h1>UART Settings</h1>
 <table border='1'>
 <tr><td>UART Channel      </td><td><select id='ci'><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></td>
-<tr><td>Parity Config     </td><td><select id='pc'><option>Odd</option><option>Even</option><option>Mark</option><option>Space</option><option>None</option></select></td>
-<tr><td>Stop Bits         </td><td><select id='sb'><option>0</option><option>1</option></select></td>
+<tr><td>Parity Config     </td><td><select id='pc'><option>None</option><option>Odd</option><option>Even</option><option>Mark</option><option>Space</option></select></td>
+<tr><td>Stop Bits         </td><td><select id='sb'><option>1</option><option>2</option></select></td>
 <tr><td>Baud Rate         </td><td><select id='br'><option>115200</option><option>57600</option><option>38400</option><option>28800</option><option>19200</option><option>14400</option><option>9600</option><option>7200</option><option>4800</option><option>2400</option><option>1200</option><option>600</option><option>300</option><option>150</option></select></td>
-<tr><td>Character Length  </td><td><select id='cl'><option>5</option><option>6</option><option>7</option><option>8</option></td>
+<tr><td>Character Length  </td><td><select id='cl'><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></td>
 <tr><td>Telnet Port       </td><td><input type='text' id='tp' maxlength='5' size='5' /></td>
 <tr><td><a href='javascript:void(0);' onClick='createRequest(0);'>Get</a></td><td><a href='javascript:void(0);' onClick='createRequest(1);'>Set</a></td>
 <tr><td>Save to Flash     </td><td><a href='javascript:void(0);' onClick='createRequest(2);'>Save</a></td>
