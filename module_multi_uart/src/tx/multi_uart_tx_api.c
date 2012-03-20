@@ -92,7 +92,7 @@ static unsigned uart_tx_calc_parity(int channel_id, unsigned int uart_char)
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
  */
-int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, int baud, int char_len )
+int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_config_polarity polarity, int baud, int char_len )
 {
     /* check and calculate baud rate divider */
     if ((uart_tx_channel[channel_id].clocks_per_bit = uart_tx_calc_baud(baud)) == 0)
@@ -101,6 +101,7 @@ int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
     /* set operation mode */
     uart_tx_channel[channel_id].sb_mode = stop_bits;
     uart_tx_channel[channel_id].parity_mode = parity;
+    uart_tx_channel[channel_id].polarity_mode = polarity;
     
     /* set the uart character length */
     uart_tx_channel[channel_id].uart_char_len = char_len;
@@ -152,8 +153,13 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     /* format data into the word (msb -> lsb) STOP|PARITY|DATA|START */
     
     /* start bit */
-    // TODO honour start bit polarity
-    full_word = 0;
+    switch (uart_tx_channel[channel_id].polarity_mode)
+    {
+        case start_0: full_word = 0; break;
+        case start_1: full_word = 1; break;
+        default: full_word = 0; break;
+    }
+    
     pos += 1;
     
     /* uart word - mask, reverse char and put into full word */
@@ -169,15 +175,24 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
         pos += 1;
     }
     
-    /* stop bit */
+    
+    /* setup polarity for stop bits */
+    switch (uart_tx_channel[channel_id].polarity_mode)
+    {
+        case start_0: temp = 0x3; break;
+        case start_1: temp = 0x0; break;
+        default: temp = 0x3; break;
+    }
+    
+    /* stop bits */
     switch (uart_tx_channel[channel_id].sb_mode)
     {
         case sb_1:
-            full_word |= 1 << pos;
+            full_word |= (0x1&temp) << pos;
             pos += 1;
             break;
         case sb_2:
-            full_word |= 0x3 << pos;
+            full_word |= (0x3&temp) << pos;
             pos += 2;
             break;
     }
@@ -188,7 +203,7 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
     full_word = (((1 << uart_tx_channel[channel_id].uart_word_len) - 1) & full_word);
     
     /* do calc XOR'd output */
-    temp = (full_word << 1) | 0x1; // TODO honour STOP bit polarity
+    temp = (full_word << 1) | 0x1;
     full_word = temp ^ full_word;
     
     return full_word;

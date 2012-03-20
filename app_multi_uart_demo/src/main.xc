@@ -82,7 +82,7 @@ void uart_tx_test(streaming chanend cUART)
        
        printintln(baud_rate);
        
-       if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+       if (uart_tx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
        {
            printstr("Invalid baud rate for tx channel ");
            printintln(i);
@@ -137,7 +137,7 @@ void uart_tx_test(streaming chanend cUART)
                for (int i = 4; i < 8; i++)
                {
                    printintln(baud_rate);
-                   if (uart_tx_initialise_channel( i, none, sb_1, baud_rate, 8 ))
+                   if (uart_tx_initialise_channel( i, none, sb_1, start_0, baud_rate, 8 ))
                    {
                        printstr("Invalid baud rate for tx channel ");
                        printintln(i);

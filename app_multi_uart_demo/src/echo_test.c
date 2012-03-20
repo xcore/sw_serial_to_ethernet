@@ -26,7 +26,7 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
         if ((int)baud_rate <= 225)
             baud_rate = 225;
         
-        if (uart_tx_initialise_channel( i, even, sb_1, baud_rate, 8 ))
+        if (uart_tx_initialise_channel( i, even, sb_1, start_0, baud_rate, 8 ))
         {
             printstr("Invalid baud rate for tx channel ");
             printintln(i);

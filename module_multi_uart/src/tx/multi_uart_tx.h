@@ -49,6 +49,7 @@ typedef struct STRUCT_MULTI_UART_TX_CHANNEL
     /** Mode definition */
     e_uart_config_stop_bits sb_mode;
     e_uart_config_parity parity_mode;
+    e_uart_config_polarity polarity_mode;
     /*@}*/
     
     /*@{*/
@@ -71,7 +72,7 @@ typedef struct STRUCT_MULTI_UART_TX_CHANNEL
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
  */
-int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, int baud, int char_len );
+int uart_tx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_config_polarity polarity, int baud, int char_len );
 
 /**
  * Assemble full word for transmission

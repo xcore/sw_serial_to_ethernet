@@ -82,7 +82,7 @@ static unsigned uart_rx_calc_parity(int channel_id, unsigned int uart_char)
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
  */
-int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_polarity polarity, int baud, int char_len )
+int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_config_polarity polarity, int baud, int char_len )
 {
     /* check and calculate baud rate divider */
     if ((uart_rx_channel[channel_id].clocks_per_bit = uart_rx_calc_baud(baud)) == 0)

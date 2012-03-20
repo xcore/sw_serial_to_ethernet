@@ -49,7 +49,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
     
     e_uart_config_stop_bits sb_mode; /**< Stop bit configuration */
     e_uart_config_parity parity_mode; /**< Parity mode configuration */
-    e_uart_polarity polarity_mode; /**< Polarity mode (unused) */
+    e_uart_config_polarity polarity_mode; /**< Polarity mode (unused) */
 
 } s_multi_uart_rx_channel;
 
@@ -64,7 +64,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
  * @param[in] char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
  */
-int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_polarity polarity, int baud, int char_len );
+int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_uart_config_stop_bits stop_bits, e_uart_config_polarity polarity, int baud, int char_len );
 
 /**
  * Validate received UART word according to channel configuration and provide a cleaned UART 
