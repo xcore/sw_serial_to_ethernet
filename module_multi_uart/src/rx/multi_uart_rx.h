@@ -49,7 +49,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
     
     e_uart_config_stop_bits sb_mode; /**< Stop bit configuration */
     e_uart_config_parity parity_mode; /**< Parity mode configuration */
-    e_uart_config_polarity polarity_mode; /**< Polarity mode (unused) */
+    e_uart_config_polarity polarity_mode; /**< Polarity mode */
 
 } s_multi_uart_rx_channel;
 
