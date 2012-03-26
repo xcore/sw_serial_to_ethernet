@@ -188,7 +188,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -408,7 +410,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -628,7 +632,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -848,7 +854,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -1068,7 +1076,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -1288,7 +1298,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -1508,7 +1520,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]
@@ -1728,7 +1742,9 @@ idle_process:
     add r9, r9, r10
     
     /* lookup TC value and check for valid start */
-    ldaw r10, dp[startBitLookup1]
+    ldaw r10, dp[startBitConfig] 
+    ldw r10, r10[r5] // get address for the startBitLookup we will use
+    
     ldc r11, 0xf
     and r8, r8, r11
     ldw r10, r10[r8]

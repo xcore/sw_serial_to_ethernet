@@ -37,6 +37,10 @@ void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], in
 unsigned fourBitLookup[16];
 unsigned startBitLookup0[16];
 unsigned startBitLookup1[16];
+unsigned startBitConfig[UART_RX_CHAN_COUNT];
+
+/* c helper */
+unsigned getUnsignedArrayAddressAsUnsigned( unsigned array[] );
 
 #pragma unsafe arrays
 void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports, clock uart_clock )
@@ -103,6 +107,19 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
             uart_word[i] = 0;
             bit_count[i] = 0;
             tickcount[i] = uart_rx_channel[i].use_sample;
+            
+            switch(uart_rx_channel[i].polarity_mode)
+            {
+                case start_0: 
+                    startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup0); 
+                    break;
+                case start_1: 
+                    startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup1);           break;
+                default: 
+                    startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup0);
+                    break;
+            }
+                    
         }
         
         rx_ports.pUart :> port_val; // junk data

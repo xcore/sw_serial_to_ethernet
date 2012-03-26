@@ -168,22 +168,24 @@ XsiStatus plugin_clock(void *instance)
   {
   	first_time_flg = 1;
 	/* drive other pins on 8B */
-	status = xsi->drive_pin("0", "X0D14", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D14", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D15", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D15", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-    status = xsi->drive_pin("0", "X0D16", s_instances[s_num_instances].start_bit_polarity);
+    status = xsi->drive_pin("0", "X0D16", !s_instances[instance_num].start_bit_polarity);
     CHECK_STATUS;
-    status = xsi->drive_pin("0", "X0D17", s_instances[s_num_instances].start_bit_polarity);
+    status = xsi->drive_pin("0", "X0D17", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D18", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D18", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D19", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D19", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D20", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D20", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D21", s_instances[s_num_instances].start_bit_polarity);
+	status = xsi->drive_pin("0", "X0D21", !s_instances[instance_num].start_bit_polarity);
 	CHECK_STATUS;
+	
+	printf("Polarity of start bit is %d\n", s_instances[instance_num].start_bit_polarity);
   }
   
   /* external clock */
@@ -236,7 +238,7 @@ XsiStatus plugin_clock(void *instance)
       s_instances[instance_num].tick_count++;
       if (s_instances[instance_num].tick_count < 100000)
       {
-          status = xsi->drive_pin(uart_package, uart_pin, s_instances[s_num_instances].start_bit_polarity);      
+          status = xsi->drive_pin(uart_package, uart_pin, !s_instances[instance_num].start_bit_polarity);      
           CHECK_STATUS;
           next_state = INITIAL_PAUSE;
       }
