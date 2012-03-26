@@ -189,6 +189,7 @@ static int configure_uart_channel(unsigned int channel_id)
 						  uart_channel_config[channel_id].channel_id,
 						  uart_channel_config[channel_id].parity,
 						  uart_channel_config[channel_id].stop_bits,
+						  uart_channel_config[channel_id].polarity,
 						  uart_channel_config[channel_id].baud,
 						  uart_channel_config[channel_id].char_len);
 

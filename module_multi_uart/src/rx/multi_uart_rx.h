@@ -49,7 +49,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
     
     e_uart_config_stop_bits sb_mode; /**< Stop bit configuration */
     e_uart_config_parity parity_mode; /**< Parity mode configuration */
-    e_uart_config_polarity polarity_mode; /**< Polarity mode */
+    e_uart_config_polarity polarity_mode; /**< Polarity mode of start/stop bits */
 
 } s_multi_uart_rx_channel;
 
@@ -59,7 +59,7 @@ typedef struct STRUCT_MULTI_UART_RX_CHANNEL
  * @param[in] channel_id    Channel Identifier
  * @param[in] parity        Parity configuration
  * @param[in] stop_bits     Stop bit configuration
- * @param[in] polarity      Polarity configuration (currently unused)
+ * @param[in] polarity      Polarity configuration of start/stop bits
  * @param[in] baud          Required baud rate
  * @param[in] char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success

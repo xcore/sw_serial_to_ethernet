@@ -102,7 +102,7 @@ typedef struct STRUCT_UART_CHANNEL_CONFIG
 	e_uart_config_stop_bits	stop_bits;
 	int						baud;					//configured baud rate
 	int 					char_len;				//Length of a character in bits (e.g. 8 bits)
-	e_uart_polarity			polarity;				//polarity of bits
+	e_uart_config_polarity	polarity;				//polarity of start bits
 	int						telnet_port;			//User configured telnet port
 	int 					telnet_conn_id;			//telnet connection id telnetd_state_t.conn_id ~= xtcp_connection_t.id
 	e_bool 					is_configured;			//whether channel is configured or not//TODO: To chk if this is still reqd, provided a default uart config if applied initially, b4 web configuring

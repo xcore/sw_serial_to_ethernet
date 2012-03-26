@@ -11,12 +11,10 @@ Key Features
 * Support for 8 channels of UART RX & TX on 8 bit ports
 * Reconfigurable at runtime
 * Supports upto 115200bps in both directions
-* Support for a variety of data lengths, parity configurations and stop bit configurations
+* Support for a variety of data lengths, parity configurations and stop bit configurations, start bit polarity
 
 To Do
-=====
-
-* Support for inverted signals
+======
 
 Firmware Overview
 =================

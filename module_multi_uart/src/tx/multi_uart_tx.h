@@ -68,6 +68,7 @@ typedef struct STRUCT_MULTI_UART_TX_CHANNEL
  * @param channel_id    Channel Identifier
  * @param parity        Parity configuration
  * @param stop_bits     Stop bit configuration
+ * @param polarity      Start/Stop bit polarity setting
  * @param baud          Required baud rate
  * @param char_len      Length of a character in bits (e.g. 8 bits)
  * @return              Return 0 on success
