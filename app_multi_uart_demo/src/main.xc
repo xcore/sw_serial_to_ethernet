@@ -7,7 +7,7 @@
 #include "echo_test.h"
 
 /* define UART_CORE for Motor Control Board as 1 */
-#define UART_CORE   1
+#define UART_CORE   0
 
 on stdcore[UART_CORE]: s_multi_uart_tx_ports uart_tx_ports =
 {    
@@ -103,7 +103,7 @@ void uart_tx_test(streaming chanend cUART)
    {
        //:example_tx_buf_fill
        /* fill buffers with test strings */
-       buffer_space = uart_tx_put_char(chan_id, (unsigned int)test_str[chan_id][rd_ptr[chan_id]]);
+       buffer_space = uart_tx_put_char(chan_id, 0xAA); //(unsigned int)test_str[chan_id][rd_ptr[chan_id]]);
        
        if (buffer_space != -1)
        {
@@ -232,6 +232,7 @@ void uart_rx_test(streaming chanend cUART)
                 
                 if (chan_id == 0)
                 {
+                    printhexln(temp);
                     if (uart_rx_validate_char( chan_id, uart_char ) == 0)
                     {
                         receive_buf[buf_ptr] = (char)uart_char;
@@ -243,6 +244,7 @@ void uart_rx_test(streaming chanend cUART)
                                 printchar(receive_buf[i]);
                         }
                     }
+                    else printstr("Invalid\n");
                 }
                 break;
         }

@@ -197,13 +197,18 @@ unsigned int uart_tx_assemble_word( int channel_id, unsigned int uart_char )
             break;
     }
     
-    full_word |= ((1 << UART_TX_IFB) - 1) << pos;
+    full_word |= ((1 << UART_TX_IFB) - (temp&1)) << pos;
     
     /* mask off word to uart word length */
-    full_word = (((1 << uart_tx_channel[channel_id].uart_word_len) - 1) & full_word);
+    full_word = (((1 << (uart_tx_channel[channel_id].uart_word_len+UART_TX_IFB)) - 1) & full_word);
     
     /* do calc XOR'd output */
-    temp = (full_word << 1) | 0x1;
+    switch (uart_tx_channel[channel_id].polarity_mode)
+    {
+        case start_0: temp = (full_word << 1) | 0x1; break;
+        case start_1: temp = (full_word << 1) | 0x0; break;
+        default: temp = (full_word << 1) | 0x1; break;
+    }
     full_word = temp ^ full_word;
     
     return full_word;

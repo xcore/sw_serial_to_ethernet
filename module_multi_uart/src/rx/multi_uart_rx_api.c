@@ -137,17 +137,28 @@ int uart_rx_initialise_channel( int channel_id, e_uart_config_parity parity, e_u
 int uart_rx_validate_char( int chan_id, unsigned *uart_word )
 {
     int error = 0;
+    unsigned val, test_result;
     unsigned word = *uart_word;
+    
+    /* set stop bits */
+    switch (uart_rx_channel[chan_id].polarity_mode)
+    {
+        case start_0: val = 0x3; test_result = 0x3; break;
+        case start_1: val = 0x0; test_result = 0x0; break;
+        default: val = 0x3; test_result = 0x3; break;
+    }
         
     switch (uart_rx_channel[chan_id].sb_mode)
     {
         case sb_1:
-            if ((word & 1) != 1) // TODO respect polarity
+            test_result &= 0x1;
+            val &= 0x1;
+            if ((word & val) != test_result)
                 error = 1;
             word >>= 1;
             break;
         case sb_2:
-            if ((word & 0x3) != 0x3) // TODO respect polarity
+            if ((word & val) != test_result) 
                 error = 1;
             word >>= 2;
             break;

@@ -16,7 +16,7 @@
 #define MAX_BYTES 1024
 #define CHECK_STATUS if (status != XSI_STATUS_OK) return status
 
-#define ARG_COUNT 4
+#define ARG_COUNT 6
 /* 500000000/115200 = 4340.277 */
 /* 500000000/115205 = 4340.089 */
 /* 500000000/116352 = 4297.305 (1% faster)*/
@@ -41,10 +41,12 @@ struct UartTxInstance
   XsiCallbacks *xsi;
   const char *uart_package;
   const char *uart_pin;
+  const char *uart_rx_pin;
   
   const char *ext_clk_pkg;
   const char *ext_clk_pin;
   
+  /* output state */
   unsigned current_data;
   unsigned current_data_len;
   unsigned tick_count;
@@ -53,10 +55,18 @@ struct UartTxInstance
   unsigned tick_error;
   UartTxState state;
   
+  /* input state */
+  unsigned rx_current_data;
+  unsigned rx_data_len;
+  unsigned rx_tick_count;
+  
+  /* ext clk src state */
   unsigned ext_clk_src_tick_count;
   unsigned ext_clk_src_tick_error;
   unsigned ext_clk_src_tick_target;
   unsigned ext_clk_value;
+  
+  unsigned start_bit_polarity;
 };
 
 /*
@@ -94,9 +104,18 @@ XsiStatus plugin_create(void **instance, XsiCallbacks *xsi, const char *argument
   // Store pin information
   s_instances[s_num_instances].uart_package = argv[0];
   s_instances[s_num_instances].uart_pin = argv[1];
+  s_instances[s_num_instances].uart_rx_pin = argv[2];
   
-  s_instances[s_num_instances].ext_clk_pkg = argv[2];
-  s_instances[s_num_instances].ext_clk_pin = argv[3];
+  s_instances[s_num_instances].ext_clk_pkg = argv[3];
+  s_instances[s_num_instances].ext_clk_pin = argv[4];
+  
+  if (atoi(argv[4]) != 0 && atoi(argv[4]) != 1)
+  {
+      printf("Invalid polarity setting - %d\n", atoi(argv[5]));
+      return XSI_STATUS_INVALID_ARGS;
+  }
+  
+  s_instances[s_num_instances].start_bit_polarity = atoi(argv[5]);
   
   s_instances[s_num_instances].state = INITIAL_PAUSE;
   s_instances[s_num_instances].tick_count = 0;
@@ -149,21 +168,21 @@ XsiStatus plugin_clock(void *instance)
   {
   	first_time_flg = 1;
 	/* drive other pins on 8B */
-	status = xsi->drive_pin("0", "X0D14", 1);
+	status = xsi->drive_pin("0", "X0D14", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D15", 1);
+	status = xsi->drive_pin("0", "X0D15", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-        status = xsi->drive_pin("0", "X0D16", 1);
-        CHECK_STATUS;
-        status = xsi->drive_pin("0", "X0D17", 1);
+    status = xsi->drive_pin("0", "X0D16", s_instances[s_num_instances].start_bit_polarity);
+    CHECK_STATUS;
+    status = xsi->drive_pin("0", "X0D17", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D18", 1);
+	status = xsi->drive_pin("0", "X0D18", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D19", 1);
+	status = xsi->drive_pin("0", "X0D19", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D20", 1);
+	status = xsi->drive_pin("0", "X0D20", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
-	status = xsi->drive_pin("0", "X0D21", 1);
+	status = xsi->drive_pin("0", "X0D21", s_instances[s_num_instances].start_bit_polarity);
 	CHECK_STATUS;
   }
   
@@ -210,14 +229,14 @@ XsiStatus plugin_clock(void *instance)
   
   
   
-  /* state machine for uart */
+  /* state machine for uart output */
   switch (state) 
   {
     case INITIAL_PAUSE:
       s_instances[instance_num].tick_count++;
       if (s_instances[instance_num].tick_count < 100000)
       {
-          status = xsi->drive_pin(uart_package, uart_pin, 1);      
+          status = xsi->drive_pin(uart_package, uart_pin, s_instances[s_num_instances].start_bit_polarity);      
           CHECK_STATUS;
           next_state = INITIAL_PAUSE;
       }
@@ -228,6 +247,9 @@ XsiStatus plugin_clock(void *instance)
       
       break;
     case IDLE:
+        int start_bit;
+        int stop_bit;
+        
         data = (unsigned int)rand() % 256; // generate 0-255
         //data = 0x55;
         data &= 0xFF; // ensure 8 bits
@@ -240,8 +262,17 @@ XsiStatus plugin_clock(void *instance)
         /* generate UART Word */
         s_instances[instance_num].current_data_len = 11; // START + DATA(8) + PARITY + STOP
         /* build word */
-        s_instances[instance_num].current_data = 0xFFFFF800;
-        s_instances[instance_num].current_data |= (1<<11) | (1<<10) | (parity<<9) | (data<<1) | 0;
+        s_instances[instance_num].current_data = 0;
+        
+        /* work out stop/start bit polarity */
+        switch (s_instances[instance_num].start_bit_polarity)
+        {
+            case 0: start_bit = 0; stop_bit = 1; break;
+            case 1: start_bit = 1; stop_bit = 0; break;
+            default: start_bit = 0; stop_bit = 1; break;
+        }
+        
+        s_instances[instance_num].current_data |= (stop_bit<<11) | (stop_bit<<10) | (parity<<9) | (data<<1) | start_bit;
         
         s_instances[instance_num].tick_count = 0;
         s_instances[instance_num].out_count = 0;
@@ -353,7 +384,7 @@ XsiStatus plugin_terminate(void *instance)
 static void print_usage()
 {
   fprintf(stderr, "Usage:\n");
-  fprintf(stderr, "  Uart_test.dll/so <package> <UART RX pin> <package> <ext clk pin>\n");
+  fprintf(stderr, "  Uart_test.dll/so <package> <UART RX pin> <UART TX pin> <package> <ext clk pin>  <start_bit_polarity>\n");
 }
 
 /*

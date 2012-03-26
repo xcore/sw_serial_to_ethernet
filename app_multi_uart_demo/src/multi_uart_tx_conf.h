@@ -39,13 +39,12 @@
 #define UART_TX_OVERSAMPLE          2
 
 /**
- * Define the buffer size in UART word entries - needs to be a power of 2 (i.e. 1,2,4,8,16,32)
+ * Define the buffer size in UART word entries
  */
 #define UART_TX_BUF_SIZE    16
 
 /**
- * Define the number of channels that are to be supported, must fit in the port. Also, 
- * must be a power of 2 (i.e. 1,2,4,8,16) - not all channels have to be utilised
+ * Define the number of channels that are to be supported, must fit in the port.
  */
 #define UART_TX_CHAN_COUNT  8
 

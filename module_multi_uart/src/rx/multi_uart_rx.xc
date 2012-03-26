@@ -35,7 +35,8 @@ void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], in
 
 // global for access by ASM
 unsigned fourBitLookup[16];
-unsigned startBitLookup[16];
+unsigned startBitLookup0[16];
+unsigned startBitLookup1[16];
 
 #pragma unsafe arrays
 void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports, clock uart_clock )
@@ -73,12 +74,19 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     
     for (int i = 0; i < 16; i++)
     {
-        startBitLookup[i] = 0xffffffff;
+        startBitLookup0[i] = 0xffffffff;
+        startBitLookup1[i] = 0xffffffff;
     }
-    startBitLookup[0b0000] = 4;
-    startBitLookup[0b0001] = 3;
-    startBitLookup[0b0011] = 2;
-    startBitLookup[0b0111] = 1;
+    
+    startBitLookup0[0b0000] = 4;
+    startBitLookup0[0b0001] = 3;
+    startBitLookup0[0b0011] = 2;
+    startBitLookup0[0b0111] = 1;
+    
+    startBitLookup1[0b1111] = 4;
+    startBitLookup1[0b1110] = 3;
+    startBitLookup1[0b1100] = 2;
+    startBitLookup1[0b1000] = 1;
     
     multi_uart_rx_port_init( rx_ports, uart_clock );
     

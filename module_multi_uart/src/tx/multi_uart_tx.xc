@@ -29,7 +29,7 @@ void multi_uart_tx_port_init( s_multi_uart_tx_ports &tx_ports, clock uart_clock 
     }
     #endif
     
-    configure_out_port(	tx_ports.pUart, uart_clock, 0xFF); // TODO honour stop bit polarity
+    configure_out_port(	tx_ports.pUart, uart_clock, 0xFF); 
     
     start_clock( uart_clock );
 }
@@ -45,8 +45,9 @@ unsigned multi_uart_tx_buffer_get( int chan_id )
 #pragma unsafe arrays
 void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports, clock uart_clock )
 {
-    unsigned port_val = 0xFF; // TODO honour IDLE/STOP polarity
+    unsigned port_val; // TODO honour IDLE/STOP polarity
     unsigned short port_ts;
+    unsigned idle_val = 0xFF;
     
     unsigned current_word[UART_TX_CHAN_COUNT];
     unsigned current_word_pos[UART_TX_CHAN_COUNT];
@@ -55,6 +56,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
     
     multi_uart_tx_port_init( tx_ports, uart_clock );
     
+    /* wait until release (post config) */
 	cUART <: MULTI_UART_GO;
 	cUART :> int _;
 	
@@ -68,7 +70,18 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 	    uart_tx_channel[i].rd_ptr = 0;
 	    uart_tx_channel[i].nelements = 0;
 	    clocks_per_bit[i] = uart_tx_channel[i].clocks_per_bit;
+	    
+	    /* build idle value */
+	    switch(uart_tx_channel[i].polarity_mode)
+	    {
+	        case start_0: idle_val |= (1<<i); break;
+	        case start_1: idle_val &= ~(1<<i); break;
+	        default: idle_val |= (1<<i); break;
+	    }
+	    
 	}
+	
+	port_val = idle_val;
 	
 	/* initialise port */
 	tx_ports.pUart <: port_val @ port_ts;
