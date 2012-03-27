@@ -1,0 +1,24 @@
+This directory contains a plugin for the XMOS simulator that allows
+the developer to test the UART module. It relies on the demo echo
+application and transmits a random sequence of bytes.
+
+The plugin can be configured and installed using `make all`.
+
+Some preconfigured run configurations of the plugin are available
+via the Makefile. These are -
+
+runsim_uart0_pol0 - this runs the simulator with the plugin configured
+to operate on the 1st UART channel on the 8A and 8B ports @115200kbps,
+with even parity, 1 stop bit and a start bit polarity of 0 
+
+runsim_uart0_pol1 - this runs the simulator with the plugin configured
+to operate on the 1st UART channel on the 8A and 8B ports @115200kbps,
+with even parity, 1 stop bit and a start bit polarity of 1
+
+If invalid arguments are provided to the plugin then the following 
+help message will be printed -
+
+Usage:
+  Uart_test.dll/so <package> <UART RX pin> <UART TX pin> <package> <ext clk pin> <start_bit_polarity>
+
+See the makefile for working examples
