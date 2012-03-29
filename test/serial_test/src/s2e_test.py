@@ -179,7 +179,7 @@ def handle_telnet_tests(args, seed):
                     TestException("Cannot run "+test_name+" as invalid targets specified")
                 
                 telnet_test.set_target(target_properties[0], target_properties[1])
-                test_pass += telnet_test.application_telnet_port_uart_data_check_echo_loop_back()
+                test_pass += telnet_test.application_telnet_port_uart_data_check_echo_loop_back(seed)
                 
     if (test_count > 0):
         print "\nTelnet Tests Complete"

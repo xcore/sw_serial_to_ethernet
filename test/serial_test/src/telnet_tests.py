@@ -1,6 +1,8 @@
 import pexpect
 import random
 import datetime
+import re
+import sys
 
 class XmosTelnetTestFailure(Exception):
     def __init__(self, msg):
@@ -26,9 +28,10 @@ class XmosTelnetTest:
     test_state = None
     test_message = ""
     
-    def __init__(self, address, port):
+    def __init__(self, address, port, verbose=0):
         self.address = address
         self.port = port
+        self.verbose = verbose
     
     def set_target( self, address, port ):
         self.address = address
@@ -48,9 +51,14 @@ class XmosTelnetTest:
                 print "\tMessage: "+message
     
     def telnet_s2e_connect(self):
+        if (self.verbose):
+            log_location = sys.stdout
+        else:
+            log_location = None
+        
         # connect
         try:
-            telnet_session = pexpect.spawn('telnet '+self.address+' '+self.port)
+            telnet_session = pexpect.spawn('telnet '+self.address+' '+self.port, logfile=log_location)
         except pexpect.EOF:
             raise XmosTelnetTestFailure("Invalid target - "+self.address+' '+self.port)
             
@@ -119,32 +127,37 @@ class XmosTelnetTest:
         self.print_test_info(test_name, test_state, test_message)
         return test_state
         
-    def application_telnet_port_uart_data_check_echo_loop_back(self, seed, test_len=50, lines=10):
+    def application_telnet_port_uart_data_check_echo_loop_back(self, seed, test_len=20, lines=10):
         test_state = self.TEST_PASS
         test_message=None
         test_name = "application_telnet_port_uart_data_check_echo_loop_back"
         
         try:
-            telnet_session_list.add(self.telnet_s2e_connect())
-        except XmosTelnetTestFailure:
-            test_state = TEST_FAIL
-            test_message = "Failed after "+count+" connections"
+            telnet_session = self.telnet_s2e_connect()
+        except XmosTelnetTestFailure as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
         else:
             for line_count in range(0,lines):
                 write_char = ""
                 for i in range(0,test_len):
-                    b = random.randint(0,len(character_bank)-1)
-                    write_char += character_bank[b]
+                    b = random.randint(0,len(self.character_bank)-1)
+                    write_char += self.character_bank[b]
             
                 try:
                     telnet_session.sendline(write_char)
-                    telnet_session.expect(write_char, timeout=5)
+                    # should get what we typed back twice due to telnet echo and uart echo
+                    telnet_session.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
+                    telnet_session.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
                 except pexpect.TIMEOUT:
                     test_state = self.TEST_FAIL
-                    test_message = "Did not get correct character response (timeout=5), test_len="+test_len+", lines="+lines+", current line="+line_count
-        
-        # close connection
-        telnet_session.close()
+                    test_message = "Did not get correct character response (timeout=5), test_len="+str(test_len)+", lines="+str(lines)+", current line="+str(line_count)
+                
+                if (test_state == self.TEST_FAIL):
+                    break
+                
+            # close connection
+            telnet_session.close()
         
         self.print_test_info(test_name, test_state, test_message)
         return test_state
