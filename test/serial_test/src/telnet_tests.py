@@ -39,28 +39,34 @@ class XmosTelnetTest:
         
     def print_test_info(self, test_name, status, message=None):
         now = datetime.datetime.now()
+        target = self.address+":"+self.port
+        
         print "["+now.strftime("%d-%m-%Y %H:%M")+"] Test:",
         
         if status == self.TEST_FAIL:
-            print test_name+" Result: FAIL"
+            print test_name+" Target: "+target+" Result: FAIL"
             if message is not None:
                 print "\tMessage: "+message
         if status == self.TEST_PASS:
-            print test_name+" Result: PASS"
+            print test_name+" Target: "+target+" Result: PASS"
             if message is not None:
                 print "\tMessage: "+message
     
-    def telnet_s2e_connect(self):
+    def telnet_s2e_connect(self, address=None, port=None):
         if (self.verbose):
             log_location = sys.stdout
         else:
             log_location = None
         
+        if (address is None or port is None ):
+            address = self.address
+            port = self.port
+        
         # connect
         try:
-            telnet_session = pexpect.spawn('telnet '+self.address+' '+self.port, logfile=log_location)
+            telnet_session = pexpect.spawn('telnet '+address+' '+port, logfile=log_location)
         except pexpect.EOF:
-            raise XmosTelnetTestFailure("Invalid target - "+self.address+' '+self.port)
+            raise XmosTelnetTestFailure("Invalid target - "+address+' '+port)
             
         # check for welcome
         try:
@@ -111,7 +117,7 @@ class XmosTelnetTest:
             try:
                 telnet_session_list.append(self.telnet_s2e_connect())
             except XmosTelnetTestFailure:
-                test_message = "Failed after "+str(count)+" connections"
+                test_message = "Achieved "+str(count)+" connections"
                 loop = 0
             else:
                 count += 1
@@ -158,6 +164,43 @@ class XmosTelnetTest:
                 
             # close connection
             telnet_session.close()
+        
+        self.print_test_info(test_name, test_state, test_message)
+        return test_state
+    
+    def application_telnet_port_uart_data_check_cross_loop_back(self, seed, second_addr, second_port, test_len=20, lines=10):
+        test_state = self.TEST_PASS
+        test_message=None
+        test_name = "application_telnet_port_uart_data_check_cross_loop_back"
+        
+        try:
+            telnet_session_master = self.telnet_s2e_connect()
+            telnet_session_slave = self.telnet_s2e_connect(second_addr, second_port)
+        except XmosTelnetTestFailure as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
+        else:
+            for line_count in range(0,lines):
+                write_char = ""
+                for i in range(0,test_len):
+                    b = random.randint(0,len(self.character_bank)-1)
+                    write_char += self.character_bank[b]
+            
+                try:
+                    telnet_session_master.sendline(write_char)
+                    # should get what we typed back twice due to telnet echo and uart echo
+                    telnet_session_master.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
+                    telnet_session_slave.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
+                except pexpect.TIMEOUT:
+                    test_state = self.TEST_FAIL
+                    test_message = "Did not get correct character response (timeout=5), test_len="+str(test_len)+", lines="+str(lines)+", current line="+str(line_count)
+                
+                if (test_state == self.TEST_FAIL):
+                    break
+                
+            # close connection
+            telnet_session_master.close()
+            telnet_session_slave.close()
         
         self.print_test_info(test_name, test_state, test_message)
         return test_state

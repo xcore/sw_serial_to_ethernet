@@ -6,6 +6,7 @@ import time
 import serial_tests
 import telnet_tests
 import serial.tools.list_ports as list_ports
+from itertools import izip
 
 class TestException(Exception):
     def __init__(self, msg):
@@ -19,6 +20,10 @@ def list_com_ports():
     for port in list_ports.comports():
         print "\t"+port[0]
 
+def pairwise(iterable):
+    "s -> (s0,s1), (s2,s3), (s4, s5), ..."
+    a = iter(iterable)
+    return izip(a, a)
         
 def process_args():
     parser = argparse.ArgumentParser(description='XMOS UART Testing System')
@@ -48,6 +53,8 @@ def process_args():
     parser.add_argument('--app-maximum-connections-telnet', const=True, default=False, action='store_const', help='Run app_maximum_connections_telnet test')
     
     parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test')
+    
+    parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets' )
     
     #parser.add_argument('--s2e-ethernet-tests', const=True, default=False, action='store_const', help='Run through the suite of Serial to Ethernet tests using Telnet & Serial interfaces')
     
@@ -137,53 +144,71 @@ def handle_telnet_tests(args, seed):
     test_pass = 0
     
     if args.app_start_up_check_using_telnet:
-        test_count += 1
         test_name = "app_start_up_check_using_telnet"
         
         if args.telnet_targets is None:
             raise TestException("Cannot run "+test_name+" test no targets specified")
         else:
             for target in args.telnet_targets:
+                test_count += 1
                 target_properties = target.split(':')
                 if (len(target_properties) != 2):
-                    TestException("Cannot run "+test_name+" as invalid targets specified")
+                    raise TestException("Cannot run "+test_name+" as invalid targets specified")
                 
                 telnet_test.set_target(target_properties[0], target_properties[1])
                 test_pass += telnet_test.app_start_up_check_using_telnet()
     
     if args.app_maximum_connections_telnet:
-        test_count += 1
         test_name = "app_maximum_connections_telnet"
         
         if args.telnet_targets is None:
             raise TestException("Cannot run "+test_name+" test no targets specified")
         else:
             for target in args.telnet_targets:
+                test_count += 1
                 target_properties = target.split(':')
                 if (len(target_properties) != 2):
-                    TestException("Cannot run "+test_name+" as invalid targets specified")
+                    raise TestException("Cannot run "+test_name+" as invalid targets specified")
                     
                 telnet_test.set_target(target_properties[0], target_properties[1])
                 test_pass += telnet_test.app_maximum_connections_telnet()
                     
     if args.application_telnet_port_uart_data_check_echo_loop_back:
-        test_count += 1
         test_name = "application_telnet_port_uart_data_check_echo_loop_back"
         
         if args.telnet_targets is None:
             raise TestException("Cannot run "+test_name+" test no targets specified")
         else:
             for target in args.telnet_targets:
+                test_count += 1
                 target_properties = target.split(':')
                 if (len(target_properties) != 2):
-                    TestException("Cannot run "+test_name+" as invalid targets specified")
+                    raise TestException("Cannot run "+test_name+" as invalid targets specified")
                 
                 telnet_test.set_target(target_properties[0], target_properties[1])
                 test_pass += telnet_test.application_telnet_port_uart_data_check_echo_loop_back(seed)
-                
+    
+    if args.application_telnet_port_uart_data_check_cross_loop_back is not None:
+        test_name = "application_telnet_port_uart_data_check_cross_loop_back"
+        
+        for master,slave in pairwise(args.application_telnet_port_uart_data_check_cross_loop_back):
+            test_count += 1
+            
+            master_target_properties = master.split(':')
+            if (len(master_target_properties) != 2):
+                raise TestException("Cannot run "+test_name+" as invalid master target specified")
+            
+            slave_target_properties = slave.split(':')
+            if (len(slave_target_properties) != 2):
+                raise TestException("Cannot run "+test_name+" as invalid slave target specified")
+            
+            telnet_test.set_target(master_target_properties[0], master_target_properties[1])
+            test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1])
+     
     if (test_count > 0):
-        print "\nTelnet Tests Complete"
+        print "\n------- Telnet Tests Complete -------"
         print "Run "+str(test_count)+" TEST(S) with "+str(test_pass)+" PASS and "+str(test_count-test_pass)+" FAILS"
+        print "--------------------------------------\n"
     
 def main():
     args = process_args()
@@ -196,6 +221,8 @@ def main():
         seed = random.randint(0,1000000)
     else:
         seed = args.seed
+    
+    print "---> Test Run with Seed = "+str(seed)
     
     try:
         handle_telnet_tests(args, seed)
