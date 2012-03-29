@@ -204,3 +204,39 @@ class XmosTelnetTest:
         
         self.print_test_info(test_name, test_state, test_message)
         return test_state
+    
+    def application_telnet_read_write_command_check(self, channel_count=8):
+        test_state = self.TEST_PASS
+        test_message = None
+        test_name="application_telnet_read_write_command_check"
+            
+        try:
+            telnet_session = self.telnet_s2e_connect()
+        except XmosTelnetTestFailure as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
+        else:
+            for chan_id in range(0,channel_count):
+                try:
+                    config_str = '#C#'+str(chan_id)+'#1#1#9600#5#0#102#@'
+                    telnet_session.sendline(config_str)
+                    telnet_session.expect('UART '+str(chan_id)+' settings successful', timeout=5)
+                    telnet_session.sendline('#R#'+str(chan_id)+'#@')
+                    telnet_session.expect(re.escape(config_str), timeout=5)
+                    
+                    config_str = '#C#'+str(chan_id)+'#2#0#115200#8#0#'+str(46+chan_id)+'#@'
+                    telnet_session.sendline(config_str)
+                    telnet_session.expect('UART '+str(chan_id)+' settings successful', timeout=5)
+                    telnet_session.sendline('#R#'+str(chan_id)+'#@')
+                    telnet_session.expect(re.escape(config_str), timeout=5)
+                except pexpect.TIMEOUT:
+                    test_state = self.TEST_FAIL
+                    test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)
+            
+            # close connection
+            telnet_session.close()
+                
+        self.print_test_info(test_name, test_state, test_message)
+        return test_state
+                    
+                    

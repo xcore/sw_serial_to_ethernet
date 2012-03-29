@@ -34,9 +34,11 @@ def process_args():
     
     parser.add_argument('-c', nargs='+', help='List of configurations in the format baud-bits-parity-stop_bits e.g for 115200 bps with 8 bit characters, even parity and 1 stop bit you would use 115200-8-E-1. Valid parity is N-none, M-mark, S-space, E-even, O-odd. Default configurations will be 115200-8-E-1', dest='config_strings')
     
-    parser.add_argument('-n', nargs='+', help='List of telnet configurations in the format address:port', dest='telnet_targets')
+    parser.add_argument('--telnet-targets', nargs='+', help='List of telnet targets in the format address:port', dest='telnet_targets')
     
-    parser.add_argument('-s', '--seed', help='Integer seed for psuedo random tests - if not given then a random seed will be used and reported', dest='seed', type=int)
+    parser.add_argument('--telnet-conf-targets', nargs='+', help='List of telnet configuration targets in the format address:port', dest='telnet_conf_targets')
+    
+    parser.add_argument('--seed', help='Integer seed for psuedo random tests - if not given then a random seed will be used and reported', dest='seed', type=int)
     
     parser.add_argument('--log', nargs=1, help='File name for failure logging', dest='log_file')
     
@@ -55,6 +57,9 @@ def process_args():
     parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test')
     
     parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets' )
+    
+    parser.add_argument('--application-telnet-read-write-command-check', const=True, default=False, action='store_const', help='Run application_telnet_read_write_command_check test')
+    
     
     #parser.add_argument('--s2e-ethernet-tests', const=True, default=False, action='store_const', help='Run through the suite of Serial to Ethernet tests using Telnet & Serial interfaces')
     
@@ -204,7 +209,22 @@ def handle_telnet_tests(args, seed):
             
             telnet_test.set_target(master_target_properties[0], master_target_properties[1])
             test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1])
-     
+    
+    if args.application_telnet_read_write_command_check:
+        test_name = "application_telnet_read_write_command_check"
+        
+        if args.telnet_conf_targets is None:
+            raise TestException("Cannot run "+test_name+" test as no configuration targets specified")
+        
+        for target in args.telnet_conf_targets:
+            test_count += 1
+            target_properties = target.split(':')
+            if (len(target_properties) != 2):
+                raise TestException("Cannot run "+test_name+" as invalid configuration targets specified")
+                
+            telnet_test.set_target(target_properties[0], target_properties[1])
+            test_pass += telnet_test.application_telnet_read_write_command_check()
+            
     if (test_count > 0):
         print "\n------- Telnet Tests Complete -------"
         print "Run "+str(test_count)+" TEST(S) with "+str(test_pass)+" PASS and "+str(test_count-test_pass)+" FAILS"
