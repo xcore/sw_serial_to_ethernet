@@ -232,7 +232,8 @@ class XmosTelnetTest:
                 except pexpect.TIMEOUT:
                     test_state = self.TEST_FAIL
                     test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)
-            
+                    break
+                
             # close connection
             telnet_session.close()
                 

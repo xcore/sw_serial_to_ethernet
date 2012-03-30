@@ -29,38 +29,22 @@ def process_args():
     parser = argparse.ArgumentParser(description='XMOS UART Testing System')
     
     parser.add_argument('-l', '--list-devices', action='store_const', const=True, default=False, help='List available UARTs on this system')
-    
     parser.add_argument('-t', nargs='+', help='List of UARTs to test (see -l to obtain a full list of available ports)', dest='ports_for_test')
-    
     parser.add_argument('-c', nargs='+', help='List of configurations in the format baud-bits-parity-stop_bits e.g for 115200 bps with 8 bit characters, even parity and 1 stop bit you would use 115200-8-E-1. Valid parity is N-none, M-mark, S-space, E-even, O-odd. Default configurations will be 115200-8-E-1', dest='config_strings')
-    
+    parser.add_argument('-v', action='store_const', const=True, default=False, help='Be verbose', dest='verbose')
     parser.add_argument('--telnet-targets', nargs='+', help='List of telnet targets in the format address:port', dest='telnet_targets')
-    
     parser.add_argument('--telnet-conf-targets', nargs='+', help='List of telnet configuration targets in the format address:port', dest='telnet_conf_targets')
-    
     parser.add_argument('--seed', help='Integer seed for psuedo random tests - if not given then a random seed will be used and reported', dest='seed', type=int)
-    
     parser.add_argument('--log', nargs=1, help='File name for failure logging', dest='log_file')
-    
     parser.add_argument('--echo-test', action='store_const', const=True, default=False, help='Do the simple echo test at a single speed')
-    
     parser.add_argument('--multi-speed-echo-test', const=True, default=False, action='store_const', help='Do the simple echo test at multiple speeds using the auto-reconfiguration command to halve the baud rate')
-
     parser.add_argument('--burst-echo-test', const=True, default=False, action='store_const', help='Do the simple burst test at a single speed')
-    
     parser.add_argument('--multi-speed-burst-echo-test', const=True, default=False, action='store_const', help='Do the burst test at multiple speeds using the auto-reconfiguration command to halve the baud rate')
-    
     parser.add_argument('--app-start-up-check-using-telnet', const=True, default=False, action='store_const', help='Run app_start_up_check_using_telnet test')
-    
     parser.add_argument('--app-maximum-connections-telnet', const=True, default=False, action='store_const', help='Run app_maximum_connections_telnet test')
-    
     parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test')
-    
     parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets' )
-    
     parser.add_argument('--application-telnet-read-write-command-check', const=True, default=False, action='store_const', help='Run application_telnet_read_write_command_check test')
-    
-    
     #parser.add_argument('--s2e-ethernet-tests', const=True, default=False, action='store_const', help='Run through the suite of Serial to Ethernet tests using Telnet & Serial interfaces')
     
     args = parser.parse_args()
@@ -143,7 +127,10 @@ def handle_serial_tests( args, seed ):
     
 def handle_telnet_tests(args, seed):
     
-    telnet_test = telnet_tests.XmosTelnetTest("","")
+    if args.verbose:
+        telnet_test = telnet_tests.XmosTelnetTest("","",verbose=1)
+    else:
+        telnet_test = telnet_tests.XmosTelnetTest("","",verbose=0)
     
     test_count = 0
     test_pass = 0
