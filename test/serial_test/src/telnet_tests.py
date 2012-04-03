@@ -1,9 +1,14 @@
-import pexpect
+import platform
 import random
 import datetime
 import re
 import sys
 from xmos_test import XmosTest
+
+if platform.system() == 'Windows':
+    import winpexpect as pexpect
+else:
+    import pexpect
 
 class XmosTelnetTestFailure(Exception):
     def __init__(self, msg):
