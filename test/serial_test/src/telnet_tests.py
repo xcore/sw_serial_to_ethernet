@@ -42,7 +42,10 @@ class XmosTelnetTest(XmosTest):
         
         # connect
         try:
-            telnet_session = pexpect.spawn('telnet '+address+' '+port, logfile=log_location)
+            if platform.system() == 'Windows':
+                telnet_session = pexpect.winspawn('telnet '+address+' '+port, logfile=log_location)
+            else:
+                telnet_session = pexpect.spawn('telnet '+address+' '+port, logfile=log_location)
         except pexpect.EOF:
             raise XmosTelnetTestFailure("Invalid target - "+address+' '+port)
             
