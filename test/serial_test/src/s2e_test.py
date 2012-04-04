@@ -119,7 +119,7 @@ def handle_serial_tests( args, seed ):
                 config_string = args.config_strings[i]
             
             serial_test.set_port( port_id )
-            test_pass += serial_test.data_burst_test( config_string, seed, burst_len=1024, test_len=500 )
+            test_pass += serial_test.data_burst_test( config_string, seed, burst_len=100, test_len=2048 )
             i += 1
     
     if (test_count > 0):

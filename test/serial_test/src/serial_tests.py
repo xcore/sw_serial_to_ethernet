@@ -82,7 +82,7 @@ class XmosSerialTestSuite(XmosSerialTest):
         
         test_state = self.TEST_PASS
         test_message=None
-        test_name = "simple_echo_test"
+        test_name = "serial_echo_test"
         
         self.pb_print_start_test_info(test_name, self.port_id, "Running SIMPLE ECHO test on port "+self.port_id+" with config "+config_string)
         
@@ -145,92 +145,78 @@ class XmosSerialTestSuite(XmosSerialTest):
     def data_burst_test( self, config_string, seed, test_len=16, reconfigure=False, burst_len=3, log_file=None):
         """Generate bursts of data of a defined length and check that all data is echoed correctly """
         
-        # 'r' is deliberately not in this list as it will cause the echo server to reconfigure the UART
-        characters = "1234567890-=qwetyuiop[]asdfghjkl;'#\\zxcvbnm,./ !\"$%^&*()_+QWETYUIOP{}ASDFGHJKL:@~|ZXCVBNM<>?"
+        test_state = self.TEST_PASS
+        test_message=None
+        test_name = "serial_burst_echo_test"
         
-        log_f = None
-        if log_file is not None:
-            log_f = open(log_file, 'w')
-            log_f.write("------------------------------------------------------\n")
-            log_f.write("BURST DATA TEST FAILURE LOG\n")
-            log_f.write("------------------------------------------------------\n")
-            log_f.flush()
+        self.pb_print_start_test_info(test_name, self.port_id, "Running test on port "+self.port_id+" with config "+config_string)
+        
+        try:
+            uart = self.configure_uart( config_string )    
+            random.seed(seed)
             
-        print "\n------------------------------------------------------"
-        print "Running BURST DATA test on port "+self.__port_id+" with config "+config_string
-        
-        uart = configure_uart( port_id, config_string )    
-        print port_id+" configured"
-        
-        print "Using seed "+str(seed)
-        random.seed(seed)
-        
-        print "Waiting for the UART to make sense... sending 'A'"
-        uart.write("A")
-        uart.flush()
-        sys.stdout.write(".")
-        while (uart.read() != "A"):
+            self.print_to_log(test_name, "Initialising...")
             uart.write("A")
+            count = 0
+            while (uart.read() != "A"):
+                uart.write("A")
+                count += 1
+                if count > 10:
+                    raise XmosTestException("Did not get initialisation character \"A\"")
+                
             uart.flush()
-            sys.stdout.write(".")
-            sys.stdout.flush()
+            time.sleep(5)
+            uart.flushInput()
             
-        print "Cleaning up UART buffers"
-        while uart.read() != "":
-            print "."
+            self.setup_prog_bar(0,test_len,20)
             
-        print ""
-        print "Running test - "+str(test_len)+" lots of "+str(burst_len)+" byte bursts..."
-        pb = progressBar.progressBar(0,test_len,20)
-        burst_ok = 0
-        burst_fail = 0
-        
-        for i in range(0,test_len):
-            write_buf = ""
-            # generate buffer
-            for b in range(0,burst_len):
-                c = random.randint(0,len(characters)-1)
-                write_buf += characters[c]
+            burst_ok = 0
+            burst_fail = 0
+            
+            for i in range(0,test_len):
+                write_buf = ""
+                # generate buffer
+                for b in range(0,burst_len):
+                    c = random.randint(0,len(self.character_bank)-1)
+                    write_buf += self.character_bank[c]
+                    
                 uart.write(write_buf)
                 uart.flush()
-                
-            # read buffer and compare
-            read_buf = uart.read(len(write_buf))
-            if (read_buf != write_buf):
-                if log_f is not None:
-                    log_f.write(">>> FAILURE on interation "+str(i)+"\n")
-                    log_f.write("write_buf = "+write_buf+"\n")
-                    log_f.write("read_buf  = "+read_buf+"\n")
-                    log_f.flush()
+                    
+                # read buffer and compare
+                read_buf = uart.read(len(write_buf))
+                if (read_buf != write_buf):
+                    self.print_to_log(test_name, ">>> FAILURE on interation "+str(i)+"\n")
+                    self.print_to_log(test_name, "write_buf = "+write_buf+"\n")
+                    self.print_to_log(test_name, "read_buf  = "+read_buf+"\n")
                     burst_fail += 1
                 else:
                     burst_ok += 1
+                        
+                self.update_prog_bar(i)
                     
-            pb.updateAmount(i)
-            sys.stdout.write(str(pb)+"COMPLETED: "+str(i+1)+" of "+str(test_len)+" PASS: "+str(burst_ok)+" FAIL: "+str(burst_fail)+"\r")
-            sys.stdout.flush()
+                # clean out input buffer to ensure things aren't out of sync
+                uart.flushInput()
+                
+            if (burst_fail == 0):
+                test_state = self.TEST_PASS
+            else:
+                test_state = self.TEST_FAIL
+                
+            test_message = "Configuration = "+config_string+" COMPLETED: "+str(test_len)+" of "+str(test_len)+" PASS: "+str(burst_ok)+" FAIL: "+str(burst_fail)+"\n"
             
-            # clean out input buffer to ensure things aren't out of sync
-            uart.flushInput()
-            
-        sys.stdout.write("\nBURST TEST COMPLETED => ")
-        if (burst_fail == 0):
-            sys.stdout.write("PASS")
-            retval = 0
-        else:
-            sys.stdout.write("FAIL")
-            retval = 1
-            
-        sys.stdout.flush()
-        
-        if reconfigure:
-            print "\nDoing reconfiguration stage..."
-            uart.write("r")
-            uart.read()
-            
-        if log_f is not None:
-            log_f.close()
+            if reconfigure:
+                self.print_to_log(test_name, "\nDoing reconfiguration stage...")
+                uart.write("r")
+                uart.read()
+                
+        except XmosTestException as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
             
         uart.close()
-        print "\n------------------------------------------------------"
-        return retval
+        self.print_test_info(test_name, test_state, self.port_id, test_message)
+        self.test_cleanup()
+        return test_state
+    
+        
