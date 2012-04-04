@@ -39,7 +39,10 @@ class XmosTest(object):
     def update_prog_bar(self, value):
         if self.pb_enabled:
             self.pb.updateAmount(value)
-            if ((value % int(self.pb_max_val/20) == 0)):
+            update_cond = int(self.pb_max_val/20)
+            if update_cond == 0:
+                update_cond = 1
+            if ((value % update_cond == 0)):
                 self.lf.write("\t"+str(self.pb)+"\r")
                 self.lf.flush()
     

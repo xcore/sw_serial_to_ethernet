@@ -21,7 +21,7 @@ class XmosSerialException(Exception):
 class XmosSerialTest(XmosTest):
     """Base class for tests that utilise the serial port"""
     
-    def __init__(self, port_id, verbose=0, prog_bar=0, log_file=None):
+    def __init__(self, port_id="", verbose=0, prog_bar=0, log_file=None):
         super(XmosSerialTest, self).__init__(prog_bar=prog_bar, log_file=log_file)
         self.port_id = port_id
     

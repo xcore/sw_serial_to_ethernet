@@ -20,7 +20,7 @@ class XmosTelnetTestFailure(Exception):
 class XmosTelnetTest(XmosTest):
     """Base class for tests that utilise the telnet interface"""
     
-    def __init__(self, address, port, verbose=0, prog_bar=0, log_file=None):
+    def __init__(self, address="", port="", verbose=0, prog_bar=0, log_file=None):
         super(XmosTelnetTest, self).__init__(prog_bar=prog_bar, log_file=log_file)
         self.address = address
         self.port = port
