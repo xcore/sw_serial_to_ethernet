@@ -7,6 +7,7 @@ from serial_tests import XmosSerialTestSuite
 from xmos_test import XmosTestException
 import serial.tools.list_ports as list_ports
 from itertools import izip
+from serial import SerialException
 
 def list_com_ports():
     print "Available Serial ports - "
@@ -246,6 +247,9 @@ def main():
         handle_serial_tests( args, seed )
     except XmosTestException as e:
         print "ERROR: "+e.msg
+        exit(1)
+    except SerialException as e:
+        print "ERROR: "+e.message
         exit(1)
         
     try:
