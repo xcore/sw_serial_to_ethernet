@@ -9,7 +9,7 @@ die "Error: $ARGV[0] is not a directory\n" if not -d $ARGV[0];
 
 # Open the flash image file and set it to binary mode
 open( OUTPUT, ">webpage_bin.img");
-open( LOC, ">copy_to_httpd.txt");
+open( LOC, ">copy_to_s2e_flash_xc.txt");
 binmode(OUTPUT);
 
 # Change to the root of the web file system

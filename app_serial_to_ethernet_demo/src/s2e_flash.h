@@ -1,4 +1,3 @@
-
 // Copyright (c) 2011, XMOS Ltd., All rights reserved
 // This software is freely distributable under a derivative of the
 // University of Illinois/NCSA Open Source License posted in
@@ -15,16 +14,27 @@ Purpose
 
 ===========================================================================*/
 
-#ifndef FLASH_APP_H_
-#define FLASH_APP_H_
-
 /*---------------------------------------------------------------------------
 include files
 ---------------------------------------------------------------------------*/
+#ifndef S2E_FLASH_H_
+#define S2E_FLASH_H_
 
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
+// required for calculation of config_address and other stuff
+#define FLASH_SIZE_PAGE             256
+#define WPAGE_NUM_FILES             2
+
+// flash_operation defines
+#define FLASH_ROM_READ              '@'
+#define FLASH_CONFIG_WRITE          '~'
+#define FLASH_CONFIG_READ           '!'
+#define FLASH_GET_CONFIG_ADDRESS    '#'
+
+// indicate if there is a config present in flash
+#define FLASH_VALID_CONFIG_PRESENT  '$'
 
 /*---------------------------------------------------------------------------
 ports and clocks
@@ -52,6 +62,9 @@ static variables
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
+
+void flash_data_access(chanend cPersData);
+
 int flash_access(char flash_operation,
                  char data[],
                  int address,
@@ -61,6 +74,5 @@ int get_config_address(int last_rom_page,
                        int last_rom_length,
                        chanend cPersData);
 
-#endif /* FLASH_APP_H_ */
+#endif /* S2E_FLASH_H_ */
 /*=========================================================================*/
-

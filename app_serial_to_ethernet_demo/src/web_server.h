@@ -37,6 +37,10 @@ global variables
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
-void web_server(chanend tcp_svr, streaming chanend cWbSvr2AppMgr, chanend pers_data);
+void web_server(
+		chanend tcp_svr,
+		streaming chanend cWbSvr2AppMgr,
+		streaming chanend cAppMgr2WbSvr,
+		chanend pers_data);
 
 #endif // _web_server_h_
