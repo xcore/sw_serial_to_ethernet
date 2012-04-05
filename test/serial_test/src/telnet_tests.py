@@ -117,10 +117,12 @@ class XmosTelnetTestSuite(XmosTelnetTest):
         self.test_cleanup()
         return test_state
         
-    def application_telnet_port_uart_data_check_echo_loop_back(self, seed, test_len=20, lines=10):
+    def application_telnet_port_uart_data_check_echo_loop_back(self, seed, data_len=20, test_duration=10, test_duration_unit='cycles'):
         test_state = self.TEST_PASS
         test_message=None
         test_name = "application_telnet_port_uart_data_check_echo_loop_back"
+        
+        self.pb_print_start_test_info(test_name, self.address+":"+self.port, "Running test for "+str(test_duration)+" "+test_duration_unit)
         
         try:
             telnet_session = self.telnet_s2e_connect()
@@ -128,12 +130,16 @@ class XmosTelnetTestSuite(XmosTelnetTest):
             test_state = self.TEST_FAIL
             test_message = e.msg
         else:
-            for line_count in range(0,lines):
+            init = 1
+            lines = 0
+            while self.test_finish_condition(test_duration_unit, test_duration, init):
+                init=0
+                lines += 1
                 write_char = ""
-                for i in range(0,test_len):
+                for i in range(0,data_len):
                     b = random.randint(0,len(self.character_bank)-1)
                     write_char += self.character_bank[b]
-            
+                
                 try:
                     telnet_session.sendline(write_char)
                     # should get what we typed back twice due to telnet echo and uart echo
@@ -141,7 +147,7 @@ class XmosTelnetTestSuite(XmosTelnetTest):
                     telnet_session.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
                 except pexpect.TIMEOUT:
                     test_state = self.TEST_FAIL
-                    test_message = "Did not get correct character response (timeout=5), test_len="+str(test_len)+", lines="+str(lines)+", current line="+str(line_count)
+                    test_message = "Did not get correct character response (timeout=5), lines="+str(lines)
                 
                 if (test_state == self.TEST_FAIL):
                     break
@@ -153,10 +159,12 @@ class XmosTelnetTestSuite(XmosTelnetTest):
         self.test_cleanup()
         return test_state
     
-    def application_telnet_port_uart_data_check_cross_loop_back(self, seed, second_addr, second_port, test_len=20, lines=10):
+    def application_telnet_port_uart_data_check_cross_loop_back(self, seed, second_addr, second_port, data_len=20, test_duration=10, test_duration_unit='cycles'):
         test_state = self.TEST_PASS
         test_message=None
         test_name = "application_telnet_port_uart_data_check_cross_loop_back"
+        
+        self.pb_print_start_test_info(test_name, self.address+":"+self.port, "Running test for "+str(test_duration)+" "+test_duration_unit)
         
         try:
             telnet_session_master = self.telnet_s2e_connect()
@@ -165,9 +173,13 @@ class XmosTelnetTestSuite(XmosTelnetTest):
             test_state = self.TEST_FAIL
             test_message = e.msg
         else:
-            for line_count in range(0,lines):
+            init = 1
+            lines = 0
+            while self.test_finish_condition(test_duration_unit, test_duration, init):
+                init=0
+                lines += 1
                 write_char = ""
-                for i in range(0,test_len):
+                for i in range(0,data_len):
                     b = random.randint(0,len(self.character_bank)-1)
                     write_char += self.character_bank[b]
             
@@ -178,7 +190,7 @@ class XmosTelnetTestSuite(XmosTelnetTest):
                     telnet_session_slave.expect(re.escape(write_char), timeout=5) # ensure we expect a reg exp safe literal
                 except pexpect.TIMEOUT:
                     test_state = self.TEST_FAIL
-                    test_message = "Did not get correct character response (timeout=5), test_len="+str(test_len)+", lines="+str(lines)+", current line="+str(line_count)
+                    test_message = "Did not get correct character response (timeout=5), lines="+str(lines)
                 
                 if (test_state == self.TEST_FAIL):
                     break

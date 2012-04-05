@@ -32,14 +32,15 @@ def process_args():
     parser.add_argument('--telnet-conf-targets', metavar='address:port', nargs='+', help='List of telnet configuration targets in the format address:port', dest='telnet_conf_targets')
     parser.add_argument('--seed', help='Integer seed for psuedo random tests - if not given then a random seed will be used and reported', dest='seed', type=int)
     parser.add_argument('--log', nargs=1, help='File name for failure logging', dest='log_file')
+    parser.add_argument('--set-test-duration', nargs=2, help='Set the test duration - applies to all tests that can be run over a period of time.', dest='test_duration', metavar=('<duration>','{cycles|seconds|minutes|hours|days}'))
     parser.add_argument('--serial-echo-test', action='store_const', const=True, default=False, help='Do the simple serial echo test at a single speed, uses --serial-targets')
     parser.add_argument('--serial-multi-speed-echo-test', const=True, default=False, action='store_const', help='Do the simple echo test at multiple speeds using the auto-reconfiguration command to halve the baud rate, users --serial-targets')
     parser.add_argument('--serial-burst-echo-test', const=True, default=False, action='store_const', help='Do the simple burst test at a single speed')
     parser.add_argument('--serial-multi-speed-burst-echo-test', const=True, default=False, action='store_const', help='Do the burst test at multiple speeds using the auto-reconfiguration command to halve the baud rate')
     parser.add_argument('--app-start-up-check-using-telnet', const=True, default=False, action='store_const', help='Run app_start_up_check_using_telnet test')
     parser.add_argument('--app-maximum-connections-telnet', const=True, default=False, action='store_const', help='Run app_maximum_connections_telnet test')
-    parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test')
-    parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets', metavar=('<address>:<port>') )
+    parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test. Test duration can be changed with --set-test-duration')
+    parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets. Test duration can be changed with --set-test-duration', metavar=('<address>:<port>') )
     parser.add_argument('--application-telnet-read-write-command-check', const=True, default=False, action='store_const', help='Run application_telnet_read_write_command_check test')
     parser.add_argument('--data-filler', nargs=4, help='Send random data via telnet & UART and verify data coming out of telnet.', metavar=('<addr_tx:port_tx>','</dev/tx_serial>', '<addr_rx:port_rx>','</dev/rx_serial>'), dest='data_filler')
     #parser.add_argument('--s2e-ethernet-tests', const=True, default=False, action='store_const', help='Run through the suite of Serial to Ethernet tests using Telnet & Serial interfaces')
@@ -181,6 +182,12 @@ def handle_telnet_tests(args, seed):
                     
     if args.application_telnet_port_uart_data_check_echo_loop_back:
         test_name = "application_telnet_port_uart_data_check_echo_loop_back"
+        test_duration_unit='cycles'
+        test_duration=10
+        
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1] 
         
         if args.telnet_targets is None:
             raise XmosTestException("Cannot run "+test_name+" test no targets specified")
@@ -192,10 +199,14 @@ def handle_telnet_tests(args, seed):
                     raise XmosTestException("Cannot run "+test_name+" as invalid targets specified")
                 
                 telnet_test.set_target(target_properties[0], target_properties[1])
-                test_pass += telnet_test.application_telnet_port_uart_data_check_echo_loop_back(seed)
+                test_pass += telnet_test.application_telnet_port_uart_data_check_echo_loop_back(seed, test_duration=test_duration, test_duration_unit=test_duration_unit)
     
     if args.application_telnet_port_uart_data_check_cross_loop_back is not None:
         test_name = "application_telnet_port_uart_data_check_cross_loop_back"
+        
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1]
         
         for master,slave in pairwise(args.application_telnet_port_uart_data_check_cross_loop_back):
             test_count += 1
@@ -209,7 +220,7 @@ def handle_telnet_tests(args, seed):
                 raise XmosTestException("Cannot run "+test_name+" as invalid slave target specified")
             
             telnet_test.set_target(master_target_properties[0], master_target_properties[1])
-            test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1])
+            test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1], test_duration=test_duration, test_duration_unit=test_duration_unit)
     
     if args.application_telnet_read_write_command_check:
         test_name = "application_telnet_read_write_command_check"

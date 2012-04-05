@@ -70,7 +70,10 @@ class XmosTest(object):
             if message is not None:
                 print >>self.lf, "\tMessage: "+message
         if status == self.TEST_PASS:
-            print >>self.lf, test_name+" Target: "+target+" Result: PASS"
+            print >>self.lf, test_name,
+            if target is not None:
+                print >>self.lf, " Target: "+target,
+            print >>self.lf, " Result: PASS"
             if message is not None:
                 print >>self.lf, "\tMessage: "+message
 
@@ -83,4 +86,52 @@ class XmosTest(object):
     def test_cleanup(self):
         if self.lf is not sys.stdout:
             self.lf.close()
+    
+    def test_finish_condition(self, test_duration_unit, test_duration, init=0):
+        """Calculate if test should finish based on cycles or time - returns whether the loop should continue or not"""
+        test_duration = int(test_duration)
+        if (init):
+            self.cycle_count = 0
+            self.start_time = datetime.datetime.now()
+            if (test_duration_unit =='minutes'):
+                pbMax = test_duration * 60
+            elif (test_duration_unit =='hours'):
+                pbMax = test_duration * 60 * 60
+            elif (test_duration_unit =='days'):
+                pbMax = test_duration * 60 * 60 * 24
+            else:
+                pbMax = test_duration
+            self.setup_prog_bar(0, pbMax, 20)
             
+        test_condition = 1
+        if (test_duration_unit =='cycles'):
+                if (self.cycle_count < test_duration):
+                    test_condition = 1
+                else:
+                    test_condition = 0
+                self.cycle_count += 1
+                self.update_prog_bar(self.cycle_count)
+        elif (test_duration_unit =='seconds' or test_duration_unit =='minutes' or test_duration_unit =='hours' or test_duration_unit =='days'):
+                update_div = 1
+                current_time = datetime.datetime.now()
+                delta = current_time - self.start_time
+                
+                if (test_duration_unit =='minutes'):
+                    test_duration_unit = 'seconds'
+                    test_duration = test_duration*60
+                    update_div = 60
+                    
+                if (test_duration_unit =='hours'): 
+                    test_duration_unit = 'seconds'
+                    test_duration = test_duration*60*60
+                    update_div = 60*60
+                    
+                if (getattr(delta, test_duration_unit) < test_duration):
+                    test_condition = 1
+                else:
+                    test_condition = 0
+                self.update_prog_bar(delta.seconds+(delta.days*24*60*60))
+        else:
+            raise XmosTestException("Invalid test duration unit - needs to be {cycles|seconds|minutes|hours|days} not "+str(test_duration_unit))
+        
+        return test_condition
