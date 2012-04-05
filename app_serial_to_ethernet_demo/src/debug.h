@@ -39,9 +39,6 @@ constants
  * with some parameters tracing enabled */
 //#define DEBUG_LEVEL_3	1
 
-/* Enable this macro to simulate MUART component data */
-//#define SIMULATION
-
 /*---------------------------------------------------------------------------
 extern variables
 ---------------------------------------------------------------------------*/

@@ -8,7 +8,7 @@
  */
 #define UART_RX_CHAN_COUNT  8
  
- /**
+/**
  * Define the system clock rate
  */
 #define UART_RX_CLOCK_RATE_HZ      100000000

@@ -3,12 +3,11 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 /*===========================================================================
- Filename: httpd.h
+ Filename: debug.h
  Project : app_serial_to_ethernet_demo
  Author  : XMOS Ltd
  Version : 1v0
- Purpose : This file declares interfaces for http client communication
- (mainly application and uart channels configuration) data
+ Purpose : This file control level of debug trace
  -----------------------------------------------------------------------------
 
  ===========================================================================*/
@@ -16,9 +15,12 @@
 /*---------------------------------------------------------------------------
  include files
  ---------------------------------------------------------------------------*/
-#ifndef _httpd_h_
-#define _httpd_h_
-#include "xtcp_client.h"
+#ifndef CLIENT_REQUEST_H_
+#define CLIENT_REQUEST_H_
+
+/*---------------------------------------------------------------------------
+ constants
+ ---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------
  extern variables
@@ -35,27 +37,17 @@
 /*---------------------------------------------------------------------------
  prototypes
  ---------------------------------------------------------------------------*/
-void httpd_init(chanend tcp_svr);
-
-void httpd_init_state(chanend tcp_svr,
-                      REFERENCE_PARAM(xtcp_connection_t, conn));
-
 #ifdef __XC__
-void httpd_recv(chanend tcp_svr,
-                REFERENCE_PARAM(xtcp_connection_t, conn),
-                chanend cPersData,
-                streaming chanend cWbSvr2AppMgr);
+int parse_client_request(streaming chanend cWbSvr2AppMgr,
+                         chanend cPersData,
+                         char data[],
+                         char response[],
+                         int data_length);
 #else
-void httpd_recv(chanend tcp_svr,
-                REFERENCE_PARAM(xtcp_connection_t, conn),
-                chanend cPersData,
-                chanend cWbSvr2AppMgr);
+int parse_client_request(chanend cWbSvr2AppMgr,
+                         chanend cPersData,
+                         char data[],
+                         char response[],
+                         int data_length);
 #endif
-
-void httpd_send(chanend tcp_svr,
-                REFERENCE_PARAM(xtcp_connection_t, conn),
-                chanend cPersData);
-
-void httpd_free_state(REFERENCE_PARAM(xtcp_connection_t, conn));
-
-#endif // _httpd_h_
+#endif // CLIENT_REQUEST_H_

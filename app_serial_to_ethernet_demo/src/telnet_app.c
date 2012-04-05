@@ -20,7 +20,6 @@ include files
 ---------------------------------------------------------------------------*/
 #include "telnetd.h"
 #include "telnet_app.h"
-#include "app_manager.h"
 #include "debug.h"
 
 /*---------------------------------------------------------------------------
@@ -50,6 +49,9 @@ static int register_app_callback = 0;
 /*---------------------------------------------------------------------------
 implementation
 ---------------------------------------------------------------------------*/
+extern void fetch_user_data(
+		xtcp_connection_t *conn,
+		char data); //TODO: To be moved into web_server.h file
 
 /** =========================================================================
 *  telnetd_recv_line
@@ -102,94 +104,6 @@ void telnetd_new_connection(chanend tcp_svr, int id)
 }
 
 /** =========================================================================
-*  valid_telnet_port
-*
-*  checks whether port_num is a valid and configured telnet port
-
-*  \param unsigned int	telnet port number
-*
-*  \return		1 		on success
-*
-**/
-int valid_telnet_port(unsigned int port_num)
-{
-	int i;
-
-	/* Look up for configured telnet ports */
-	for (i=0;i<UART_TX_CHAN_COUNT;i++)
-	{
-		if ((uart_channel_config[i].telnet_port == port_num) &&
-			(uart_channel_config[i].is_configured == TRUE))
-			return 1;
-	}
-
-	return 0;
-}
-
-/** =========================================================================
-*  listen_on_default_telnet_ports
-*
-*  Uses uart config structures to listen on default configured telnet ports
-*
-*  \param chanend tcp_svr	channel end sharing uip_server thread
-*
-*  \return		None
-*
-**/
-void listen_on_default_telnet_ports(chanend tcp_svr)
-{
-	int i;
-
-	/* Look up for configured telnet ports */
-	for (i=0;i<UART_TX_CHAN_COUNT;i++)
-	{
-		if ((uart_channel_config[i].telnet_port != 0) &&
-			(uart_channel_config[i].is_configured == TRUE))
-		{
-			telnetd_set_new_session(
-					  tcp_svr,
-					  uart_channel_config[i].telnet_port);
-
-			if (0 == register_app_callback)
-			{
-				/* Register application callback function */
-				register_callback(&fill_uart_channel_data);
-				register_app_callback = 1;
-			}
-
-		}
-	}
-}
-
-/** =========================================================================
-*  telnetd_close_connection
-*
-*  closes the active telnet connection
-*
-*  \param	xtcp_connection_t conn	reference to TCP client conn state mgt
-*  									structure
-*
-*  \return	None
-*
-**/
-void telnetd_close_connection(xtcp_connection_t *conn)
-{
-	int i;
-	active_conn = -1;
-
-	for (i=0;i<UART_TX_CHAN_COUNT;i++)
-	{
-		if (uart_channel_config[i].telnet_conn_id == conn->id)
-		{
-			/* Update client state to inactive */
-			uart_channel_config[i].is_telnet_active = FALSE;
-			break;
-		}
-	}
-	telnetd_free_state(conn);
-}
-
-/** =========================================================================
 *  telnetd_set_new_session
 *
 *  Listen on the telnet port and register application callback function,
@@ -210,7 +124,7 @@ void telnetd_set_new_session(chanend tcp_svr, int telnet_port)
   if (0 == register_app_callback)
   {
 	  /* Register application callback function */
-	  register_callback(&fill_uart_channel_data);
+	  register_callback(&fetch_user_data);
 	  register_app_callback = 1;
   }
 
@@ -232,59 +146,3 @@ void telnetd_connection_closed(chanend tcp_svr, int id)
 {
   active_conn = -1;
 }
-
-/** =========================================================================
-*  telnetd_send_client_data
-*
-*  This function performs the following:
-*  (i) fetches data from a uart channel (round robin fashion)
-*  (ii) identifies telnet connection relevant to uart channel data
-*  (iii) send uart data to this identified telnet socket
-*
-*  \param	chanend tcp_svr		channel end sharing uip_server thread
-*
-*  \return	1		telnet data send is successful
-*  			0		no telnet data to send or unsuccessful call to
-*  					telnetd_send
-*
-**/
-int telnetd_send_client_data(chanend tcp_svr)
-{
-	int success = 0;
-	int valid_data_to_send = 0;
-
-	int channel_id=0; //uart channel index
-	int read_index=0; //uart rx buffer index
-	int conn_id = 0;
-	int connection_state_index = 0;
-	unsigned int buf_depth=0;  //uart rx buffer data depth
-	char buffer[RX_CHANNEL_FIFO_LEN] = "";
-
-	valid_data_to_send = get_uart_channel_data(&channel_id, &conn_id, &read_index, &buf_depth, buffer);
-
-	if (1 == valid_data_to_send)
-	{
-		//printint(channel_id); TODO: Bug: Data for chnl 7 is always present
-
-		connection_state_index = fetch_connection_state_index(conn_id);
-
-		if (-1 != connection_state_index)
-		{
-			success = telnetd_send(tcp_svr, connection_state_index, buffer);
-			if (1 == success)
-			{
-				update_uart_rx_channel_state(&channel_id, &read_index, &buf_depth);
-			}
-		}
-#ifdef DEBUG_LEVEL_2
-		else
-		{
-			printstr("telnet send failed. Conn Id is ");printint(conn_id);
-			printstr(" Connection_state_index is "); printintln(connection_state_index);
-		}
-#endif //DEBUG_LEVEL_2
-	}
-
-	return success;
-}
-

@@ -101,3 +101,7 @@ Application buffer management functions
 .. doxygenfunction:: update_uart_rx_channel_state
 
 .. doxygenfunction:: fill_uart_channel_data_from_queue
+
+.. doxygenfunction:: get_uart_channel_data
+
+.. doxygenfunction:: telnetd_send_client_data

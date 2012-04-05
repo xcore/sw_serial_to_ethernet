@@ -24,12 +24,11 @@
 #include "uip_single_server.h" //Enable this for 2T Eth comp
 //#include "uip_server.h" //Enable this for 5T Eth comp
 //#include "ethernet_server.h" //Enable this for 5T Eth comp
-#include "telnetd.h"
 #include "app_manager.h"
 #include "web_server.h"
 #include "multi_uart_rxtx.h"
 #include <flash.h>
-#include "flash_wrapper.h"
+#include "s2e_flash.h"
 
 /*---------------------------------------------------------------------------
  constants
@@ -232,6 +231,7 @@ int main(void)
     chan xtcp[1];
     chan cPersData;
 	streaming chan cWbSvr2AppMgr;
+	streaming chan cAppMgr2WbSvr;
 	streaming chan cTxUART;
 	streaming chan cRxUART;
 
@@ -291,11 +291,11 @@ int main(void)
 	            
 	            /* web server thread for handling and servicing http requests
 	            * and telnet data communication */
-	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cPersData);
+	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cAppMgr2WbSvr, cPersData);
 	            
 	            /* The multi-uart application manager thread to handle uart
 	            * data communication to web server clients */
-	            on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cTxUART, cRxUART);
+	            on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cAppMgr2WbSvr, cTxUART, cRxUART);
 #if 0
 	            /* Multi-uart transmit thread */
 	            on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
