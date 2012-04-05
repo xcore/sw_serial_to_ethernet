@@ -148,8 +148,8 @@ s_multi_uart_rx_ports uart_rx_ports =
 xtcp_ipconfig_t ipconfig =
 {
 #ifndef DHCP_CONFIG
-       { 169, 254, 196, 178 }, // ip address (eg 192,168,0,2)
-       { 255, 255, 0, 0 },     // netmask (eg 255,255,255,0)
+       { 192, 168, 0, 2 }, // ip address (eg 192,168,0,2)
+       { 255, 255, 255, 0 },     // netmask (eg 255,255,255,0)
        { 0, 0, 0, 0 }          // gateway (eg 192,168,0,1)
 #else
        { 0, 0, 0, 0 }, // ip address (eg 192,168,0,2)
