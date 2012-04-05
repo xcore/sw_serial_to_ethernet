@@ -66,7 +66,7 @@ typedef struct STRUCT_UART_CHANNEL_CONFIG
 	e_uart_config_stop_bits	stop_bits;
 	int						baud;					//configured baud rate
 	int 					char_len;				//Length of a character in bits (e.g. 8 bits)
-	e_uart_polarity			polarity;				//polarity of bits
+	e_uart_config_polarity  polarity;        		//polarity of start bits
 	int						telnet_port;			//User configured telnet port
 } s_uart_channel_config;
 
