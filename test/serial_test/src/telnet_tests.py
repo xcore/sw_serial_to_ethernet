@@ -1,14 +1,9 @@
-import platform
 import random
 import datetime
 import re
 import sys
 from xmos_test import XmosTest
-
-if platform.system() == 'Windows':
-    import winpexpect as pexpect
-else:
-    import pexpect
+import pexpect
 
 class XmosTelnetTestFailure(Exception):
     def __init__(self, msg):
@@ -42,10 +37,7 @@ class XmosTelnetTest(XmosTest):
         
         # connect
         try:
-            if platform.system() == 'Windows':
-                telnet_session = pexpect.winspawn('telnet '+address+' '+port, logfile=log_location)
-            else:
-                telnet_session = pexpect.spawn('telnet '+address+' '+port, logfile=log_location)
+            telnet_session = pexpect.spawn('telnet '+address+' '+port, logfile=log_location)
         except pexpect.EOF:
             raise XmosTelnetTestFailure("Invalid target - "+address+' '+port)
             

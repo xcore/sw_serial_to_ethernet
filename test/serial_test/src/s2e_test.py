@@ -9,11 +9,16 @@ import serial.tools.list_ports as list_ports
 from itertools import izip
 from serial import SerialException
 from s2e_system_tests import XmosSerialToEthernetSystemTests
+import platform
 
 def list_com_ports():
-    print "Available Serial ports - "
-    for port in list_ports.comports():
-        print "\t"+port[0]
+    port_list = list_ports.comports()    
+    if port_list is not None and len(port_list) is not 0:
+        print "Available Serial ports - "
+        for port in list_ports.comports():
+            print "\t"+port[0]
+    else:
+        print "No serial ports found by pySerial - you might be using cygwin where you can use /dev/ttySXX where XX = (nn-1) with nn being the COM port number (so COM11 is /dev/ttyS10)"
 
 def pairwise(iterable):
     "s -> (s0,s1), (s2,s3), (s4, s5), ..."
@@ -281,6 +286,11 @@ def handle_s2e_tests(args, seed):
         print "-------------------------------------------\n"
         
 def main():
+    
+    if platform.system() == 'Windows':
+        print 'ERROR: Native Win32 not supported due to use of pexpect - please use cygwin (see README)'
+        exit(1)
+    
     args = process_args()
     
     if args.list_devices is True:
