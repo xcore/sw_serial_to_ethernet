@@ -19,7 +19,7 @@ class XmosSerialToEthernetSystemTests(XmosTelnetTest, XmosSerialTest):
         
         test_state = self.TEST_PASS
         test_message=None
-        test_name = "data-filler"
+        test_name = "data-filler-serial-to-telnet"
         
         rx_fail = 0
         tx_attempts = 0
@@ -40,11 +40,69 @@ class XmosSerialToEthernetSystemTests(XmosTelnetTest, XmosSerialTest):
             telnet.close()
         else:
             # do test
-            start_time = datetime.datetime.now()
-            current_time = datetime.datetime.now()
-            delta = current_time - start_time
-            self.setup_prog_bar(0,test_len,20) 
-            while (getattr(delta, len_unit) < test_len):
+            init = 1
+            while self.test_finish_condition(len_unit, test_len, init):
+                init = 0
+                write_buf = ""
+                # generate buffer
+                for b in range(0,burst_len):
+                    c = random.randint(0,len(self.character_bank)-1)
+                    write_buf += self.character_bank[c]
+                
+                # write data to UART    
+                uart.write(write_buf)
+                uart.flush()
+                tx_attempts += 1
+                
+                # get data from telnet
+                try:
+                    telnet.expect(re.escape(write_buf), timeout=5)
+                except pexpect.TIMEOUT:
+                    rx_fail += 1
+                
+            test_message = "Serial data bursts sent: "+str(tx_attempts)+" Telnet RX Failures: "+str(rx_fail)
+            if (rx_fail/tx_attempts > 0.1):
+                test_state = self.TEST_FAIL
+            else:
+                test_state = self.TEST_PASS
+            
+            # close connection
+            telnet.close()
+            uart.close()
+        
+        self.print_test_info(test_name, test_state, self.port_id, test_message)
+        self.test_cleanup()
+        return test_state
+
+def data_filler_telnet_to_serial(self, seed, config_string='115200-8-E-1', test_len=60, len_unit='seconds', burst_len=16):
+        """Data filler test that pipes data through serial->telnet"""
+        
+        test_state = self.TEST_PASS
+        test_message=None
+        test_name = "data-filler-telnet-to-serial"
+        
+        rx_fail = 0
+        tx_attempts = 0
+        
+        self.pb_print_start_test_info(test_name, self.port_id, "Running test on port "+self.port_id+" with config "+config_string)
+        random.seed(seed)
+        
+        try:
+            # connect
+            telnet = self.telnet_s2e_connect()
+            uart = self.configure_uart( config_string )    
+        except XmosTelnetTestFailure as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
+        except XmosSerialException as e:
+            test_state = self.TEST_FAIL
+            test_message = e.msg
+            telnet.close()
+        else:
+            # do test
+            init = 1
+            while self.test_finish_condition(len_unit, test_len, init):
+                init = 0
                 write_buf = ""
                 # generate buffer
                 for b in range(0,burst_len):

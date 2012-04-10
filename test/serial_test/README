@@ -1,0 +1,79 @@
+XMOS Serial & Serial To Ethernet Test Scripts
+===============================================
+
+Introduction
+-------------
+
+These scripts are designed to exercise the serial and serial to ethernet 
+functionality of this multi-uart software component. They provide the 
+following functionality:
+
+* Seed based random data generation (allows repeatability of tests)
+* Iteration through lists of targets
+* Support for different test durations (cycles / seconds / minutes / hours 
+    / days)
+* Logging / Verbose / Progress display modes
+* Support for the following test configurations
+    * Test for echoing of serial data
+    * Test for bursts of serial data
+    * Telnet connection response by S2E application
+    * Telnet maximum session test
+    * Telnet echoing by S2E application (agnostic to whether it is an internal 
+        or serial loop back)
+    * Telnet cross loop back testing - checking that data goes out one 
+        telnet session and is received in another
+    * Telnet read/write command check for S2E application configuration
+    * Streaming of data from ethernet telnet session to be received by 
+        serial device
+    
+
+To get full usage and help information run:
+
+python s2e_test.py -h
+
+Required Python Modules
+-------------------------
+
+The scripts required the following:
+
+* argparse
+* pexpect
+* pySerial
+
+These can all be installed by using 'easy_install'. Example:
+
+easy_install argparse
+
+If you don't have easy_install then you need to install setuptools (see 
+http://pypi.python.org/pypi/setuptools)
+
+WINDOWS USERS:
+
+It is recommended that windows users use Cygwin (http://www.cygwin.com/). 
+Install setuptools as per the instructions on the site above and install 
+the required libraries as described above.
+
+Within Cygwin the -l option will not pick up any devices - however they
+can be accessed via /dev/ttySxx where xx is the COM port ID minus 1. So 
+COM11 becomes /dev/ttyS10
+
+Code structure
+---------------
+
+The code is designed to allow the easy implmentation of tests by extending
+some base objects. The files in the src directory are described as follows:
+
+* xmos_test.py - Implements the base functionality of the tests, provides
+    logging, standardised print output, progress reporting and test duration
+    configuration. Every test/test suite inherits this object. Also provides
+    basic XMOS test exceptions
+* serial_tests.py - Defines serial test class which has methods for serial
+    configuration of the serial port. Also contains the test suite for
+    serial only tests
+* telnet_tests.py - Defines the telnet test class which has methods for telnet
+    connection to the S2E application. Also contains the test suite for
+    telnet only tests
+* s2e_system_tests.py - Defines the tests functions for telnet and serial test
+    combinations
+* s2e_test.py - Top level file that handles the parsing of arguments and running
+    of the tests. Contains main()
