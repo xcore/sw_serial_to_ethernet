@@ -35,6 +35,7 @@ def process_args():
     parser.add_argument('--serial-conf', nargs='+', metavar='/dev/serial_dev', help='List of configurations in the format baud-bits-parity-stop_bits e.g for 115200 bps with 8 bit characters, even parity and 1 stop bit you would use 115200-8-E-1. Valid parity is N-none, M-mark, S-space, E-even, O-odd. Default configurations will be 115200-8-E-1', dest='config_strings')
     parser.add_argument('--telnet-targets', metavar='address:port', nargs='+', help='List of telnet targets in the format address:port', dest='telnet_targets')
     parser.add_argument('--telnet-conf-targets', metavar='address:port', nargs='+', help='List of telnet configuration targets in the format address:port', dest='telnet_conf_targets')
+    parser.add_argument('--burst-len', metavar='N', nargs=1, help='Set the data lengths of the bursts to something other than the test default', dest='burst_len', type=int)
     parser.add_argument('--seed', help='Integer seed for psuedo random tests - if not given then a random seed will be used and reported', dest='seed', type=int)
     parser.add_argument('--log', nargs=1, help='File name for failure logging', dest='log_file')
     parser.add_argument('--set-test-duration', nargs=2, help='Set the test duration - applies to all tests that can be run over a period of time.', dest='test_duration', metavar=('<duration>','{cycles|seconds|minutes|hours|days}'))
@@ -47,7 +48,7 @@ def process_args():
     parser.add_argument('--application-telnet-port-uart-data-check-echo-loop-back', const=True, default=False, action='store_const', help='Run application_telnet_port_uart_data_check_echo_loop_back test. Test duration can be changed with --set-test-duration')
     parser.add_argument('--application-telnet-port-uart-data-check-cross-loop-back', nargs='+', dest='application_telnet_port_uart_data_check_cross_loop_back', help='Run application_telnet_port_uart_data_check_cross_loop_back test with master (TX) and slave (RX) telnet targets of the form <address>:<port>, multiple pairs will run the tests on those targets. Test duration can be changed with --set-test-duration', metavar=('<address>:<port>') )
     parser.add_argument('--application-telnet-read-write-command-check', const=True, default=False, action='store_const', help='Run application_telnet_read_write_command_check test')
-    parser.add_argument('--data-filler', nargs=4, help='Send random data via telnet & UART and verify data coming out of telnet.', metavar=('<addr_tx:port_tx>','</dev/tx_serial>', '<addr_rx:port_rx>','</dev/rx_serial>'), dest='data_filler')
+    parser.add_argument('--data-filler', nargs=2, help='Send random data via telnet & UART and verify data received via UART and telnet', metavar=('<addr_tx:port_tx>','</dev/tx_serial>'), dest='data_filler')
     #parser.add_argument('--s2e-ethernet-tests', const=True, default=False, action='store_const', help='Run through the suite of Serial to Ethernet tests using Telnet & Serial interfaces')
     
     args = parser.parse_args()
@@ -269,7 +270,18 @@ def handle_s2e_tests(args, seed):
     
     if args.data_filler:
         test_count += 1
+        #test defaults
+        test_duration_unit='minutes'
+        test_duration=1
+        burst_len = 16
         
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1]
+            
+        if args.burst_len:
+            burst_len = args.burst_len[0] 
+            
         serial_target = args.data_filler[1]
         telnet_target = args.data_filler[0]
         telnet_target_properties = telnet_target.split(':')
@@ -278,7 +290,7 @@ def handle_s2e_tests(args, seed):
         
         s2e_test.set_port( serial_target )
         s2e_test.set_target(telnet_target_properties[0], telnet_target_properties[1])
-        test_pass += s2e_test.data_filler_serial_to_telnet(seed)
+        test_pass += s2e_test.data_filler(seed, test_len=test_duration, len_unit=test_duration_unit, burst_len=burst_len)
     
     if (test_count > 0):
         print "\n------- S2E System Tests Complete -------"
