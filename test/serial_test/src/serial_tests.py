@@ -77,7 +77,7 @@ class XmosSerialTest(XmosTest):
 class XmosSerialTestSuite(XmosSerialTest):
     """This class provides pure serial tests for the UART module. It relies on the echo application"""
     
-    def simple_echo_test( self, config_string, seed, test_len=1024, reconfigure=False, log_file=None ):
+    def simple_echo_test( self, config_string, seed, test_len=1024, test_duration_unit='cycles', reconfigure=False, log_file=None ):
         """Conduct a simple echo test sending psuedo random data chars one at a time and """
         
         test_state = self.TEST_PASS
@@ -103,11 +103,14 @@ class XmosSerialTestSuite(XmosSerialTest):
             time.sleep(5)
             uart.flushInput()
             
-            self.setup_prog_bar(0,test_len,20)
+            test_count = 0
             char_ok = 0
             char_fail = 0
             
-            for i in range(0,test_len):
+            init = 1
+            while self.test_finish_condition(test_duration_unit, test_len, init ):
+                test_count += 1
+                init = 0
                 b = random.randint(0,len(self.character_bank)-1)
                 write_char = self.character_bank[b]
                 uart.write(write_char)
@@ -117,16 +120,13 @@ class XmosSerialTestSuite(XmosSerialTest):
                 else:
                     char_fail += 1
                     self.print_to_log(test_name, "\nFAILURE => write_char = "+write_char+"\tread_char = "+read_char)
-                self.update_prog_bar(i)
                     
-            self.update_prog_bar(test_len)
-
             if (char_fail == 0):
                 test_state = self.TEST_PASS
             else:
                 test_state = self.TEST_FAIL
                 
-            test_message = "Configuration = "+config_string+" COMPLETED: "+str(test_len)+" of "+str(test_len)+" PASS: "+str(char_ok)+" FAIL: "+str(char_fail)+"\n"
+            test_message = "Configuration = "+config_string+" COMPLETED: "+str(test_count)+" PASS: "+str(char_ok)+" FAIL: "+str(char_fail)+"\n"
             
             if reconfigure:
                 self.print_to_log(test_name, "\nDoing reconfiguration stage...")
@@ -142,7 +142,7 @@ class XmosSerialTestSuite(XmosSerialTest):
         self.test_cleanup()
         return test_state
     
-    def data_burst_test( self, config_string, seed, test_len=16, reconfigure=False, burst_len=3, log_file=None):
+    def data_burst_test( self, config_string, seed, test_len=16, test_duration_unit='cycles', reconfigure=False, burst_len=3, log_file=None):
         """Generate bursts of data of a defined length and check that all data is echoed correctly """
         
         test_state = self.TEST_PASS
@@ -168,13 +168,15 @@ class XmosSerialTestSuite(XmosSerialTest):
             time.sleep(5)
             uart.flushInput()
             
-            self.setup_prog_bar(0,test_len,20)
-            
+            test_count = 0
             burst_ok = 0
             burst_fail = 0
             
-            for i in range(0,test_len):
+            init = 1
+            while self.test_finish_condition(test_duration_unit, test_len, init):
+                init = 0
                 write_buf = ""
+                test_count += 1
                 # generate buffer
                 for b in range(0,burst_len):
                     c = random.randint(0,len(self.character_bank)-1)
@@ -193,8 +195,6 @@ class XmosSerialTestSuite(XmosSerialTest):
                 else:
                     burst_ok += 1
                         
-                self.update_prog_bar(i)
-                    
                 # clean out input buffer to ensure things aren't out of sync
                 uart.flushInput()
                 
@@ -203,7 +203,7 @@ class XmosSerialTestSuite(XmosSerialTest):
             else:
                 test_state = self.TEST_FAIL
                 
-            test_message = "Configuration = "+config_string+" COMPLETED: "+str(test_len)+" of "+str(test_len)+" PASS: "+str(burst_ok)+" FAIL: "+str(burst_fail)+"\n"
+            test_message = "Configuration = "+config_string+" COMPLETED: "+str(test_count)+" PASS: "+str(burst_ok)+" FAIL: "+str(burst_fail)+"\n"
             
             if reconfigure:
                 self.print_to_log(test_name, "\nDoing reconfiguration stage...")

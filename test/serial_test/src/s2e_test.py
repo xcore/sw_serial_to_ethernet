@@ -31,8 +31,8 @@ def process_args():
     parser.add_argument('-l', '--list-serial-devices', action='store_const', const=True, default=False, help='List available UARTs on this system', dest='list_devices')
     parser.add_argument('-v', action='store_const', const=True, default=False, help='Be verbose', dest='verbose')
     parser.add_argument('-p', action='store_const', const=True, default=False, help='Show progress bars', dest='prog_bar')
-    parser.add_argument('--serial-targets', nargs='+', help='List of UARTs to test (see -l to obtain a full list of available ports)', dest='ports_for_test')
-    parser.add_argument('--serial-conf', nargs='+', metavar='/dev/serial_dev', help='List of configurations in the format baud-bits-parity-stop_bits e.g for 115200 bps with 8 bit characters, even parity and 1 stop bit you would use 115200-8-E-1. Valid parity is N-none, M-mark, S-space, E-even, O-odd. Default configurations will be 115200-8-E-1', dest='config_strings')
+    parser.add_argument('--serial-targets', nargs='+', metavar='/dev/serial_dev', help='List of UARTs to test (see -l to obtain a full list of available ports)', dest='ports_for_test')
+    parser.add_argument('--serial-conf', nargs='+', metavar='SERIAL_CONFIG', help='List of configurations in the format baud-bits-parity-stop_bits e.g for 115200 bps with 8 bit characters, even parity and 1 stop bit you would use 115200-8-E-1. Valid parity is N-none, M-mark, S-space, E-even, O-odd. Default configurations will be 115200-8-E-1', dest='config_strings')
     parser.add_argument('--telnet-targets', metavar='address:port', nargs='+', help='List of telnet targets in the format address:port', dest='telnet_targets')
     parser.add_argument('--telnet-conf-targets', metavar='address:port', nargs='+', help='List of telnet configuration targets in the format address:port', dest='telnet_conf_targets')
     parser.add_argument('--burst-len', metavar='N', nargs=1, help='Set the data lengths of the bursts to something other than the test default', dest='burst_len', type=int)
@@ -83,6 +83,13 @@ def handle_serial_tests( args, seed ):
         use_default_config = True
     
     if args.serial_echo_test:
+        test_duration_unit='minutes'
+        test_duration=1
+        
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1]
+        
         # simple echo test on all defined ports
         i = 0
         for port_id in args.ports_for_test:
@@ -93,10 +100,17 @@ def handle_serial_tests( args, seed ):
                 config_string = args.config_strings[i]
             
             serial_test.set_port( port_id )
-            test_pass += serial_test.simple_echo_test( config_string, seed, test_len=2048 )
+            test_pass += serial_test.simple_echo_test( config_string, seed, test_duration_unit=test_duration_unit, test_len=test_duration )
             i += 1
     
-    if args.serial_multi_speed_echo_test:    
+    if args.serial_multi_speed_echo_test:
+        test_duration_unit='cycles'
+        test_duration=2048
+        
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1]
+            
         # test with reconfiguration on all defined ports - halves baud rate each time
         i = 0
         for port_id in args.ports_for_test:
@@ -113,12 +127,23 @@ def handle_serial_tests( args, seed ):
             while (baud_rate >= 225):
                 test_count += 1
                 built_config = str(baud_rate)+"-"+config[1]+"-"+config[2]+"-"+config[3]
-                test_pass += serial_test.simple_echo_test( built_config, seed, reconfigure=True, test_len=2048 )
+                test_pass += serial_test.simple_echo_test( built_config, seed, reconfigure=True, test_duration_unit=test_duration_unit, test_len=test_duration )
                 baud_rate = baud_rate / 2
                 
             i += 1
     
     if args.serial_burst_echo_test:
+        burst_len = 100
+        test_duration_unit='minutes'
+        test_duration=1
+        
+        if args.test_duration:
+            test_duration = args.test_duration[0]
+            test_duration_unit = args.test_duration[1]
+        
+        if args.burst_len:
+            burst_len = args.burst_len[0] 
+            
         # test on all defined ports
         i = 0
         for port_id in args.ports_for_test:
@@ -129,7 +154,7 @@ def handle_serial_tests( args, seed ):
                 config_string = args.config_strings[i]
             
             serial_test.set_port( port_id )
-            test_pass += serial_test.data_burst_test( config_string, seed, burst_len=100, test_len=2048 )
+            test_pass += serial_test.data_burst_test( config_string, seed, burst_len=burst_len, test_duration_unit=test_duration_unit, test_len=test_duration )
             i += 1
     
     if (test_count > 0):
@@ -190,6 +215,10 @@ def handle_telnet_tests(args, seed):
         test_name = "application_telnet_port_uart_data_check_echo_loop_back"
         test_duration_unit='cycles'
         test_duration=10
+        data_len = 10
+        
+        if args.burst_len:
+            data_len=args.burst_len[0]
         
         if args.test_duration:
             test_duration = args.test_duration[0]
@@ -209,10 +238,16 @@ def handle_telnet_tests(args, seed):
     
     if args.application_telnet_port_uart_data_check_cross_loop_back is not None:
         test_name = "application_telnet_port_uart_data_check_cross_loop_back"
+        test_duration_unit='cycles'
+        test_duration=10
+        data_len = 10
         
         if args.test_duration:
             test_duration = args.test_duration[0]
             test_duration_unit = args.test_duration[1]
+            
+        if args.burst_len:
+            data_len=args.burst_len[0]
         
         for master,slave in pairwise(args.application_telnet_port_uart_data_check_cross_loop_back):
             test_count += 1
@@ -226,7 +261,7 @@ def handle_telnet_tests(args, seed):
                 raise XmosTestException("Cannot run "+test_name+" as invalid slave target specified")
             
             telnet_test.set_target(master_target_properties[0], master_target_properties[1])
-            test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1], test_duration=test_duration, test_duration_unit=test_duration_unit)
+            test_pass += telnet_test.application_telnet_port_uart_data_check_cross_loop_back(seed, slave_target_properties[0], slave_target_properties[1], test_duration=test_duration, test_duration_unit=test_duration_unit, data_len=data_len)
     
     if args.application_telnet_read_write_command_check:
         test_name = "application_telnet_read_write_command_check"
