@@ -2,7 +2,8 @@
 # compiled for. It either refers to an XN file in the source directories
 # or a valid argument for the --target option when compiling.
 
-TARGET ?= XS1-L2A-QF124
+#TARGET ?= XS1-L2A-QF124
+TARGET ?= xp-skc-l2-single
 
 # The APP_NAME variable determines the name of the final .xe file. It should
 # not include the .xe postfix. If left blank the name will default to 
@@ -25,7 +26,7 @@ XCC_FLAGS_Release = $(XCC_FLAGS)
 
 # The USED_MODULES variable lists other module used by the application. 
 #USED_MODULES = module_xtcp module_ethernet module_locks module_telnet_console module_multi_uart
-USED_MODULES = module_xtcp module_mii_singlethread module_ethernet_smi module_telnet_console module_multi_uart
+USED_MODULES=module_xtcp module_mii_singlethread module_ethernet_smi module_telnet_console module_multi_uart
 
 # This uses the tcp mac filtering in module_xtcp
 USE_XTCP_MAC_CUSTOM_FILTER=1
