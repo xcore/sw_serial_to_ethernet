@@ -53,8 +53,8 @@ on stdcore[0] : fl_SPIPorts flash_ports =
 };
 
 /* MUART TX port configuration */
-#define PORT_TX on stdcore[1]: XS1_PORT_8A
-#define PORT_RX on stdcore[1]: XS1_PORT_8C
+#define PORT_TX on stdcore[1]: XS1_PORT_8B
+#define PORT_RX on stdcore[1]: XS1_PORT_8A
 //#define PORT_TX_TEMP_3 on stdcore[1]: XS1_CLKBLK_1
 /* MUART RX port configuration */
 //#define PORT_RX_TEMP_1 on stdcore[1]: XS1_PORT_8B
@@ -63,7 +63,7 @@ on stdcore[0] : fl_SPIPorts flash_ports =
 
 on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
 /* Define 1 bit external clock */
-on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1A;
+on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1F;
 
 on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
 
@@ -73,7 +73,7 @@ on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
 on stdcore[0]: port otp_data = XS1_PORT_32B; // OTP_DATA_PORT
 on stdcore[0]: out port otp_addr = XS1_PORT_16C; // OTP_ADDR_PORT
 on stdcore[0]: port otp_ctrl = XS1_PORT_16D; // OTP_CTRL_PORT
-on stdcore[0]: out port reset = PORT_SHARED_RS;
+on stdcore[0]: out port reset = XS1_PORT_8D;
 
 on stdcore[0]: clock clk_smi = XS1_CLKBLK_5;
 
@@ -106,20 +106,20 @@ on stdcore[0]: mii_interface_t mii =
     XS1_CLKBLK_1,
     XS1_CLKBLK_2,
 
-    PORT_ETH_RXCLK,
-    PORT_ETH_RXER,
-    PORT_ETH_RXD,
-    PORT_ETH_RXDV,
+    PORT_ETH_RXCLK_1,
+    PORT_ETH_ERR_1,
+    PORT_ETH_RXD_1,
+    PORT_ETH_RXDV_1,
 
-    PORT_ETH_TXCLK,
-    PORT_ETH_TXEN,
-    PORT_ETH_TXD,
+    PORT_ETH_TXCLK_1,
+    PORT_ETH_TXEN_1,
+    PORT_ETH_TXD_1,
 
     PORT_ETH_FAKE,
   };
 
-on stdcore[0]: port p_reset = PORT_SHARED_RS;
-on stdcore[0]: smi_interface_t smi = { 0, PORT_ETH_MDIO, PORT_ETH_MDC };
+on stdcore[0]: out port p_reset = XS1_PORT_8D;
+on stdcore[0]: smi_interface_t smi = { 0, PORT_ETH_MDIO_1, PORT_ETH_MDC_1 };
 on stdcore[0]: clock clk_smi = XS1_CLKBLK_5;
 
 #endif //TWO_THREAD_ETH
