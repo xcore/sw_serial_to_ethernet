@@ -4,6 +4,7 @@ import re
 import sys
 from xmos_test import XmosTest
 import pexpect
+from random import *
 
 class XmosTelnetTestFailure(Exception):
     def __init__(self, msg):
@@ -206,29 +207,75 @@ class XmosTelnetTestSuite(XmosTelnetTest):
             test_state = self.TEST_FAIL
             test_message = e.msg
         else:
+            print '\n*******************************************'
+            print '                 GET and SET'
+            print '*******************************************'
             for chan_id in range(0,channel_count):
                 stage = 0
                 try:
-                    config_str = '#C#'+str(chan_id)+'#1#1#9600#5#0#102#@'
+                    config_str = '~2~~'+str(chan_id)+'~~2~~0~~115200~~8~~'+str(46+chan_id)+'~@'
+                    print '----CHECKING TELNET SET-----'
+                    print 'For Uart '+str(chan_id)+' Telnet Port '+str(46+chan_id)
+                    print 'Command Sent:'+config_str
                     telnet_session.sendline(config_str)
-                    telnet_session.expect('UART '+str(chan_id)+' settings successful', timeout=5)
-                    stage = 1
-                    telnet_session.sendline('#R#'+str(chan_id)+'#@')
                     telnet_session.expect(re.escape(config_str), timeout=5)
-                    stage = 2
-                    
-                    config_str = '#C#'+str(chan_id)+'#2#0#115200#8#0#'+str(46+chan_id)+'#@'
-                    telnet_session.sendline(config_str)
-                    telnet_session.expect('UART '+str(chan_id)+' settings successful', timeout=5)
-                    stage = 3
-                    telnet_session.sendline('#R#'+str(chan_id)+'#@')
+                    print 'Response Received:'+config_str
+                    print "-----CHECKING TELNET GET-----"
+                    telnet_session.sendline('~1~~'+str(chan_id)+'~@')
+                    print 'Command Sent : '+' ~1~~'+str(chan_id)+'~@'
+                    config_str = '~1~~'+str(chan_id)+'~~2~~0~~115200~~8~~'+str(46+chan_id)+'~@'
                     telnet_session.expect(re.escape(config_str), timeout=5)
+                    print 'Response Received : '+config_str
                     stage = 4
                 except pexpect.TIMEOUT:
                     test_state = self.TEST_FAIL
                     test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)+", stage = "+str(stage)
                     break
-                
+            print '\n***************************************************'
+            print '                 SAVE and RESTORE'
+            print '***************************************************'
+            for chan_id in range(0,channel_count):
+                stage = 0
+                try:
+                    config_str = '~2~~'+str(chan_id)+'~~2~~0~~9600~~8~~'+str(46+chan_id)+'~@'
+                    print '----CHECKING TELNET SAVE(SET) COMMAND-----'
+                    print 'For Uart '+str(chan_id)+' Telnet Port '+str(46+chan_id)
+                    print 'Command Sent:'+config_str
+                    telnet_session.sendline(config_str)
+                    telnet_session.expect(re.escape(config_str), timeout=5)
+                    print 'Response Received:'+config_str
+                except pexpect.TIMEOUT:
+                    test_state = self.TEST_FAIL
+                    test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)+", stage = "+str(stage)
+                    break
+             
+            for chan_id in range(0,channel_count):
+                try:
+                    config_str='~3~~'+str(chan_id)+'~@'
+                    print '\nSAVE COMMAND: '+ config_str  
+                    telnet_session.sendline(config_str)
+                    config_str='~1~~7~~2~~0~~9600~~8~~53~@'
+                    telnet_session.expect(re.escape(config_str),timeout=5)
+                    print 'Response : '+ config_str
+                    print '\n @@@ Saved Successfully  for uart '+ str(chan_id)+' @@@\n'
+                except pexpect.TIMEOUT:
+                    test_state = self.TEST_FAIL
+                    test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)+", stage = "+str(stage)
+                    break
+            print '\n----------CHECKING TELNET RESTORE COMMAND-------'
+            for chan_id in range(0,channel_count):
+                try:
+                    config_str='~4~~0~@'
+                    print 'Command Sent: ' + config_str
+                    telnet_session.sendline(config_str)
+                    config_str='~2~~7~~2~~0~~9600~~8~~53~@'
+                    telnet_session.expect(re.escape(config_str),timeout=5)
+                    print 'Response : ' + config_str
+                    print '\n @@@ Restored Successfully for uart '+str(chan_id)+ '@@@\n'
+                except pexpect.TIMEOUT:
+                    test_state = self.TEST_FAIL
+                    test_message = "Did not get correct character response (timeout=5), config_str = "+config_str+", chan_id = "+str(chan_id)+", stage = "+str(stage)
+                    break  
             # close connection
             telnet_session.close()
                 
