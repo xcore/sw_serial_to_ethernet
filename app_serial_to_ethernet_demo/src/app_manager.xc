@@ -29,9 +29,6 @@ include files
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
-#define STR_N_CPY(dest, src, len) do { dest[len-1] = src[len-1]; \
-                                        len--; \
-                                      } while (0!=len)
 #define	MAX_BIT_RATE					115200 //100000		//bits per sec
 #define TIMER_FREQUENCY					100000000	//100 Mhz
 /* Default length of a uart character in bits */
@@ -702,17 +699,11 @@ void fill_uart_channel_data_from_queue()
 *  \return			None
 *
 **/
-#if 0 //CleanUp
-static int re_apply_uart_channel_config(
-		s_uart_channel_config	&sUartChannelConfig,
-		streaming chanend cTxUART,
-		streaming chanend cRxUART)
-#else
+#pragma unsafe arrays
 static int re_apply_uart_channel_config(
 		int channel_id,
 		streaming chanend cTxUART,
 		streaming chanend cRxUART)
-#endif
 {
 	int ret_val = 0;
     int chnl_config_status = 0;

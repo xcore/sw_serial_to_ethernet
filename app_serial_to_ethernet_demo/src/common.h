@@ -23,6 +23,9 @@ include files
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
+//Separate thread for accessing flash routines
+/* Enable this macro if Web Server is not on Core 0 */
+#define FLASH_THREAD
 /* Length of application buffer to hold UART channel data */
 #define UART_APP_TX_CHAN_COUNT		8 // Must be Same as UART_TX_CHAN_COUNT
 #define TX_CHANNEL_FIFO_LEN			256 //This is a common length between app server and data manager

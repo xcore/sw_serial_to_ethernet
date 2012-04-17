@@ -19,7 +19,7 @@ include files
 ---------------------------------------------------------------------------*/
 #ifndef S2E_FLASH_H_
 #define S2E_FLASH_H_
-
+#include "common.h"
 /*---------------------------------------------------------------------------
 constants
 ---------------------------------------------------------------------------*/
@@ -35,6 +35,9 @@ constants
 
 // indicate if there is a config present in flash
 #define FLASH_VALID_CONFIG_PRESENT  '$'
+
+#define S2E_FLASH_ERROR             -1
+#define S2E_FLASH_OK                0
 
 /*---------------------------------------------------------------------------
 ports and clocks
@@ -62,7 +65,15 @@ static variables
 /*---------------------------------------------------------------------------
 prototypes
 ---------------------------------------------------------------------------*/
+#ifndef FLASH_THREAD
+int flash_get_config_address(int last_rom_page, int last_rom_length);
 
+int flash_read_rom(int page, char data[]);
+
+int flash_write_config(int address, char data[]);
+
+int flash_read_config(int address, char data[]);
+#else //FLASH_THREAD
 void flash_data_access(chanend cPersData);
 
 int flash_access(char flash_operation,
@@ -73,6 +84,7 @@ int flash_access(char flash_operation,
 int get_config_address(int last_rom_page,
                        int last_rom_length,
                        chanend cPersData);
+#endif //FLASH_THREAD
 
 #endif /* S2E_FLASH_H_ */
 /*=========================================================================*/

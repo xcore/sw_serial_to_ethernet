@@ -406,10 +406,17 @@ static void send_data_to_client(
 *  \return			None
 *
 **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+static void process_user_data(
+		streaming chanend cWbSvr2AppMgr,
+		chanend tcp_svr)
+#else //FLASH_THREAD
 static void process_user_data(
 		streaming chanend cWbSvr2AppMgr,
 		chanend cPersData,
 		chanend tcp_svr)
+#endif //FLASH_THREAD
 {
 	int idxBuffer = 0;
 	int uart_loop = 0;
@@ -487,11 +494,18 @@ static void process_user_data(
             		cmd_complete = 0;
 
             		/* Parse commands and send to UART Manager via cWbSvr2AppMgr */
+#ifndef FLASH_THREAD
+            		parse_client_request(cWbSvr2AppMgr,
+                                         data,
+                                         response,
+                                         cmd_data_idx);
+#else //FLASH_THREAD
                     parse_client_request(cWbSvr2AppMgr,
                                          cPersData,
                                          data,
                                          response,
                                          cmd_data_idx);
+#endif //FLASH_THREAD
                     /* Send response back to telnet client */
                     connection_state_index =
                     		fetch_connection_state_index(
@@ -552,11 +566,19 @@ static void process_user_data(
 *  \return	None
 *
 **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+void web_server_handle_event(
+		chanend tcp_svr,
+		xtcp_connection_t &conn,
+		streaming chanend cWbSvr2AppMgr)
+#else //FLASH_THREAD
 void web_server_handle_event(
 		chanend tcp_svr,
 		xtcp_connection_t &conn,
 		streaming chanend cWbSvr2AppMgr,
 		chanend cPersData)
+#endif //FLASH_THREAD
 {
 	AppPorts app_port_type = TYPE_UNSUPP_PORT;
 	int WbSvr2AppMgr_chnl_data = 9999;
@@ -612,7 +634,11 @@ void web_server_handle_event(
       case XTCP_RECV_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
     	  {
+#ifndef FLASH_THREAD
+    		  httpd_recv(tcp_svr, conn, cWbSvr2AppMgr);
+#else //FLASH_THREAD
     		  httpd_recv(tcp_svr, conn, cPersData, cWbSvr2AppMgr);
+#endif //FLASH_THREAD
     	  }
     	  else if (app_port_type==TYPE_TELNET_PORT)
     	  {
@@ -623,7 +649,11 @@ void web_server_handle_event(
       case XTCP_REQUEST_DATA:
       case XTCP_RESEND_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
+#ifndef FLASH_THREAD
+    		  httpd_send(tcp_svr, conn);
+#else //FLASH_THREAD
     		  httpd_send(tcp_svr, conn, cPersData);
+#endif //FLASH_THREAD
     	  else if (app_port_type==TYPE_TELNET_PORT)
     		  telnet_buffered_send_handler(tcp_svr, conn);
           break;
@@ -661,11 +691,19 @@ void web_server_handle_event(
 *  \return	None
 *
 **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+void web_server(
+		chanend tcp_svr,
+		streaming chanend cWbSvr2AppMgr,
+		streaming chanend cAppMgr2WbSvr)
+#else //FLASH_THREAD
 void web_server(
 		chanend tcp_svr,
 		streaming chanend cWbSvr2AppMgr,
 		streaming chanend cAppMgr2WbSvr,
 		chanend cPersData)
+#endif //FLASH_THREAD
 {
   xtcp_connection_t conn;
   timer processUserDataTimer;
@@ -704,11 +742,18 @@ void web_server(
   flash_data[3] = MARKER_END;
 
   // Browser is requesting data
+#ifndef FLASH_THREAD
+  parse_client_request(cWbSvr2AppMgr,
+                       flash_data,
+                       r_data,
+                       FLASH_SIZE_PAGE);
+#else //FLASH_THREAD
   parse_client_request(cWbSvr2AppMgr,
                        cPersData,
                        flash_data,
                        r_data,
                        FLASH_SIZE_PAGE);
+#endif //FLASH_THREAD
 
   // Loop forever processing TCP events
   while(1)
@@ -739,6 +784,16 @@ void web_server(
         	}
         }
         break;
+#ifndef FLASH_THREAD
+        case xtcp_event(tcp_svr, conn):
+          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr);
+          break;
+        case processUserDataTimer when timerafter (processUserDataTS) :> char _ :
+          //Send user data to Uart App
+          process_user_data(cWbSvr2AppMgr, tcp_svr);
+          processUserDataTS += PROCESS_USER_DATA_TMR_EVENT_INTRVL;
+          break;
+#else //FLASH_THREAD
         case xtcp_event(tcp_svr, conn):
           web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr, cPersData);
           break;
@@ -747,6 +802,7 @@ void web_server(
           process_user_data(cWbSvr2AppMgr, cPersData, tcp_svr);
           processUserDataTS += PROCESS_USER_DATA_TMR_EVENT_INTRVL;
           break;
+#endif //FLASH_THREAD
         default:
           break;
         }

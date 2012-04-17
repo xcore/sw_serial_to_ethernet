@@ -229,7 +229,9 @@ int main(void)
     chan connect_status;
 #endif //TWO_THREAD_ETH
     chan xtcp[1];
+#ifdef FLASH_THREAD
     chan cPersData;
+#endif //FLASH_THREAD
 	streaming chan cWbSvr2AppMgr;
 	streaming chan cAppMgr2WbSvr;
 	streaming chan cTxUART;
@@ -265,7 +267,7 @@ int main(void)
             ethernet_getmac_otp(otp_ports, mac_address);
 
             // Bring PHY out of reset
-            p_reset <: 0x2;
+            //p_reset <: 0x2;
 
             // Start server
             uipSingleServer(clk_smi, null, smi, mii, xtcp, 1, ipconfig, mac_address);
@@ -280,7 +282,9 @@ int main(void)
 	            }
 #endif
 
+#ifdef FLASH_THREAD
 	            on stdcore[0]: flash_data_access(cPersData);
+#endif //FLASH_THREAD
 	            /*
 	            on stdcore[0]: dummy();
 	            on stdcore[0]: dummy();
@@ -291,7 +295,11 @@ int main(void)
 	            
 	            /* web server thread for handling and servicing http requests
 	            * and telnet data communication */
+#ifndef FLASH_THREAD
+	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cAppMgr2WbSvr);
+#else //FLASH_THREAD
 	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cAppMgr2WbSvr, cPersData);
+#endif //FLASH_THREAD
 	            
 	            /* The multi-uart application manager thread to handle uart
 	            * data communication to web server clients */

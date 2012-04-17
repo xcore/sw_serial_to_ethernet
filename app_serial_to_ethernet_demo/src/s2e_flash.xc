@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------
  constants
  ---------------------------------------------------------------------------*/
+//#define FLASH_DEBUG 1
 
 /*---------------------------------------------------------------------------
  ports and clocks
@@ -43,11 +44,9 @@ on stdcore[0] : extern fl_SPIPorts flash_ports;
  ---------------------------------------------------------------------------*/
 // Array of allowed flash devices from "SpecMacros.h"
 fl_DeviceSpec myFlashDevices[] =
-{ FL_DEVICE_ATMEL_AT25FS010,
-  FL_DEVICE_ATMEL_AT25DF041A,
-  FL_DEVICE_WINBOND_W25X10,
-  FL_DEVICE_WINBOND_W25X20,
-  FL_DEVICE_WINBOND_W25X40 };
+{
+ FL_DEVICE_NUMONYX_M25P16,
+};
 
 
 fsdata_t fsdata[] =
@@ -82,13 +81,14 @@ int get_flash_data_page_address(int data_page);
  **/
 int read_from_flash(int address, char data[])
 {
-    if (0 != connect_flash())               { return -1; }
+    // connect to flash
+    if (S2E_FLASH_OK != connect_flash())            { return S2E_FLASH_ERROR; }
     // Read from the data partition
-    if (0 != fl_readPage(address, data))    { return -1; }
+    if (S2E_FLASH_OK != fl_readPage(address, data)) { return S2E_FLASH_ERROR; }
     // Disconnect from the flash
-    if (0 != fl_disconnect())               { return -1; }
+    if (S2E_FLASH_OK != fl_disconnect())            { return S2E_FLASH_ERROR; }
     // return all ok
-    return 0;
+    return S2E_FLASH_OK;
 }
 
 /** =========================================================================
@@ -106,7 +106,9 @@ int write_to_flash(int address, char data[])
     int sector;
     int current_sector_address;
 
-    if (0 != connect_flash())    { return -1; }
+    // connect to flash
+    if (S2E_FLASH_OK != connect_flash())    { return S2E_FLASH_ERROR; }
+
     // find the sector where the address resides
     num_sectors = fl_getNumSectors();
     for (ix_sector = 0; ix_sector < num_sectors; ix_sector++)
@@ -125,13 +127,13 @@ int write_to_flash(int address, char data[])
         }
     }
     // erase sector
-    if (0 != fl_eraseSector(sector))        { return -1; }
+    if (S2E_FLASH_OK != fl_eraseSector(sector))      {return S2E_FLASH_ERROR;}
     // write page
-    if (0 != fl_writePage(address, data))   { return -1; }
+    if (S2E_FLASH_OK != fl_writePage(address, data)) {return S2E_FLASH_ERROR;}
     // disconnect
-    if (0 != fl_disconnect())               { return -1; }
+    if (S2E_FLASH_OK != fl_disconnect())             {return S2E_FLASH_ERROR;}
     // return all ok
-    return 0;
+    return S2E_FLASH_OK;
 }
 
 /** =========================================================================
@@ -142,20 +144,28 @@ int write_to_flash(int address, char data[])
  **/
 int connect_flash()
 {
-    /* Connect to the FLASH */
-    if (0 != fl_connectToDevice(flash_ports, myFlashDevices, 5)) { return -1; }
-    /*Get the FLASH type*/
+    // connect to flash
+    if (0 != fl_connectToDevice(flash_ports, myFlashDevices, 1))
+    {
+#ifdef FLASH_DEBUG
+        printstrln("Cannot connect to Flash!");
+#endif
+        return S2E_FLASH_ERROR;
+    }
+
+    // get flash type
     switch (fl_getFlashType())
     {
-        case 0: break;
-        case ATMEL_AT25FS010: break;
-        case ATMEL_AT25DF041A: break;
-        case WINBOND_W25X10: break;
-        case WINBOND_W25X20: break;
-        case WINBOND_W25X40: break;
-        default: printstrln("FLASH fitted : Unexpected!"); return -1; break;
+        case NUMONYX_M25P16: break;
+        default:
+#ifdef FLASH_DEBUG
+        	printstrln("Unknown Flash!");
+#endif
+        	return S2E_FLASH_ERROR;
+        break;
     }
-    return 0; // all ok
+    // all ok
+    return S2E_FLASH_OK;
 }
 
 /** =========================================================================
@@ -173,12 +183,13 @@ int get_flash_config_address(int last_rom_page, int last_rom_length)
     int done = 0;
     int address = 0;
 
-    if (0 != connect_flash())               { return -1; }
+    // connect to flash
+    if (S2E_FLASH_OK != connect_flash())    { return S2E_FLASH_ERROR; }
     // get number of bytes in ROM
     total_rom_bytes = last_rom_page + ((1 + last_rom_length) / FLASH_SIZE_PAGE);
     total_rom_bytes *= FLASH_SIZE_PAGE;
     // check if data partition is defined
-    if (fl_getDataPartitionSize() == 0)     { return -1; }
+    if (fl_getDataPartitionSize() == 0)     { return S2E_FLASH_ERROR; }
     // get the index of data sector
     index_data_sector = fl_getNumSectors() - fl_getNumDataSectors();
     // ROM resides in data partition.
@@ -206,7 +217,8 @@ int get_flash_config_address(int last_rom_page, int last_rom_length)
     } // while
     address = fl_getSectorAddress(index_data_sector);
     // disconnect
-    if (0 != fl_disconnect())               { return -1; }
+    if (S2E_FLASH_OK != fl_disconnect())   { return S2E_FLASH_ERROR; }
+    // return the flash address
     return address;
 }
 
@@ -219,7 +231,8 @@ int get_flash_config_address(int last_rom_page, int last_rom_length)
 int get_flash_data_page_address(int data_page)
 {
     int address, index_data_sector;
-    if (0 != connect_flash())               { return -1; }
+    // connect to flash
+    if (S2E_FLASH_OK != connect_flash())    { return S2E_FLASH_ERROR; }
     // get the index of data sector
     index_data_sector = fl_getNumSectors() - fl_getNumDataSectors();
     // address of the requested page is data_sector start address + page*page_size
@@ -228,6 +241,62 @@ int get_flash_data_page_address(int data_page)
     return address;
 }
 
+#ifndef FLASH_THREAD
+/** =========================================================================
+*  flash_get_config_address
+*  \param last_rom_page: page number of the last fs file
+*  \param last_rom_length: length of the last fs file
+*
+**/
+int flash_get_config_address(int last_rom_page, int last_rom_length)
+{
+    int address;
+    address = get_flash_config_address(last_rom_page, last_rom_length);
+    return address;
+}
+
+/** =========================================================================
+*  flash_read_rom
+*  \param page: page number to read
+*  \param data[]: flash data will be stored here
+*
+**/
+#pragma unsafe arrays
+int flash_read_rom(int page, char data[])
+{
+    int address;
+    address = get_flash_data_page_address(page);
+    // return error if there was error in flash access
+    if(address == S2E_FLASH_ERROR)    { return S2E_FLASH_ERROR; }
+    // read data from flash
+    read_from_flash(address, data);
+    // return ok
+    return S2E_FLASH_OK;
+}
+
+/** =========================================================================
+*  flash_write_config
+*  \param address: address to write to
+*  \param data[]: data to be stored in flash
+*
+**/
+int flash_write_config(int address, char data[])
+{
+    return write_to_flash(address, data);
+}
+
+/** =========================================================================
+*  flash_read_config
+*  \param address: address to read from
+*  \param data[]: flash data to be stored here
+*
+**/
+int flash_read_config(int address, char data[])
+{
+    return read_from_flash(address, data);
+}
+
+#else //FLASH_THREAD
 /** =========================================================================
  *  flash_data_access
  *
@@ -368,5 +437,6 @@ int get_config_address(int last_rom_page, int last_rom_length, chanend cPersData
     cPersData :> address;
     return address;
 }
+#endif //FLASH_THREAD
 
 /*=========================================================================*/

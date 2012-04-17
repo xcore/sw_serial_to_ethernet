@@ -19,6 +19,7 @@
 #ifndef _httpd_h_
 #define _httpd_h_
 #include "xtcp_client.h"
+#include "common.h"
 
 /*---------------------------------------------------------------------------
  extern variables
@@ -40,21 +41,38 @@ void httpd_init(chanend tcp_svr);
 void httpd_init_state(chanend tcp_svr,
                       REFERENCE_PARAM(xtcp_connection_t, conn));
 
+#ifndef FLASH_THREAD
+#ifdef __XC__
+void httpd_recv(chanend tcp_svr,
+                REFERENCE_PARAM(xtcp_connection_t, conn),
+                streaming chanend cWbSvr2AppMgr);
+#else //__XC__
+void httpd_recv(chanend tcp_svr,
+                REFERENCE_PARAM(xtcp_connection_t, conn),
+                chanend cWbSvr2AppMgr);
+#endif //__XC__
+#else //FLASH_THREAD
 #ifdef __XC__
 void httpd_recv(chanend tcp_svr,
                 REFERENCE_PARAM(xtcp_connection_t, conn),
                 chanend cPersData,
                 streaming chanend cWbSvr2AppMgr);
-#else
+#else //__XC__
 void httpd_recv(chanend tcp_svr,
                 REFERENCE_PARAM(xtcp_connection_t, conn),
                 chanend cPersData,
                 chanend cWbSvr2AppMgr);
-#endif
+#endif //__XC__
+#endif //FLASH_THREAD
 
+#ifndef FLASH_THREAD
+void httpd_send(chanend tcp_svr,
+                REFERENCE_PARAM(xtcp_connection_t, conn));
+#else //FLASH_THREAD
 void httpd_send(chanend tcp_svr,
                 REFERENCE_PARAM(xtcp_connection_t, conn),
                 chanend cPersData);
+#endif //FLASH_THREAD
 
 void httpd_free_state(REFERENCE_PARAM(xtcp_connection_t, conn));
 

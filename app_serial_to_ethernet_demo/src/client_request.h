@@ -17,7 +17,7 @@
  ---------------------------------------------------------------------------*/
 #ifndef CLIENT_REQUEST_H_
 #define CLIENT_REQUEST_H_
-
+#include "common.h"
 /*---------------------------------------------------------------------------
  constants
  ---------------------------------------------------------------------------*/
@@ -37,17 +37,31 @@
 /*---------------------------------------------------------------------------
  prototypes
  ---------------------------------------------------------------------------*/
+#ifndef FLASH_THREAD
+#ifdef __XC__
+int parse_client_request(streaming chanend cWbSvr2AppMgr,
+                         char data[],
+                         char response[],
+                         int data_length);
+#else //__XC__
+int parse_client_request(chanend cWbSvr2AppMgr,
+                         char data[],
+                         char response[],
+                         int data_length);
+#endif //__XC__
+#else //FLASH_THREAD
 #ifdef __XC__
 int parse_client_request(streaming chanend cWbSvr2AppMgr,
                          chanend cPersData,
                          char data[],
                          char response[],
                          int data_length);
-#else
+#else //__XC__
 int parse_client_request(chanend cWbSvr2AppMgr,
                          chanend cPersData,
                          char data[],
                          char response[],
                          int data_length);
-#endif
+#endif //__XC__
+#endif //FLASH_THREAD
 #endif // CLIENT_REQUEST_H_

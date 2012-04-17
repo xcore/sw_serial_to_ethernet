@@ -19,6 +19,7 @@
  include files
  ---------------------------------------------------------------------------*/
 #include <string.h>
+//#include <print.h>
 #include "httpd.h"
 #include "common.h"
 #include "debug.h"
@@ -32,6 +33,8 @@
 #define HTTP_REQ_ERR            0
 #define HTTP_REQ_GET_WEBPAGE    1
 #define HTTP_REQ_GET_DATA       2
+
+//#define HTTP_DEBUG 1
 
 /*---------------------------------------------------------------------------
  ports and clocks
@@ -117,19 +120,34 @@ void httpd_init(chanend tcp_svr)
  *  \return	None
  *
  **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+#ifdef __XC__
+void parse_http_request(httpd_state_t *hs,
+                        char *data,
+                        int len,
+                        streaming chanend cWbSvr2AppMgr)
+#else //__XC__
+void parse_http_request(httpd_state_t *hs,
+                        char *data,
+                        int len,
+                        chanend cWbSvr2AppMgr)
+#endif //__XC__
+#else //FLASH_THREAD
 #ifdef __XC__
 void parse_http_request(httpd_state_t *hs,
                         char *data,
                         int len,
                         chanend cPersData,
                         streaming chanend cWbSvr2AppMgr)
-#else
+#else //__XC__
 void parse_http_request(httpd_state_t *hs,
                         char *data,
                         int len,
                         chanend cPersData,
                         chanend cWbSvr2AppMgr)
-#endif
+#endif //__XC__
+#endif //FLASH_THREAD
 {
     int channel_id = 0;
     int request_type;
@@ -147,12 +165,22 @@ void parse_http_request(httpd_state_t *hs,
     {
         if (data[5] == '~')
         {
+#ifdef HTTP_DEBUG
+        printstrln("Got data request");
+#endif
             // Browser is requesting data
+#ifndef FLASH_THREAD
+            parse_client_request(cWbSvr2AppMgr,
+                                 &data[0],
+                                 &hs->wpage_data[0],
+                                 len);
+#else //FLASH_THREAD
             parse_client_request(cWbSvr2AppMgr,
                                  cPersData,
                                  &data[0],
                                  &hs->wpage_data[0],
                                  len);
+#endif //FLASH_THREAD
 
             hs->http_request_type = HTTP_REQ_GET_DATA;
             hs->wpage_length = strlen(&(hs->wpage_data[0]));
@@ -160,6 +188,9 @@ void parse_http_request(httpd_state_t *hs,
         } // if (data[5] == HTTP_REQ_GET_DATA)
         else
         {
+#ifdef HTTP_DEBUG
+        printstrln("Got webpage request");
+#endif
             hs->http_request_type = HTTP_REQ_GET_WEBPAGE;
             for (i = 4; i < 36; i++)
             {
@@ -198,6 +229,9 @@ void parse_http_request(httpd_state_t *hs,
                     break;
                 } // if(data[i] = ' ')
             } // for (i = 4; i < 36; i++)
+#ifdef HTTP_DEBUG
+        printstr("Page number: "); printintln(hs->dptr);
+#endif
         } // else
     } // if GET
     else
@@ -219,11 +253,20 @@ void parse_http_request(httpd_state_t *hs,
  *  \return	None
  *
  **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+#ifdef __XC__
+void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, streaming chanend cWbSvr2AppMgr)
+#else //__XC__
+void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cWbSvr2AppMgr)
+#endif //__XC__
+#else //FLASH_THREAD
 #ifdef __XC__
 void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData, streaming chanend cWbSvr2AppMgr)
-#else
+#else //__XC__
 void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData, chanend cWbSvr2AppMgr)
-#endif
+#endif //__XC__
+#endif //FLASH_THREAD
 {
     httpd_state_t *hs = (struct httpd_state_t *) conn->appstate;
     char data[XTCP_CLIENT_BUF_SIZE];
@@ -239,7 +282,11 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData, cha
     }
 
     // Otherwise we have data, so parse it
+#ifndef FLASH_THREAD
+    parse_http_request(hs, &data[0], len, cWbSvr2AppMgr);
+#else //FLASH_THREAD
     parse_http_request(hs, &data[0], len, cPersData, cWbSvr2AppMgr);
+#endif //FLASH_THREAD
 
     // If we are required to send data
     if (hs->wpage_length != 0)
@@ -264,7 +311,12 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData, cha
  *  \return	None
  *
  **/
+#pragma unsafe arrays
+#ifndef FLASH_THREAD
+void httpd_send(chanend tcp_svr, xtcp_connection_t *conn)
+#else //FLASH_THREAD
 void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
+#endif //FLASH_THREAD
 {
     int i;
     int length_page;
@@ -285,12 +337,16 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
         {
             if (hs->http_request_type == HTTP_REQ_GET_WEBPAGE)
             {
+#ifndef FLASH_THREAD
+            	flash_read_rom(hs->dptr, hs->wpage_data);
+#else //FLASH_THREAD
                 flash_access(FLASH_ROM_READ,
                              hs->wpage_data,
                              hs->dptr,
                              cPersData);
+#endif //FLASH_THREAD
 
-                if(hs->wpage_data[0] != 255)
+                if(strncmp(hs->wpage_data, "HTTP/1.0 200 OK", 15) == 0)
                 {}
                 else
                 {
@@ -314,10 +370,14 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
                 else
                 {
                     hs->dptr++;
+#ifndef FLASH_THREAD
+                    flash_read_rom(hs->dptr, hs->wpage_data);
+#else //FLASH_THREAD
                     flash_access(FLASH_ROM_READ,
                                  hs->wpage_data,
                                  hs->dptr,
                                  cPersData);
+#endif //FLASH_THREAD
                     xtcp_send(tcp_svr, hs->wpage_data, length_page);
                 }
             }
@@ -333,7 +393,9 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
             }
             else
             {
+#ifdef DEBUG_LEVEL_1
                 printstrln("unidentified request - should not get here");
+#endif //DEBUG_LEVEL_1
                 xtcp_complete_send(tcp_svr);
                 xtcp_close(tcp_svr, conn);
             }
