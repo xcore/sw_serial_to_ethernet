@@ -2,7 +2,7 @@ TOOLS_ROOT = $(installpath)
 include $(TOOLS_ROOT)/src/MakefileUnix.mak
 
 ifndef M32
-M32 = -m32
+M32 =
 endif
 
 APP_NAME=Release/multi_uart_demo
