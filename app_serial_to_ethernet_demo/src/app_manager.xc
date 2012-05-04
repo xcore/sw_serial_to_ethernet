@@ -349,7 +349,7 @@ static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
 {
 	int channel_id;
 	int chnl_config_status = 0;
-	unsigned temp;
+	char temp;
 
 	for (channel_id=0;channel_id<UART_TX_CHAN_COUNT;channel_id++)
 	{

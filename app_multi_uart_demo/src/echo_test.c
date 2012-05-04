@@ -14,8 +14,9 @@ volatile unsigned rx_elements[8] = {0,0,0,0,0,0,0,0};
 void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
 {
 
-    unsigned uart_char, temp;
+    unsigned uart_char;
     unsigned baud_rate = 115200;
+    char temp;
     
     printstr("Running echo test...\n");
     
@@ -46,11 +47,11 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
     
     //:thread_start_helper_funcs
     /* release UART rx thread */
-    do { temp = get_streaming_uint(cRxBuf); } while (temp != MULTI_UART_GO);
+    do { temp = get_streaming_token(cRxBuf); } while (temp != MULTI_UART_GO);
     send_streaming_int(cRxBuf, 1);
     
     /* release UART tx thread */
-    do { temp = get_streaming_uint(cTxUART); } while (temp != MULTI_UART_GO);
+    do { temp = get_streaming_token(cTxUART); } while (temp != MULTI_UART_GO);
     send_streaming_int(cTxUART, 1);
     //:
     
@@ -118,9 +119,10 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
 {
     unsigned chan_id = 0;
     unsigned uart_char, temp;
+    char go;
     int rv;
     
-    do { uart_char = get_streaming_uint(cRxUART); } while (uart_char != MULTI_UART_GO);
+    do { go = get_streaming_token(cRxUART); } while (go != MULTI_UART_GO);
     send_streaming_int(cRxBuf, uart_char); // pass up
     
     uart_char = get_streaming_uint(cRxBuf); 

@@ -214,8 +214,8 @@ void uart_rx_reconf_pause( chanend cUART )
  */
 void uart_rx_reconf_enable( chanend cUART )
 {
-    unsigned temp;
+    char temp;
     
-    do { temp = get_streaming_uint(cUART); } while (temp != MULTI_UART_GO);
+    do { temp = get_streaming_token(cUART); } while (temp != MULTI_UART_GO);
     send_streaming_int(cUART, 1);
 }

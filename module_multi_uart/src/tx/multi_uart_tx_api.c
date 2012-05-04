@@ -246,6 +246,7 @@ void uart_tx_reconf_pause( chanend cUART, timer t )
     unsigned pause_time;
     unsigned min_baud_chan;
     unsigned temp = 0;
+    char go;
     
     /* find slowest channel - which is max(clocks_per_bit)*/
     for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
@@ -278,11 +279,10 @@ void uart_tx_reconf_pause( chanend cUART, timer t )
     
     /* request pause */
     send_streaming_int(cUART, 0); 
-    temp = 0;
     do 
     {
-        temp = get_streaming_uint(cUART); // wait for UART to be ready for reconf
-    } while (temp != MULTI_UART_GO);
+    	go = get_streaming_token(cUART); // wait for UART to be ready for reconf
+    } while (go != MULTI_UART_GO);
     
 }
 

@@ -97,7 +97,7 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
     while (1)
     {
         
-        cUART <: MULTI_UART_GO;
+        cUART <: (char)MULTI_UART_GO;
         cUART :> int _;
         
         /* initialisation loop */

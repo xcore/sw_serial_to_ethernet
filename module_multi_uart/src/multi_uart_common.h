@@ -2,8 +2,7 @@
 #define __MULTI_UART_COMMON_H__
 
 /* define channel commands */
-#define MULTI_UART_STOP     0xFFFFFFFF
-#define MULTI_UART_GO       0xFFFFFFFE
+#define MULTI_UART_GO 0xFE
 
 /**
  * Define the parity configuration

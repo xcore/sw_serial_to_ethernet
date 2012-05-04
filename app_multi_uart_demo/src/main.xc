@@ -62,7 +62,7 @@ void uart_tx_test(streaming chanend cUART)
         
     
     unsigned rd_ptr[8] = {0,0,0,0,0,0,0,0};
-    unsigned temp = 0;
+    char temp = 0;
     int chan_id = 0;
     #ifdef LOOP_REF_TEST
     unsigned baud_rate = 100000;
@@ -167,6 +167,7 @@ void uart_rx_test(streaming chanend cUART)
 {
     unsigned uart_char, temp;
     char receive_buf[100] = {'u'};
+    char go;
     unsigned int buf_ptr = 0;
     #ifdef LOOP_REF_TEST
     unsigned baud_rate = 100000;
@@ -193,7 +194,7 @@ void uart_rx_test(streaming chanend cUART)
     
     //:xc_release_uart
     /* release UART rx thread */
-    do { cUART :> temp; } while (temp != MULTI_UART_GO);
+    do { cUART :> go; } while (go != MULTI_UART_GO);
     cUART <: 1;
     //:
     

@@ -57,7 +57,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
     multi_uart_tx_port_init( tx_ports, uart_clock );
     
     /* wait until release (post config) */
-	cUART <: MULTI_UART_GO;
+	cUART <: (char)MULTI_UART_GO;
 	cUART :> int _;
 	
 	/* initialise data structures */
@@ -135,7 +135,7 @@ void run_multi_uart_tx( streaming chanend cUART, s_multi_uart_tx_ports &tx_ports
 		            tx_ports.pUart <: port_val;
 		            
 		            /* allow otherside to hold us while we wait */
-		            cUART <: MULTI_UART_GO;
+		            cUART <: (char)MULTI_UART_GO;
 		            cUART :> int _;
 		            
 		            /* initialise data structures */
