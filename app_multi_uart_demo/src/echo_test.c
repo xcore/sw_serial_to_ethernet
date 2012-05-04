@@ -44,17 +44,17 @@ void uart_rxtx_echo_test( chanend cTxUART, chanend cRxBuf )
     //:
     
     baud_rate /= 2;
-    
+
     //:thread_start_helper_funcs
     /* release UART rx thread */
     do { temp = get_streaming_token(cRxBuf); } while (temp != MULTI_UART_GO);
-    send_streaming_int(cRxBuf, 1);
-    
+    send_streaming_token(cRxBuf, 1);
+
     /* release UART tx thread */
     do { temp = get_streaming_token(cTxUART); } while (temp != MULTI_UART_GO);
     send_streaming_int(cTxUART, 1);
     //:
-    
+
     /* main echo loop */
     while (1)
     {
@@ -123,9 +123,9 @@ void rx_buffering( chanend cRxUART, chanend cRxBuf )
     int rv;
     
     do { go = get_streaming_token(cRxUART); } while (go != MULTI_UART_GO);
-    send_streaming_int(cRxBuf, uart_char); // pass up
+    send_streaming_token(cRxBuf, go); // pass up
     
-    uart_char = get_streaming_uint(cRxBuf); 
+    go = get_streaming_token(cRxBuf);
     send_streaming_int(cRxUART, 1); // pass down
     
     printstr("RX Buf running\n");

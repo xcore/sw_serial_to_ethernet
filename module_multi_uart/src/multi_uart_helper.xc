@@ -39,6 +39,11 @@ unsigned get_streaming_uint( streaming chanend c )
     return i;
 }
 
+void send_streaming_token( streaming chanend c, char i )
+{
+    c <: i;
+}
+
 char get_streaming_token( streaming chanend c )
 {
     char i;

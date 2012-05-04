@@ -47,6 +47,13 @@ void send_streaming_int( streaming_chanend c, int i );
 unsigned get_streaming_uint( streaming_chanend c );
 
 /**
+ * Send token value across a streaming channel end
+ * @param   c       chanend to use
+ * @param   i       token to send
+ */
+void send_streaming_token( streaming_chanend c, char i );
+
+/**
  * Get token from streaming chanend
  * @param   c       chanend to use
  * @return          token received over channel
