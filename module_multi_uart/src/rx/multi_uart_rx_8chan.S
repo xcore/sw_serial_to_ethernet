@@ -141,10 +141,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -363,10 +364,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -585,10 +587,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -807,10 +810,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -1029,10 +1033,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -1251,10 +1256,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -1473,10 +1479,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process
@@ -1695,10 +1702,11 @@ process_loop:
 	and r8, r6, r7 // mask off bits             
     mkmsk r11, 4                                
     crc32 r8, r11, r11 // compress bits         
-                                                
-    ldaw r11, dp[fourBitLookup] // do lookup    
+
+    ldaw r11, dp[fourBitConfig] // do lookup    
+    ldw r11, r11[r5]
     ldw r8, r11[r8] // get fourBits             
-                                                
+
 	/* check if state is idle (0x0) */
 	ldw r11, r1[r5]
 	bf r11, idle_process

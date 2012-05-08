@@ -34,7 +34,10 @@ typedef enum ENUM_UART_RX_CHAN_STATE
 void uart_rx_loop_8( in buffered port:32 pUart, e_uart_rx_chan_state state[], int tick_count[], int bit_count[], int uart_word[], streaming chanend cUART, unsigned rx_char_slots[]  );
 
 // global for access by ASM
-unsigned fourBitLookup[16];
+unsigned fourBitLookup0[16];
+unsigned fourBitLookup1[16];
+unsigned fourBitConfig[UART_RX_CHAN_COUNT];
+
 unsigned startBitLookup0[16];
 unsigned startBitLookup1[16];
 unsigned startBitConfig[UART_RX_CHAN_COUNT];
@@ -59,23 +62,40 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
      * from an 8 bit port and translates it into the 4 desired bits - huzzah!
      * bit 4-7 indicates whether there could be a start bit and how many are swallowed
      */
-    fourBitLookup[15] = 0x00;
-    fourBitLookup[7]  = 0x31;
-    fourBitLookup[13] = 0x02;
-    fourBitLookup[5]  = 0x23;
-    fourBitLookup[0]  = 0x04;
-    fourBitLookup[8]  = 0x05;
-    fourBitLookup[2]  = 0x06;
-    fourBitLookup[10] = 0x17;
-    fourBitLookup[11] = 0x08;
-    fourBitLookup[3]  = 0x09;
-    fourBitLookup[9]  = 0x0a;
-    fourBitLookup[1]  = 0x0b;
-    fourBitLookup[4]  = 0x0c;
-    fourBitLookup[12] = 0x0d;
-    fourBitLookup[6]  = 0x0e;
-    fourBitLookup[14] = 0x0f;
-    
+    fourBitLookup0[15] = 0x00;
+    fourBitLookup0[7]  = 0x31;
+    fourBitLookup0[13] = 0x02;
+    fourBitLookup0[5]  = 0x23;
+    fourBitLookup0[0]  = 0x04;
+    fourBitLookup0[8]  = 0x05;
+    fourBitLookup0[2]  = 0x06;
+    fourBitLookup0[10] = 0x17;
+    fourBitLookup0[11] = 0x08;
+    fourBitLookup0[3]  = 0x09;
+    fourBitLookup0[9]  = 0x0a;
+    fourBitLookup0[1]  = 0x0b;
+    fourBitLookup0[4]  = 0x0c;
+    fourBitLookup0[12] = 0x0d;
+    fourBitLookup0[6]  = 0x0e;
+    fourBitLookup0[14] = 0x0f;
+
+    fourBitLookup1[15] = 0x00;
+    fourBitLookup1[7]  = 0x01;
+    fourBitLookup1[13] = 0x02;
+    fourBitLookup1[5]  = 0x03;
+    fourBitLookup1[0]  = 0x04;
+    fourBitLookup1[8]  = 0x05;
+    fourBitLookup1[2]  = 0x06;
+    fourBitLookup1[10] = 0x07;
+    fourBitLookup1[11] = 0x18;
+    fourBitLookup1[3]  = 0x09;
+    fourBitLookup1[9]  = 0x0a;
+    fourBitLookup1[1]  = 0x0b;
+    fourBitLookup1[4]  = 0x2c;
+    fourBitLookup1[12] = 0x0d;
+    fourBitLookup1[6]  = 0x3e;
+    fourBitLookup1[14] = 0x0f;
+
     for (int i = 0; i < 16; i++)
     {
         startBitLookup0[i] = 0xffffffff;
@@ -112,14 +132,17 @@ void run_multi_uart_rx( streaming chanend cUART, s_multi_uart_rx_ports &rx_ports
             {
                 case start_0: 
                     startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup0); 
+                    fourBitConfig[i]  = getUnsignedArrayAddressAsUnsigned(fourBitLookup0);
                     break;
                 case start_1: 
-                    startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup1);           break;
+                    startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup1);
+                    fourBitConfig[i]  = getUnsignedArrayAddressAsUnsigned(fourBitLookup1);
+                    break;
                 default: 
                     startBitConfig[i] = getUnsignedArrayAddressAsUnsigned(startBitLookup0);
+                    fourBitConfig[i]  = getUnsignedArrayAddressAsUnsigned(fourBitLookup0);
                     break;
             }
-                    
         }
         
         rx_ports.pUart :> port_val; // junk data
