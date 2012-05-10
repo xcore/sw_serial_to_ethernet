@@ -41,12 +41,12 @@ prototypes
 void web_server(
 		chanend tcp_svr,
 		streaming chanend cWbSvr2AppMgr,
-		streaming chanend cAppMgr2WbSvr);
+		chanend cAppMgr2WbSvr);
 #else //FLASH_THREAD
 void web_server(
 		chanend tcp_svr,
 		streaming chanend cWbSvr2AppMgr,
-		streaming chanend cAppMgr2WbSvr,
+		chanend cAppMgr2WbSvr,
 		chanend pers_data);
 #endif //FLASH_THREAD
 

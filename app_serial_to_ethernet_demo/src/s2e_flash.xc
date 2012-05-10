@@ -48,11 +48,11 @@ fl_DeviceSpec myFlashDevices[] =
  FL_DEVICE_NUMONYX_M25P16,
 };
 
-
+// Webpage file information generated from the script must be copied here
 fsdata_t fsdata[] =
 {
-		{ "/index.html", 0, 4827 },
-		{ "/img/xmos_logo.gif", 19, 915 },
+ { "/index.html", 0, 5276 },
+ { "/img/xmos_logo.gif", 21, 915 },
 };
 
 /*---------------------------------------------------------------------------
@@ -75,9 +75,9 @@ int get_flash_data_page_address(int data_page);
 /** =========================================================================
  *  read_from_flash
  *
- *  \param address: address in flash to read data from
- *  \param data: array where read data will be stored
- *
+ *  \param int  address  address in flash to read data from
+ *  \param char data     array where read data will be stored
+ *  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
  **/
 int read_from_flash(int address, char data[])
 {
@@ -92,10 +92,11 @@ int read_from_flash(int address, char data[])
 }
 
 /** =========================================================================
- *  Description
+ *  write_to_flash
  *
- *  \param address: address in flash to write data to
- *  \param data: array that will be written to flash
+ *  \param int  address  address in flash to write data to
+ *  \param char data     array that will be written to flash
+ *  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
  *
  **/
 int write_to_flash(int address, char data[])
@@ -139,8 +140,7 @@ int write_to_flash(int address, char data[])
 /** =========================================================================
  *  connect_flash
  *
- *  \param
- *
+ *  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
  **/
 int connect_flash()
 {
@@ -171,8 +171,9 @@ int connect_flash()
 /** =========================================================================
  *  get_flash_config_address
  *
- *  \param last_rom_page: page number of the last fs file stored in data partition
- *  \param last_rom_length: length of the last fs file stored in data partition
+ *  \param int last_rom_page   page number of the last fs file stored in data partition
+ *  \param int last_rom_length length of the last fs file stored in data partition
+ *  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
  *
  **/
 int get_flash_config_address(int last_rom_page, int last_rom_length)
@@ -225,7 +226,8 @@ int get_flash_config_address(int last_rom_page, int last_rom_length)
 /** =========================================================================
  *  get_flash_data_page_address
  *
- *  \param data_page: page number
+ *  \param int data_page page number
+ *  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
  *
  **/
 int get_flash_data_page_address(int data_page)
@@ -244,8 +246,10 @@ int get_flash_data_page_address(int data_page)
 #ifndef FLASH_THREAD
 /** =========================================================================
 *  flash_get_config_address
-*  \param last_rom_page: page number of the last fs file
-*  \param last_rom_length: length of the last fs file
+*
+*  \param int last_rom_page    page number of the last fs file
+*  \param int last_rom_length  length of the last fs file
+*  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
 *
 **/
 int flash_get_config_address(int last_rom_page, int last_rom_length)
@@ -257,8 +261,10 @@ int flash_get_config_address(int last_rom_page, int last_rom_length)
 
 /** =========================================================================
 *  flash_read_rom
-*  \param page: page number to read
-*  \param data[]: flash data will be stored here
+*
+*  \param int  page    page number to read
+*  \param char data[]  flash data will be stored here
+*  \return int         S2E_FLASH_OK / S2E_FLASH_ERROR
 *
 **/
 #pragma unsafe arrays
@@ -276,8 +282,10 @@ int flash_read_rom(int page, char data[])
 
 /** =========================================================================
 *  flash_write_config
-*  \param address: address to write to
-*  \param data[]: data to be stored in flash
+*
+*  \param int  address address to write to
+*  \param char data[]  data to be stored in flash
+*  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
 *
 **/
 int flash_write_config(int address, char data[])
@@ -287,8 +295,10 @@ int flash_write_config(int address, char data[])
 
 /** =========================================================================
 *  flash_read_config
-*  \param address: address to read from
-*  \param data[]: flash data to be stored here
+*
+*  \param int address address to read from
+*  \param char data[] flash data to be stored here
+*  \return int          S2E_FLASH_OK / S2E_FLASH_ERROR
 *
 **/
 int flash_read_config(int address, char data[])
@@ -300,7 +310,8 @@ int flash_read_config(int address, char data[])
 /** =========================================================================
  *  flash_data_access
  *
- *  \param cPersData: channel to pass data from Core 0 (Flash port present in Core0)
+ *  \param chanend cPersData channel to pass data from Core 0
+ *                           (Flash port present in Core0)
  *
  **/
 void flash_data_access(chanend cPersData)
@@ -365,11 +376,11 @@ void flash_data_access(chanend cPersData)
 /** =========================================================================
 *  flash_access
 *
-*  \param flash_operation: the operation to perform, see s2e_flash.h for #defines
-*  \param data[]: array where data is got from / stored to
-*  \param address: for rom_read: address is the page number
+*  \param char flash_operation: the operation to perform, see s2e_flash.h for #defines
+*  \param char data[]: array where data is got from / stored to
+*  \param int address: for rom_read: address is the page number
 *           for config: it is the actual address (get address using get_config_address)
-*  \param cPersData: channel to pass data from Core 0 (Flash port present in Core0)
+*  \param chanend cPersData: channel to pass data from Core 0 (Flash port present in Core0)
 *  see: s2e_flash.xc: flash_data_access()
 *
 **/
@@ -422,9 +433,12 @@ int flash_access(char flash_operation, char data[], int address, chanend cPersDa
 
 /** =========================================================================
 *  get_config_address
-*  \param last_rom_page: page number of the last fs file
-*  \param last_rom_length: length of the last fs file
-*  \param cPersData: channel to pass data from Core 0 (Flash port present in Core0)
+*
+*  \param int last_rom_page: page number of the last fs file
+*  \param int last_rom_length: length of the last fs file
+*  \param chanend cPersData: channel to pass data from Core 0
+*                            (Flash port present in Core0)
+*  \return int address address in flash
 *  see: s2e_flash.xc: flash_data_access()
 *
 **/

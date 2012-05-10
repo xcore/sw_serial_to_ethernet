@@ -33,7 +33,7 @@ constants
 ---------------------------------------------------------------------------*/
 //#define PROCESS_USER_DATA_TMR_EVENT_INTRVL		(TIMER_FREQUENCY /	\
 //										(MAX_BIT_RATE * UART_APP_TX_CHAN_COUNT))
-#define PROCESS_USER_DATA_TMR_EVENT_INTRVL	4000 //500
+#define PROCESS_USER_DATA_TMR_EVENT_INTRVL	3000 //500
 
 /*---------------------------------------------------------------------------
 ports and clocks
@@ -65,24 +65,56 @@ typedef struct STRUCT_USER_DATA_FIFO
 	int 			read_index;						//Index of consumed data
 	int 			write_index;					//Input data to Tx api
 	unsigned 		buf_depth;						//depth of buffer to be consumed
-	e_bool			is_currently_serviced;			//T/F: Indicates whether this fifo is just
-													// serviced; if T, select next fifo
 }s_user_data_fifo;
+
+/* Data structure to hold UART X data received from xtcp connections */
+typedef struct STRUCT_XTCP_RECD_DATA_BUFFERS
+{
+	int 			uart_id;
+	int				conn_id;
+	int 			read_index;						//Index of consumed data
+	int 			write_index;					//Input data to Tx api
+	int 			telnet_recd_data_index;	//TODO: TBR
+	unsigned 		buf_depth;						//depth of buffer to be consumed
+	char 			telnet_recd_data[XTCP_CLIENT_BUF_SIZE+TX_CHANNEL_FIFO_LEN]; //TODO: TBC
+	e_bool 			is_currently_serviced;
+}s_xtcp_recd_data_fifo;
+
+/* Data structure to hold UART X data received to send to xtcp connections */
+typedef struct STRUCT_XTCP_SEND_DATA_BUFFERS
+{
+	int 			uart_id;
+	int				conn_id;
+	unsigned 		buf_length;
+	char 			uart_rx_buffer_to_send[RX_CHANNEL_FIFO_LEN];
+}s_xtcp_send_data_fifo;
 
 /* Data structure to map key uart config to app manager data structure */
 typedef struct STRUCT_MAP_APP_MGR_TO_UART
 {
 	unsigned int 			uart_id;        //UART identifier
+	int						conn_id;		//Xtcp connection id
 	int						local_port;   //User configured port e.g. (telnet)
 }s_map_app_mgr_to_uart;
 /*---------------------------------------------------------------------------
 global variables
 ---------------------------------------------------------------------------*/
-s_user_data_fifo   user_client_data_buffer[NUM_HTTPD_CONNECTIONS]; //Number of client connections that can be suppported
+s_user_data_fifo   user_client_data_buffer;
 s_map_app_mgr_to_uart user_port_to_uart_id_map[UART_APP_TX_CHAN_COUNT];
+s_xtcp_recd_data_fifo xtcp_recd_data_buffer[UART_APP_TX_CHAN_COUNT];
+/* Any time, a single MUART RX data is collected from MUART and sent to xtcp */
+s_xtcp_send_data_fifo xtcp_send_data_buffer;
+
 /*---------------------------------------------------------------------------
 static variables
 ---------------------------------------------------------------------------*/
+int gPollForUartDataToFetchFromUartRx	= 1;
+int gPollForSendingUartDataToUartTx;  //0 Initially reset this
+int gPollForTelnetCommandData;  //0 Initially reset this
+
+int g_UartTxNumToSend;
+char g_telnet_recd_data_buffer[XTCP_CLIENT_BUF_SIZE];
+char g_telnet_actual_data_buffer[XTCP_CLIENT_BUF_SIZE];
 
 /*---------------------------------------------------------------------------
 implementation
@@ -125,32 +157,41 @@ static int valid_telnet_port(unsigned int port_num)
 static int fetch_conn_id_for_uart_id(int uart_id)
 {
 	int i = 0;
-	int j = 0;
-	int conn_id = 0;
 
 	for (i=0;i<UART_APP_TX_CHAN_COUNT;i++)
 	{
 		if (user_port_to_uart_id_map[i].uart_id == uart_id)
 		{
-			break;
+			return user_port_to_uart_id_map[i].conn_id;
 		}
 	}
 
-	if (i != UART_APP_TX_CHAN_COUNT)
-	{
-	    for (j = 0; j < NUM_HTTPD_CONNECTIONS; j++)
-	    {
-			if (user_port_to_uart_id_map[i].local_port == user_client_data_buffer[j].conn_local_port)
-				break;
-	    }
+	return -1;
+}
 
-	    if (j != NUM_HTTPD_CONNECTIONS)
+/** =========================================================================
+*  fetch_uart_id_for_port_id
+*
+*  Fetch conn_id that is active and mapped for user port
+*
+*  \param	int local_port		XTCP Port number
+*
+*  \return	None
+*
+**/
+static int fetch_uart_id_for_port_id(int local_port)
+{
+	int i;
+
+	for (i=0;i<UART_APP_TX_CHAN_COUNT;i++)
 	    {
-	    	conn_id = user_client_data_buffer[j].conn_id;
+		if (user_port_to_uart_id_map[i].local_port == local_port)
+		{
+			return user_port_to_uart_id_map[i].uart_id;
 	    }
 	}
 
-	return conn_id;
+	return -1;
 }
 
 /** =========================================================================
@@ -170,24 +211,26 @@ void update_user_conn_details(xtcp_connection_t &conn)
 {
     int i;
 
-    // Try and find an empty connection slot
-    for (i = 0; i < NUM_HTTPD_CONNECTIONS; i++)
+    if (TELNET_PORT_USER_CMDS == conn.local_port)
     {
-        if (!user_client_data_buffer[i].conn_local_port)
-            break;
+    	user_client_data_buffer.buf_depth = 0;
+    	user_client_data_buffer.read_index = 0;
+    	user_client_data_buffer.write_index = 0;
+    	user_client_data_buffer.data_source = TELNET_DATA;
+    	user_client_data_buffer.conn_id = conn.id;
+    	user_client_data_buffer.conn_local_port = conn.local_port;
     }
-
-    if (i == NUM_HTTPD_CONNECTIONS)
-    {
-        // If no free connection slots were found
-    	//Flag as error
-    }
-    // Otherwise, update the connection details
     else
     {
-    	user_client_data_buffer[i].conn_local_port = conn.local_port;
-    	user_client_data_buffer[i].conn_id = conn.id;
-    	user_client_data_buffer[i].is_currently_serviced = TRUE; //This will be serviced in the last order of RR
+        // Try and find UART X corresponding to conn
+        for (i = 0; i < UART_APP_TX_CHAN_COUNT; i++)
+        {
+        	if (user_port_to_uart_id_map[i].local_port == conn.local_port)
+        	{
+        		user_port_to_uart_id_map[i].conn_id = conn.id;
+        		return;
+        	}
+        }
     }
 }
 
@@ -208,28 +251,25 @@ void free_user_conn_details(xtcp_connection_t &conn)
 {
     int i;
 
-    // Try and find an empty connection slot
-    for (i = 0; i < NUM_HTTPD_CONNECTIONS; i++)
+    if (TELNET_PORT_USER_CMDS == conn.local_port)
     {
-        if (user_client_data_buffer[i].conn_local_port == conn.local_port)
-            break;
+    	user_client_data_buffer.buf_depth = 0;
+    	user_client_data_buffer.read_index = 0;
+    	user_client_data_buffer.write_index = 0;
+    	user_client_data_buffer.data_source = NIL_DATA_SOURCE;
+    	user_client_data_buffer.conn_id = -1;
+    	user_client_data_buffer.conn_local_port = 0;
     }
-
-    if (i == NUM_HTTPD_CONNECTIONS)
-    {
-        // If no free connection slots were found
-    	//Flag as error
-    }
-    // Otherwise, free the connection details
     else
     {
-    	user_client_data_buffer[i].buf_depth = 0;
-    	user_client_data_buffer[i].read_index = 0;
-    	user_client_data_buffer[i].write_index = 0;
-    	user_client_data_buffer[i].data_source = NIL_DATA_SOURCE;
-    	user_client_data_buffer[i].is_currently_serviced = FALSE;
-    	user_client_data_buffer[i].conn_id = 0;
-    	user_client_data_buffer[i].conn_local_port = 0;
+        for (i = 0; i < UART_APP_TX_CHAN_COUNT; i++)
+        {
+        	if (user_port_to_uart_id_map[i].local_port == conn.local_port)
+        	{
+        		user_port_to_uart_id_map[i].conn_id = -1;
+        		return;
+        	}
+        }
     }
 }
 
@@ -250,45 +290,65 @@ void fetch_user_data(
 		xtcp_connection_t &conn,
 		char data)
 {
-	int i = 0;
 	int write_index = 0;
 
-	/* Identify buffer to be filled */
-    for (i = 0; i < NUM_HTTPD_CONNECTIONS; i++)
+	if (TELNET_PORT_USER_CMDS == conn.local_port)
     {
-        if (user_client_data_buffer[i].conn_local_port == conn.local_port)
-            break;
-    }
-
-    if (i == NUM_HTTPD_CONNECTIONS)
-    {
-        // If no free connection slots were found
-    	//Flag as error
-    }
-    // Otherwise, free the connection details
-    else
-    {
-	    if (user_client_data_buffer[i].buf_depth < TX_CHANNEL_FIFO_LEN)
+	    if (user_client_data_buffer.buf_depth < TX_CHANNEL_FIFO_LEN)
 	    {
-	    	write_index = user_client_data_buffer[i].write_index;
-	    	user_client_data_buffer[i].user_data[write_index] = data;
+	    	write_index = user_client_data_buffer.write_index;
+	    	user_client_data_buffer.user_data[write_index] = data;
 	        write_index++;
 
 	        if (write_index >= TX_CHANNEL_FIFO_LEN)
 	        {
 	        	write_index = 0;
 	        }
-	        user_client_data_buffer[i].write_index = write_index;
-	        user_client_data_buffer[i].buf_depth++;
+	        user_client_data_buffer.write_index = write_index;
+	        user_client_data_buffer.buf_depth++;
 	    }
-#ifdef DEBUG_LEVEL_1
-	    else if (user_client_data_buffer[i].buf_depth >= TX_CHANNEL_FIFO_LEN)
+	}
+}
+
+static void app_buffers_init(void)
+{
+	int i;
+	for (i=0; i<UART_APP_TX_CHAN_COUNT; i++)
 	    {
-	    	printstr("App Server TX buffer full...[data is dropped]. Data from port : ");
-	        printintln(user_client_data_buffer[i].conn_local_port);
+		xtcp_recd_data_buffer[i].uart_id = i;
+		xtcp_recd_data_buffer[i].conn_id = -1;
+		xtcp_recd_data_buffer[i].read_index = 0;
+		xtcp_recd_data_buffer[i].write_index = 0;
+		xtcp_recd_data_buffer[i].telnet_recd_data_index = 0;
+		xtcp_recd_data_buffer[i].buf_depth = 0;
+		xtcp_recd_data_buffer[i].telnet_recd_data[0] = '\0';
+
+		if (i == (UART_APP_TX_CHAN_COUNT-1))
+		{
+			/* Set last channel as currently serviced so that
+			 * channel queue scan order starts from first channel */
+			xtcp_recd_data_buffer[i].is_currently_serviced = TRUE;
 	    }
-#endif	//DEBUG_LEVEL_1
+		else
+		{
+			xtcp_recd_data_buffer[i].is_currently_serviced = FALSE;
     }
+	}
+
+	/* xtcp transmit buffer init */
+    xtcp_send_data_buffer.buf_length = 0;
+    xtcp_send_data_buffer.uart_id = -1;
+    xtcp_send_data_buffer.conn_id = -1;
+    xtcp_send_data_buffer.uart_rx_buffer_to_send[0] = '\0';
+
+    /* Telnet command mode data buffer init  */
+	user_client_data_buffer.buf_depth = 0;
+	user_client_data_buffer.read_index = 0;
+	user_client_data_buffer.write_index = 0;
+	user_client_data_buffer.data_source = NIL_DATA_SOURCE;
+	user_client_data_buffer.conn_id = -1;
+	user_client_data_buffer.conn_local_port = 0;
+
 }
 
 /** =========================================================================
@@ -309,42 +369,34 @@ static void modify_telnet_port(
 {
 	int uart_id = 0;
 	int telnet_port_num = 0;
-	int i = 0;
 
 	cWbSvr2AppMgr :> uart_id;
 	cWbSvr2AppMgr :> telnet_port_num;
 
-	for (i=0;i<UART_APP_TX_CHAN_COUNT;i++)
+	if (user_port_to_uart_id_map[uart_id].local_port != telnet_port_num)
 	{
-		if (user_port_to_uart_id_map[i].uart_id == uart_id)
+		if (user_port_to_uart_id_map[uart_id].conn_id > 0) //Ensure a valid conn_id
 		{
-			break;
-		}
-	}
+			xtcp_connection_t conn_release;
 
-	if ((i != UART_APP_TX_CHAN_COUNT) &&
-		(user_port_to_uart_id_map[i].local_port != telnet_port_num))
-	{
 		/* Modify telnet sockets */
-		xtcp_connection_t conn_release;
-		conn_release.id = fetch_conn_id_for_uart_id(uart_id);
-		conn_release.local_port = user_port_to_uart_id_map[i].local_port;
+			conn_release.id = user_port_to_uart_id_map[uart_id].conn_id;
+			conn_release.local_port = user_port_to_uart_id_map[uart_id].local_port;
 
 		xtcp_unlisten(tcp_svr, conn_release.local_port);
 		xtcp_abort(tcp_svr, conn_release);
+		}
 
 		/* Open a new telnet session */
-		telnetd_set_new_session(
-				tcp_svr,
-				telnet_port_num);
+		telnetd_set_new_session(tcp_svr, telnet_port_num);
 
 		/* Update local port number */
-		user_port_to_uart_id_map[i].local_port = telnet_port_num;
+		user_port_to_uart_id_map[uart_id].local_port = telnet_port_num;
 	}
 }
 
 /** =========================================================================
-*  send_data_to_client
+*  fetch_uart_data_and_send_to_client
 *
 *  This function performs the following:
 *  (i) Identifies which client to send to data
@@ -355,41 +407,59 @@ static void modify_telnet_port(
 *  \return	None
 *
 **/
-static void send_data_to_client(
+static void fetch_uart_data_and_send_to_client(
 		chanend tcp_svr,
-		streaming chanend cAppMgr2WbSvr)
+		xtcp_connection_t &conn,
+		chanend cAppMgr2WbSvr)
 {
-	int success = 0;
-	int i = 0;
-	int connection_state_index = 0;
-	unsigned int buf_depth = 0;  //uart rx buffer data depth
-	char buffer[RX_CHANNEL_FIFO_LEN] = "";
-	int uart_id = 0;
-	int conn_id = 0;
+    int i;
+    int length_page;
 
-	cAppMgr2WbSvr :> uart_id;
-	cAppMgr2WbSvr :> buf_depth;
-
-	conn_id = fetch_conn_id_for_uart_id(uart_id);
-
-	connection_state_index = fetch_connection_state_index(conn_id);
-	if (-1 != connection_state_index)
+    switch (conn.event)
 	{
-		for (i=0; i<buf_depth; i++)
+        case XTCP_RESEND_DATA:
 		{
-			/* Store Uart X data from channel */
-			cAppMgr2WbSvr :> buffer[i];
+            xtcp_send(tcp_svr, xtcp_send_data_buffer.uart_rx_buffer_to_send, xtcp_send_data_buffer.buf_length);
+            break;
 		}
 
-		success = telnetd_send(tcp_svr, connection_state_index, buffer);
-#ifdef DEBUG_LEVEL_1
-		if (1 != success)
+        case XTCP_REQUEST_DATA:
+        {
+        	outct(cAppMgr2WbSvr, '2'); //PULL_UART_DATA_FROM_UART_TO_APP
+        	cAppMgr2WbSvr <: xtcp_send_data_buffer.uart_id;
+        	cAppMgr2WbSvr :> xtcp_send_data_buffer.buf_length;
+
+        	/* Get UART data */
+    		for (i=0; i<xtcp_send_data_buffer.buf_length; i++)
 		{
-			printstr("telnet send failed. Conn Id is ");printint(conn_id);
-			printstr(" Connection_state_index is "); printintln(connection_state_index);
+    			/* Store Uart X data from channel */
+    			cAppMgr2WbSvr :> xtcp_send_data_buffer.uart_rx_buffer_to_send[i];
 		}
-#endif //DEBUG_LEVEL_1
+
+            xtcp_send(tcp_svr, xtcp_send_data_buffer.uart_rx_buffer_to_send, xtcp_send_data_buffer.buf_length);
+            break;
 	}
+
+        case XTCP_SENT_DATA:
+        {
+        	/* Check if there is more data to be sent to xtcp */
+            xtcp_complete_send(tcp_svr);
+            /* Enable poll to get other UART data */
+            gPollForUartDataToFetchFromUartRx = 0;
+            gPollForSendingUartDataToUartTx = 1;
+            gPollForTelnetCommandData = 0;
+
+            xtcp_send_data_buffer.buf_length = 0;
+            xtcp_send_data_buffer.uart_id = -1;
+            xtcp_send_data_buffer.conn_id = -1;
+            xtcp_send_data_buffer.uart_rx_buffer_to_send[0] = '\0';
+            break;
+        } // case XTCP_SENT_DATA:
+
+        default:
+            break;
+
+    } // switch(conn->event)
 }
 
 /** =========================================================================
@@ -414,39 +484,17 @@ static void process_user_data(
 #else //FLASH_THREAD
 static void process_user_data(
 		streaming chanend cWbSvr2AppMgr,
-		chanend cPersData,
-		chanend tcp_svr)
+		chanend tcp_svr,
+		chanend cPersData)
 #endif //FLASH_THREAD
 {
-	int idxBuffer = 0;
-	int uart_loop = 0;
 	int read_index = 0;
 
-	/* Identify buffer to be filled */
-    for (idxBuffer = 0; idxBuffer < NUM_HTTPD_CONNECTIONS; idxBuffer++)
-    {
-		if (TRUE == user_client_data_buffer[idxBuffer].is_currently_serviced)
-			break;
-    }
-
-	/* 'i' now contains buffer # that is just serviced
-	 * reset it and increment to point to next buffer */
-    if (idxBuffer != NUM_HTTPD_CONNECTIONS)
-    {
-        user_client_data_buffer[idxBuffer].is_currently_serviced = FALSE;
-        idxBuffer++;
-    	//channel_id &= (UART_APP_TX_CHAN_COUNT-1);
-        if (idxBuffer >= NUM_HTTPD_CONNECTIONS)
-        {
-        	idxBuffer = 0;
-        }
-        user_client_data_buffer[idxBuffer].is_currently_serviced = TRUE;
-
-        if ((user_client_data_buffer[idxBuffer].buf_depth > 0) &&
-        		(user_client_data_buffer[idxBuffer].buf_depth <= TX_CHANNEL_FIFO_LEN))
+    if ((user_client_data_buffer.buf_depth > 0) &&
+    		(user_client_data_buffer.buf_depth <= TX_CHANNEL_FIFO_LEN))
         {
         	/* Check if it is a UART command through telnet command socket */
-        	if (TELNET_PORT_USER_CMDS == user_client_data_buffer[idxBuffer].conn_local_port)
+    	if (TELNET_PORT_USER_CMDS == user_client_data_buffer.conn_local_port)
         	{
         		char data[UI_COMMAND_LENGTH];
         		char response[UI_COMMAND_LENGTH];
@@ -458,15 +506,15 @@ static void process_user_data(
         		/* UART Command available to service */
         		/* If valid marker end is not present in command, ignore request till
         		 * a complete command is received */
-        		read_index = user_client_data_buffer[idxBuffer].read_index;
-        		buf_depth = user_client_data_buffer[idxBuffer].buf_depth;
+    		read_index = user_client_data_buffer.read_index;
+    		buf_depth = user_client_data_buffer.buf_depth;
 
             	/* Send data continually */
             	while ((buf_depth > 0) && (1 != cmd_complete))
             	{
-            		data[cmd_data_idx] = user_client_data_buffer[idxBuffer].user_data[read_index];
+        		data[cmd_data_idx] = user_client_data_buffer.user_data[read_index];
             		cmd_data_idx++;
-            		if (MARKER_END == user_client_data_buffer[idxBuffer].user_data[read_index])
+        		if (MARKER_END == user_client_data_buffer.user_data[read_index])
             		{
             			cmd_complete = 1;
             			//break;
@@ -482,15 +530,15 @@ static void process_user_data(
             		if ((0 == buf_depth) && (1 != cmd_complete))
             		{
             			/* There is no valid command end marker - ignore the request*/
-                		user_client_data_buffer[idxBuffer].buf_depth = buf_depth;
-                		user_client_data_buffer[idxBuffer].read_index = read_index;
+            		user_client_data_buffer.buf_depth = buf_depth;
+            		user_client_data_buffer.read_index = read_index;
             		}
             	}
 
             	if (1 == cmd_complete)
             	{
-            		user_client_data_buffer[idxBuffer].buf_depth = buf_depth;
-            		user_client_data_buffer[idxBuffer].read_index = read_index;
+        		user_client_data_buffer.buf_depth = buf_depth;
+        		user_client_data_buffer.read_index = read_index;
             		cmd_complete = 0;
 
             		/* Parse commands and send to UART Manager via cWbSvr2AppMgr */
@@ -509,44 +557,15 @@ static void process_user_data(
                     /* Send response back to telnet client */
                     connection_state_index =
                     		fetch_connection_state_index(
-                    				user_client_data_buffer[idxBuffer].conn_id);
+                				user_client_data_buffer.conn_id);
 
                     telnetd_send_line(tcp_svr,
                     		connection_state_index,
                     		response);
             	} //if (1 == cmd_complete)
         	} //if (TELNET_PORT_USER_CMDS == user_client_data_buffer[i].conn_local_port)
-        	else
-        	{
-        		/* UART X data */
-            	cWbSvr2AppMgr <: UART_DATA_FROM_APP_TO_UART;
-            	/* Locate and send Uart Id */
-            	for (uart_loop=0;uart_loop<UART_APP_TX_CHAN_COUNT;uart_loop++)
-            	{
-            		if (user_port_to_uart_id_map[uart_loop].local_port == user_client_data_buffer[idxBuffer].conn_local_port)
-            			break;
-            	}
-            	cWbSvr2AppMgr <: user_port_to_uart_id_map[uart_loop].uart_id; //UART Channel Id
-            	cWbSvr2AppMgr <: user_client_data_buffer[idxBuffer].buf_depth; //Length of data
-
-        		read_index = user_client_data_buffer[idxBuffer].read_index;
-            	/* Send data continually */
-            	while (user_client_data_buffer[idxBuffer].buf_depth > 0)
-            	{
-            		cWbSvr2AppMgr <: user_client_data_buffer[idxBuffer].user_data[read_index];
-            		read_index++;
-
-            		if (read_index >= TX_CHANNEL_FIFO_LEN)
-            		{
-            			read_index = 0;
-            		}
-            		user_client_data_buffer[idxBuffer].buf_depth--;
-            	}
-
-            	user_client_data_buffer[idxBuffer].read_index = read_index;
-        	} //If telnet data for UART X
         } //If there is any client data
-    } //if (i != NUM_HTTPD_CONNECTIONS)
+
 
 }
 
@@ -577,12 +596,14 @@ void web_server_handle_event(
 		chanend tcp_svr,
 		xtcp_connection_t &conn,
 		streaming chanend cWbSvr2AppMgr,
+		chanend cAppMgr2WbSvr,
 		chanend cPersData)
 #endif //FLASH_THREAD
 {
 	AppPorts app_port_type = TYPE_UNSUPP_PORT;
 	int WbSvr2AppMgr_chnl_data = 9999;
-	int new_telnet_port = 0;
+	int telnet_recd_data_len = 0;
+	int uart_id = -1;
 
   // We have received an event from the TCP stack, so respond
   // appropriately
@@ -626,10 +647,11 @@ void web_server_handle_event(
     		  /* Initialize and manage telnet connection state
     		   * and set tx buffers */
     		  telnetd_init_state(tcp_svr, conn);
-    	  }
+
     	  /* Note connection details so that data is manageable
     	   * at server level */
     	  update_user_conn_details(conn);
+    	  }
         break;
       case XTCP_RECV_DATA:
     	  if (app_port_type==TYPE_HTTP_PORT)
@@ -640,9 +662,53 @@ void web_server_handle_event(
     		  httpd_recv(tcp_svr, conn, cPersData, cWbSvr2AppMgr);
 #endif //FLASH_THREAD
     	  }
-    	  else if (app_port_type==TYPE_TELNET_PORT)
+    	  else if (TELNET_PORT_USER_CMDS == conn.local_port)
     	  {
     		  telnetd_recv(tcp_svr, conn);
+    	  }
+    	  else if (app_port_type==TYPE_TELNET_PORT)
+    	  {
+    		  /* Identify UART X associated with this connection */
+    		  uart_id = fetch_uart_id_for_port_id(conn.local_port);
+    		  if (-1 != uart_id)
+    		  {
+    			  int TempLen = 0;
+    			  int i = 0;
+
+    			  TempLen = telnetd_recv_data(tcp_svr, conn, g_telnet_recd_data_buffer[0], g_telnet_actual_data_buffer[0]);
+#if 0
+    			  printchar('X');
+    			  printintln(TempLen);
+    			  printchar('w');
+    			  printint(xtcp_recd_data_buffer[uart_id].write_index);
+    			  printchar('-');
+    			  printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
+#endif
+    			  for (i=0; i<TempLen; i++)
+    			  {
+    				  xtcp_recd_data_buffer[uart_id].telnet_recd_data[xtcp_recd_data_buffer[uart_id].write_index] = g_telnet_actual_data_buffer[i];
+    				  xtcp_recd_data_buffer[uart_id].write_index++;
+
+    				  if (xtcp_recd_data_buffer[uart_id].write_index >= (XTCP_CLIENT_BUF_SIZE+TX_CHANNEL_FIFO_LEN))
+    				  {
+    					  xtcp_recd_data_buffer[uart_id].write_index = 0;
+    				  }
+    				  xtcp_recd_data_buffer[uart_id].buf_depth++;
+    			  }
+#if 0
+    			  printchar('W');
+    			  printint(xtcp_recd_data_buffer[uart_id].write_index);
+    			  printchar('-');
+    			  printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
+#endif
+        		  if (xtcp_recd_data_buffer[uart_id].buf_depth > (TX_CHANNEL_FIFO_LEN * 2))
+        		  {
+            		  /* Pause the connection till buffer is consumed */
+//        			  printchar('P');
+        			  xtcp_pause(tcp_svr, conn);
+        		  }
+        		  /* Upon data consumption, unpause connection */
+    		  }
     	  }
         break;
       case XTCP_SENT_DATA:
@@ -654,8 +720,21 @@ void web_server_handle_event(
 #else //FLASH_THREAD
     		  httpd_send(tcp_svr, conn, cPersData);
 #endif //FLASH_THREAD
+        	  else if (TELNET_PORT_USER_CMDS == conn.local_port)
+        	  {
+        		  /* Telnet User Commands */
+        		  telnet_buffered_send_handler(tcp_svr, conn);
+        	  }
     	  else if (app_port_type==TYPE_TELNET_PORT)
+    	  {
+    		    if (conn.id == xtcp_send_data_buffer.conn_id)
+    		    {
+    	    		  /* There is xtcp bandwidth to accept data */
+    	    		  fetch_uart_data_and_send_to_client(tcp_svr, conn, cAppMgr2WbSvr);
+    		    }
+    		    else
     		  telnet_buffered_send_handler(tcp_svr, conn);
+    	  }
           break;
       case XTCP_TIMED_OUT:
       case XTCP_ABORTED:
@@ -677,6 +756,122 @@ void web_server_handle_event(
   return;
 }
 
+
+static void send_uart_tx_data(
+		chanend tcp_svr,
+		chanend cAppMgr2WbSvr)
+{
+	int buf_depth_avialable = 0;
+	int i;
+	int uart_id = 0;
+	int data_to_send = 0;
+
+    uart_id = g_UartTxNumToSend;
+    cAppMgr2WbSvr <: uart_id;
+
+    cAppMgr2WbSvr :> buf_depth_avialable;
+    data_to_send = (xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth > buf_depth_avialable) ? buf_depth_avialable : xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth;
+
+    cAppMgr2WbSvr <: data_to_send; //Amount of bytes to send
+#if 0
+	  printchar('r');
+	  printint(xtcp_recd_data_buffer[uart_id].read_index);
+	  printchar('-');
+	  printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
+#endif
+	/* Get UART data */
+	for (i=0; i<data_to_send; i++)
+	{
+		/* Send Uart X data to MUART TX */
+		cAppMgr2WbSvr <: xtcp_recd_data_buffer[g_UartTxNumToSend].telnet_recd_data[xtcp_recd_data_buffer[g_UartTxNumToSend].read_index];
+		xtcp_recd_data_buffer[g_UartTxNumToSend].read_index++;
+		if (xtcp_recd_data_buffer[g_UartTxNumToSend].read_index >= XTCP_CLIENT_BUF_SIZE+TX_CHANNEL_FIFO_LEN)
+		{
+			xtcp_recd_data_buffer[g_UartTxNumToSend].read_index = 0;
+		}
+		xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth--;
+	}
+#if 0
+	  printchar('R');
+	  printint(xtcp_recd_data_buffer[uart_id].read_index);
+	  printchar('-');
+	  printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
+#endif
+	if (xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth <= 0)
+	{
+		xtcp_connection_t conn;
+		conn.id = fetch_conn_id_for_uart_id(uart_id);
+//		printchar('U');
+		xtcp_unpause(tcp_svr, conn);
+		//printintln(0);
+	}
+
+	gPollForUartDataToFetchFromUartRx = 1;
+	gPollForSendingUartDataToUartTx = 0;
+	gPollForTelnetCommandData = 0;
+	g_UartTxNumToSend = -1;
+}
+
+static void post_uart_tx_data(
+		chanend tcp_svr,
+		chanend cAppMgr2WbSvr)
+{
+	int i;
+	int j;
+
+    for (i=0; i<UART_APP_TX_CHAN_COUNT; i++)
+    {
+		if (TRUE == xtcp_recd_data_buffer[i].is_currently_serviced)
+		{
+			break;
+		}
+    }
+    xtcp_recd_data_buffer[i].is_currently_serviced = FALSE;
+
+    i++;
+    if (i >= UART_APP_TX_CHAN_COUNT)
+    {
+    	i = 0;
+    }
+    xtcp_recd_data_buffer[i].is_currently_serviced = TRUE;
+
+	if (xtcp_recd_data_buffer[i].buf_depth > 0)
+	{
+		/* Send CT */
+	    outct(cAppMgr2WbSvr, 'A'); //UART_CONTROL_TOKEN
+	    g_UartTxNumToSend = i;
+	    send_uart_tx_data(tcp_svr, cAppMgr2WbSvr);
+	}
+	gPollForUartDataToFetchFromUartRx	= 1;
+	gPollForSendingUartDataToUartTx = 0;
+	gPollForTelnetCommandData = 0;
+}
+
+
+static void request_xtcp_init(
+		chanend tcp_svr,
+		chanend cAppMgr2WbSvr)
+{
+	cAppMgr2WbSvr :> xtcp_send_data_buffer.uart_id;
+
+	xtcp_send_data_buffer.conn_id = fetch_conn_id_for_uart_id(xtcp_send_data_buffer.uart_id);
+	if (-1 == xtcp_send_data_buffer.conn_id)
+	{
+		/* No telnet connective active for UART */
+		xtcp_send_data_buffer.uart_id = -1; //Deinit state
+		xtcp_send_data_buffer.buf_length = 0;
+		gPollForUartDataToFetchFromUartRx = 0;
+		gPollForSendingUartDataToUartTx = 1;
+		gPollForTelnetCommandData = 0;
+	}
+	else
+	{
+		xtcp_connection_t conn;
+		conn.id = xtcp_send_data_buffer.conn_id;
+		xtcp_init_send(tcp_svr, conn);
+	}
+}
+
 /** =========================================================================
 *  web_server
 *
@@ -696,12 +891,12 @@ void web_server_handle_event(
 void web_server(
 		chanend tcp_svr,
 		streaming chanend cWbSvr2AppMgr,
-		streaming chanend cAppMgr2WbSvr)
+		chanend cAppMgr2WbSvr)
 #else //FLASH_THREAD
 void web_server(
 		chanend tcp_svr,
 		streaming chanend cWbSvr2AppMgr,
-		streaming chanend cAppMgr2WbSvr,
+		chanend cAppMgr2WbSvr,
 		chanend cPersData)
 #endif //FLASH_THREAD
 {
@@ -713,11 +908,15 @@ void web_server(
   char flash_data[FLASH_SIZE_PAGE];
   char r_data[FLASH_SIZE_PAGE];
   int WbSvr2AppMgr_uart_data;
-  int AppMgr2WbSvr_uart_data;
+  unsigned int AppMgr2WbSvr_uart_data;
+  unsigned char tok;
+
 
   /* Initiate HTTP and telnet connection state management */
   httpd_init(tcp_svr);
   telnetd_init_conn(tcp_svr);
+
+  app_buffers_init();
 
   /* Exchange configured client ports (telnet/udp) */
   /* For now, keep it simple to get values from uart app module *///TODO: to remove telnet from app_mgr
@@ -729,8 +928,6 @@ void web_server(
 
   /* Telnet port for executing user commands */
   telnetd_set_new_session(tcp_svr, TELNET_PORT_USER_CMDS);
-  /* Init dummy to True */
-  user_client_data_buffer[0].is_currently_serviced = TRUE;
 
   processUserDataTimer :> processUserDataTS;
   processUserDataTS += PROCESS_USER_DATA_TMR_EVENT_INTRVL;
@@ -748,11 +945,15 @@ void web_server(
                        r_data,
                        FLASH_SIZE_PAGE);
 #else //FLASH_THREAD
+#if 1 //TempFIX
   parse_client_request(cWbSvr2AppMgr,
                        cPersData,
                        flash_data,
                        r_data,
                        FLASH_SIZE_PAGE);
+#else //TempFIX
+  cWbSvr2AppMgr <: UART_RESTORE_END_FROM_APP_TO_UART;
+#endif //TempFIX
 #endif //FLASH_THREAD
 
   // Loop forever processing TCP events
@@ -776,17 +977,23 @@ void web_server(
         	}
         }
         break;
-        case cAppMgr2WbSvr :> AppMgr2WbSvr_uart_data :
+        case inct_byref(cAppMgr2WbSvr, tok):
         {
-        	if (UART_DATA_FROM_UART_TO_APP == AppMgr2WbSvr_uart_data)
+        	if ('3' == tok)  //UART_DATA_READY_UART_TO_APP
         	{
-        		send_data_to_client(tcp_svr, cAppMgr2WbSvr);
+        		request_xtcp_init(tcp_svr, cAppMgr2WbSvr);
+        	}
+        	else if ('4' == tok) //NO_UART_DATA_READY
+        	{
+        		gPollForUartDataToFetchFromUartRx = 0;
+        		gPollForSendingUartDataToUartTx = 0;
+        		gPollForTelnetCommandData = 1;
         	}
         }
         break;
 #ifndef FLASH_THREAD
         case xtcp_event(tcp_svr, conn):
-          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr);
+          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr, cAppMgr2WbSvr);
           break;
         case processUserDataTimer when timerafter (processUserDataTS) :> char _ :
           //Send user data to Uart App
@@ -795,11 +1002,28 @@ void web_server(
           break;
 #else //FLASH_THREAD
         case xtcp_event(tcp_svr, conn):
-          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr, cPersData);
+          web_server_handle_event(tcp_svr, conn, cWbSvr2AppMgr, cAppMgr2WbSvr, cPersData);
           break;
         case processUserDataTimer when timerafter (processUserDataTS) :> char _ :
-          //Send user data to Uart App
-          process_user_data(cWbSvr2AppMgr, cPersData, tcp_svr);
+        	if (gPollForUartDataToFetchFromUartRx)
+        	{
+        		/* Send CT */
+        	    outct(cAppMgr2WbSvr, '1');
+                gPollForUartDataToFetchFromUartRx = 0;
+        	}
+        	//TODO: More processing loop optim to be done for better xtcp recv rate
+        	else if (gPollForSendingUartDataToUartTx)
+        	{
+        		/* Perform TX data transfer */
+        		post_uart_tx_data(tcp_svr, cAppMgr2WbSvr);
+        	}
+        	else if (gPollForTelnetCommandData)
+        	{
+        		gPollForTelnetCommandData = 0;
+        		process_user_data(cWbSvr2AppMgr, tcp_svr, cPersData);
+        		gPollForUartDataToFetchFromUartRx = 0;
+        		gPollForSendingUartDataToUartTx = 1;
+        	}
           processUserDataTS += PROCESS_USER_DATA_TMR_EVENT_INTRVL;
           break;
 #endif //FLASH_THREAD

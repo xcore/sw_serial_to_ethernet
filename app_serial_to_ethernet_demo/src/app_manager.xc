@@ -36,7 +36,6 @@ constants
 //#define MGR_TX_TMR_EVENT_INTERVAL		(TIMER_FREQUENCY /	\
 //										(MAX_BIT_RATE * UART_TX_CHAN_COUNT))
 #define MGR_TX_TMR_EVENT_INTERVAL		4000 //500
-#define MGR_RX_TMR_EVENT_INTERVAL		8000 //500 //TODO: Needs to be based on calculation
 /*---------------------------------------------------------------------------
 ports and clocks
 ---------------------------------------------------------------------------*/
@@ -57,6 +56,7 @@ s_uart_channel_config	uart_channel_config[UART_TX_CHAN_COUNT];
 s_uart_tx_channel_fifo	uart_tx_channel_state[UART_TX_CHAN_COUNT];
 s_uart_rx_channel_fifo	uart_rx_channel_state[UART_RX_CHAN_COUNT];
 s_pending_cmd_to_send   pending_cmd_to_send;
+
 /*---------------------------------------------------------------------------
 static variables
 ---------------------------------------------------------------------------*/
@@ -380,76 +380,7 @@ static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
 }
 
 /** =========================================================================
-*  fill_uart_channel_data
-*
-*  This function transmits telnet data to uart channel;
-*  If uart buffer is full, data is stored in application buffer
-*  Identifies uart channel for the configured telnet port
-
-*  \param unsigned int	telnet_port : telnet client port number
-*
-*  \param unsigned int	conn_id : current active telnet client conn identifir
-*
-*  \return			None
-*
-**/
-static void fill_uart_channel_data(
-		streaming chanend cWbSvr2AppMgr)
-{
-	int i = 0;
-	char chan_data;
-	int buffer_space = 0;
-	int channel_id;
-	unsigned buf_depth = 0;
-	int write_index = 0;
-
-	cWbSvr2AppMgr :> channel_id;
-	cWbSvr2AppMgr :> buf_depth;
-
-
-	if (ERR_UART_CHANNEL_NOT_FOUND != channel_id)
-	{
-		for (i=0; i<buf_depth; i++)
-		{
-			cWbSvr2AppMgr :> chan_data;
-			if (uart_tx_channel_state[channel_id].buf_depth == 0)
-			{
-				/* There is no pending Uart buffer data */
-				/* Transmit to uart directly */
-				buffer_space = uart_tx_put_char(channel_id, (unsigned int) chan_data);
-				if (-1 != buffer_space)
-				{
-					/* Data is successfully sent to MUART TX */
-					continue;
-				}
-			}
-
-			if (uart_tx_channel_state[channel_id].buf_depth < TX_CHANNEL_FIFO_LEN)
-		    {
-				/* Uart buffer is full; fill app buffer of respective uart channel */
-		    	uart_tx_channel_state[channel_id].channel_id = channel_id;
-		    	write_index = uart_tx_channel_state[channel_id].write_index;
-		        uart_tx_channel_state[channel_id].channel_data[write_index] = (char)chan_data;
-		        write_index++;
-
-		        if (write_index >= TX_CHANNEL_FIFO_LEN)
-		        {
-		        	write_index = 0;
-		        }
-		        uart_tx_channel_state[channel_id].write_index = write_index;
-		        uart_tx_channel_state[channel_id].buf_depth++;
-		    }
-			else
-			{
-				;//Data Overflow scenario
-			}
-		}
-	}
-}
-
-
-/** =========================================================================
-*  receive_uart_channel_data
+*  uart_rx_receive_uart_channel_data
 *
 *  This function waits for channel data from MUART RX thread;
 *  when uart channel data is available, decodes uart char to raw character
@@ -462,7 +393,7 @@ static void fill_uart_channel_data(
 *  \return			None
 *
 **/
-void receive_uart_channel_data(
+void uart_rx_receive_uart_channel_data(
 		streaming chanend cUART,
 		unsigned channel_id)
 {
@@ -553,17 +484,10 @@ void receive_uart_channel_data(
 *  					0	otherwise
 *
 **/
-static int get_uart_channel_data(
-		streaming chanend cAppMgr2WbSvr)
+static void poll_uart_rx_data_to_send_to_client(
+		chanend cAppMgr2WbSvr)
 {
-	int ret_value = 0;
-	int i = 0;
-	int local_read_index = 0;
-
 	int channel_id = 0;
-	int read_index = 0;
-	unsigned int buf_depth = 0;
-	char buffer[] = "";
 
 	for (channel_id=0;channel_id<UART_RX_CHAN_COUNT;channel_id++)
 	{
@@ -582,18 +506,105 @@ static int get_uart_channel_data(
     }
 	uart_rx_channel_state[channel_id].is_currently_serviced = TRUE;
 
+	//printint(buf_depth); TODO: Bug: Data for chnl 7 is always present
+	if ((uart_rx_channel_state[channel_id].buf_depth > 0) &&
+			(uart_rx_channel_state[channel_id].buf_depth <= RX_CHANNEL_FIFO_LEN))
+	{
+		/* Send Uart Id and buffer depth */
+		outct(cAppMgr2WbSvr, '3');  //UART_DATA_READY_UART_TO_APP
+		cAppMgr2WbSvr <: channel_id;
+	}
+	else
+		outct(cAppMgr2WbSvr, '4');  //NO_UART_DATA_READY
+
+}
+
+/** =========================================================================
+*  collect_uart_tx_data
+*
+*  This function collects xtcp telnet data into application buffer
+*
+*  \param chanend cAppMgr2WbSvr : Channel to exchange telnet data
+*
+*  \return			None
+*
+**/
+static void collect_uart_tx_data(
+		chanend cAppMgr2WbSvr)
+{
+	int buf_depth_available = -1;
+	int i = 0;
+	int channel_id = -1;
+	char chan_data;
+
+	  //Get Uart Id
+	  cAppMgr2WbSvr :> channel_id;
+	  //Send back available buffer space for this channel
+	  //printchar('U');
+	  //printintln(uart_tx_channel_state[channel_id].buf_depth);
+
+	  buf_depth_available = TX_CHANNEL_FIFO_LEN - uart_tx_channel_state[channel_id].buf_depth;
+	  cAppMgr2WbSvr <: buf_depth_available;
+	  //printint(buf_depth_available);
+
+	  cAppMgr2WbSvr :> buf_depth_available; //This now contains only required buf depth to send
+
+	  for (i=0; i<buf_depth_available; i++)
+	  {
+		  cAppMgr2WbSvr :> chan_data;
+		  uart_tx_channel_state[channel_id].channel_data[uart_tx_channel_state[channel_id].write_index] =
+				  (char)chan_data;
+
+		  uart_tx_channel_state[channel_id].write_index++;
+
+		  if (uart_tx_channel_state[channel_id].write_index >= TX_CHANNEL_FIFO_LEN)
+		  {
+			  uart_tx_channel_state[channel_id].write_index = 0;
+		  }
+		  uart_tx_channel_state[channel_id].buf_depth++;
+	  }
+}
+
+/** =========================================================================
+*  uart_rx_send_uart_channel_data
+*
+*  This function waits for channel data from MUART RX thread;
+*  when uart channel data is available, decodes uart char to raw character
+*  and save the data into application managed RX buffer
+*
+*  \param int channel_id : reference to uart channel identifir
+*
+*  \param int conn_id 	 : reference to client connection identifir
+*
+*  \param int read_index : reference to current buffer position to read
+*  							channel data
+*
+*  \param int buf_depth : reference to current depth of uart channel buffer
+*
+*  \return			1	when there is data to send
+*  					0	otherwise
+*
+**/
+static void uart_rx_send_uart_channel_data(
+		chanend cAppMgr2WbSvr)
+{
+	int i = 0;
+	int local_read_index = 0;
+
+	int channel_id = 0;
+	int read_index = 0;
+	unsigned int buf_depth = 0;
+	char buffer[] = "";
+
+	cAppMgr2WbSvr :> channel_id;
 	read_index = uart_rx_channel_state[channel_id].read_index;
 	buf_depth = uart_rx_channel_state[channel_id].buf_depth;
 
-	//printint(buf_depth); TODO: Bug: Data for chnl 7 is always present
-	if ((buf_depth > 0) && (buf_depth <= RX_CHANNEL_FIFO_LEN))
-	{
-		/* Send Uart Id and buffer depth */
-		cAppMgr2WbSvr <: UART_DATA_FROM_UART_TO_APP;
-		cAppMgr2WbSvr <: channel_id;
+	/* Send Uart X buffer depth */
 		cAppMgr2WbSvr <: buf_depth;
 
 		local_read_index = read_index;
+	//printint(buf_depth); TODO: Bug: Data for chnl 7 is always present
 
 		for (i=0; i<buf_depth; i++)
 		{
@@ -606,6 +617,8 @@ static int get_uart_channel_data(
 			}
 		}
 
+	//cAppMgr2WbSvr :> void; //End data Ack
+
 		/* Data is pushed to app manager thread; Update buffer state pointers */
 		read_index += buf_depth;
 		if (read_index > (RX_CHANNEL_FIFO_LEN-1))
@@ -614,15 +627,11 @@ static int get_uart_channel_data(
 		}
 		uart_rx_channel_state[channel_id].read_index = read_index;
 		uart_rx_channel_state[channel_id].buf_depth -= buf_depth; //= 0;
-
-		ret_value = 1;
-	}
-
-	return ret_value;
 }
 
+
 /** =========================================================================
-*  fill_uart_channel_data_from_queue
+*  uart_tx_fill_uart_channel_data_from_queue
 *
 *  This function primarily handles UART TX buffer overflow condition by
 *  storing data into its application buffer when UART Tx buffer is full
@@ -634,7 +643,7 @@ static int get_uart_channel_data(
 *  \return			None
 *
 **/
-void fill_uart_channel_data_from_queue()
+void uart_tx_fill_uart_channel_data_from_queue()
 {
 	int channel_id;
 	int buffer_space = 0;
@@ -839,10 +848,8 @@ static int parse_uart_command_data(
             uart_channel_config[index_uart].char_len    = ui_command[5];
             uart_channel_config[index_uart].telnet_port = ui_command[6];
 
-            //re_apply_uart_channel_config(uart_channel_config[index_uart], cTxUART, cRxUART);
             re_apply_uart_channel_config(index_uart, cTxUART, cRxUART);
             //TODO: Channel backup may be required and need to be reconfigured upon failure
-            //pending_cmd_to_send.flag = 1;
             //pending_cmd_to_send.cmd_type = ui_command[0];
             pending_cmd_to_send.uart_id = ui_command[1]; //UART Id
         }
@@ -892,19 +899,21 @@ static int parse_uart_command_data(
  */
 void app_manager_handle_uart_data(
 		streaming chanend cWbSvr2AppMgr,
-		streaming chanend cAppMgr2WbSvr,
+		chanend cAppMgr2WbSvr,
 		streaming chanend cTxUART,
 		streaming chanend cRxUART)
 {
-	timer txTimer, rxTimer;
-	unsigned txTimeStamp, rxTimeStamp;
+	timer txTimer;
+	unsigned txTimeStamp;
 	char rx_channel_id;
 	unsigned int local_port = 0;
 	int conn_id  = 0;
 	int WbSvr2AppMgr_chnl_data = 9999;
 	char flash_config_valid;
-	int i, j, intdata;
+	int i;
 	char flash_data;
+	unsigned char tok;
+	int write_index;
 
 	//TODO: Flash cold start should happen here
 	/* Applying default in-program values, in case Cold start fails */
@@ -925,9 +934,6 @@ void app_manager_handle_uart_data(
 	txTimer :> txTimeStamp;
 	txTimeStamp += MGR_TX_TMR_EVENT_INTERVAL;
 
-	rxTimer :> rxTimeStamp;
-	rxTimeStamp += MGR_RX_TMR_EVENT_INTERVAL;
-
 	// Loop forever processing Tx and Rx channel data
 	while(1)
     {
@@ -935,20 +941,30 @@ void app_manager_handle_uart_data(
         {
 #pragma ordered
 #pragma xta endpoint "ep_1"
+#if 1
 		  case cRxUART :> rx_channel_id:
     		  //Read data from MUART RX thread
-    		  //receive_uart_channel_data(cRxUART, (unsigned)rx_channel_id);
-    		  receive_uart_channel_data(cRxUART, rx_channel_id);
+			  uart_rx_receive_uart_channel_data(cRxUART, rx_channel_id);
 			  break;
-    	  case txTimer when timerafter (txTimeStamp) :> void :
-    		  //Read data from App TX queue
-    		  fill_uart_channel_data_from_queue();
-			  txTimeStamp += MGR_TX_TMR_EVENT_INTERVAL;
-			  break;
-    	  case rxTimer when timerafter (rxTimeStamp) :> void :
+#endif
+		  /* Check for any UART data poll request from WS */
+		  case inct_byref(cAppMgr2WbSvr, tok):
+		  //case inuint_byref(cAppMgr2WbSvr, tok):
+			  //if (UART_CONTROL_TOKEN == tok)
+			  if ('1' == tok)
+			  {
+				  poll_uart_rx_data_to_send_to_client(cAppMgr2WbSvr);
+			  }
+			  //else if (PULL_UART_DATA_FROM_UART_TO_APP == tok)
+			  else if ('2' == tok)
+			  {
     		  //Send data from App RX queue
-    		  get_uart_channel_data(cAppMgr2WbSvr);
-			  rxTimeStamp += MGR_RX_TMR_EVENT_INTERVAL;
+        		  uart_rx_send_uart_channel_data(cAppMgr2WbSvr);
+			  }
+			  else if ('A' == tok)  //UART_DATA_READY_FROM_APP_TO_UART
+			  {
+				  collect_uart_tx_data(cAppMgr2WbSvr); //UART_DATA_FROM_APP_TO_UART
+			  }
 			  break;
     	  case cWbSvr2AppMgr :> WbSvr2AppMgr_chnl_data :
     		  if (UART_CMD_FROM_APP_TO_UART == WbSvr2AppMgr_chnl_data)
@@ -959,14 +975,10 @@ void app_manager_handle_uart_data(
     		  }
     		  else if (UART_SET_END_FROM_APP_TO_UART == WbSvr2AppMgr_chnl_data)
     		  {
-    			  //if (pending_cmd_to_send.flag)
-    			  {
     				  cWbSvr2AppMgr <: UART_CMD_MODIFY_TLNT_PORT_FROM_UART_TO_APP;
     				  //cWbSvr2AppMgr <: cmd_type;
     				  cWbSvr2AppMgr <: pending_cmd_to_send.uart_id;
     				  cWbSvr2AppMgr <: uart_channel_config[pending_cmd_to_send.uart_id].telnet_port;
-    				  //pending_cmd_to_send.flag = 0;
-    			  }
     		  }
     		  else if (UART_RESTORE_END_FROM_APP_TO_UART == WbSvr2AppMgr_chnl_data)
     		  {
@@ -979,13 +991,16 @@ void app_manager_handle_uart_data(
 				    	cWbSvr2AppMgr <: uart_channel_config[i].telnet_port;
 				    }
     		  }
-    		  else if (UART_DATA_FROM_APP_TO_UART == WbSvr2AppMgr_chnl_data)
-    		  {
-    			  fill_uart_channel_data(cWbSvr2AppMgr);
-    		  }
+    		  break;
+    	  case txTimer when timerafter (txTimeStamp) :> void :
+    		  //Read data from App TX queue
+    		  uart_tx_fill_uart_channel_data_from_queue();
+			  txTimeStamp += MGR_TX_TMR_EVENT_INTERVAL;
+			  break;
+          default:
     		  break;
         }
     }
 }
 
-//#pragma xta command "analyze function receive_uart_channel_data"
+//#pragma xta command "analyze function uart_rx_receive_uart_channel_data"

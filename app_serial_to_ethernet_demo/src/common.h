@@ -28,8 +28,8 @@ constants
 #define FLASH_THREAD
 /* Length of application buffer to hold UART channel data */
 #define UART_APP_TX_CHAN_COUNT		8 // Must be Same as UART_TX_CHAN_COUNT
-#define TX_CHANNEL_FIFO_LEN			256 //This is a common length between app server and data manager
-#define RX_CHANNEL_FIFO_LEN			256
+#define TX_CHANNEL_FIFO_LEN			128 //This is a common length between app server and data manager
+#define RX_CHANNEL_FIFO_LEN			128
 #ifndef NUM_HTTPD_CONNECTIONS
 /* Maximum number of concurrent connections */
 #define NUM_HTTPD_CONNECTIONS 10
@@ -68,8 +68,11 @@ typedef enum ENUM_BOOL
  *
  **/
 typedef enum app_mgr_event_type_t {
+	UART_CONTROL_TOKEN = 1,
 	/* Uart X data */
-	UART_DATA_FROM_UART_TO_APP = 1,
+	PULL_UART_DATA_FROM_UART_TO_APP,
+	/* Uart X data ready at AM to send to xtcp clients */
+	UART_DATA_READY_UART_TO_APP,
 	/* Uart X data from client to Muart */
 	UART_DATA_FROM_APP_TO_UART,
 	/* UART X command from UI to UART manager */

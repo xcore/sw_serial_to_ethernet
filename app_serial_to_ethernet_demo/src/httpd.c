@@ -19,7 +19,6 @@
  include files
  ---------------------------------------------------------------------------*/
 #include <string.h>
-//#include <print.h>
 #include "httpd.h"
 #include "common.h"
 #include "debug.h"
@@ -33,8 +32,6 @@
 #define HTTP_REQ_ERR            0
 #define HTTP_REQ_GET_WEBPAGE    1
 #define HTTP_REQ_GET_DATA       2
-
-//#define HTTP_DEBUG 1
 
 /*---------------------------------------------------------------------------
  ports and clocks
@@ -165,9 +162,6 @@ void parse_http_request(httpd_state_t *hs,
     {
         if (data[5] == '~')
         {
-#ifdef HTTP_DEBUG
-        printstrln("Got data request");
-#endif
             // Browser is requesting data
 #ifndef FLASH_THREAD
             parse_client_request(cWbSvr2AppMgr,
@@ -175,22 +169,22 @@ void parse_http_request(httpd_state_t *hs,
                                  &hs->wpage_data[0],
                                  len);
 #else //FLASH_THREAD
+            /* Make a call to exchange UART command data */
+        	/* Send CT */
+           // outct(cAppMgr2WbSvr, 'a'); //UART_CONTROL_TOKEN_CMD_EXCHG
+
             parse_client_request(cWbSvr2AppMgr,
                                  cPersData,
                                  &data[0],
                                  &hs->wpage_data[0],
                                  len);
 #endif //FLASH_THREAD
-
             hs->http_request_type = HTTP_REQ_GET_DATA;
             hs->wpage_length = strlen(&(hs->wpage_data[0]));
 
         } // if (data[5] == HTTP_REQ_GET_DATA)
         else
         {
-#ifdef HTTP_DEBUG
-        printstrln("Got webpage request");
-#endif
             hs->http_request_type = HTTP_REQ_GET_WEBPAGE;
             for (i = 4; i < 36; i++)
             {
@@ -229,9 +223,6 @@ void parse_http_request(httpd_state_t *hs,
                     break;
                 } // if(data[i] = ' ')
             } // for (i = 4; i < 36; i++)
-#ifdef HTTP_DEBUG
-        printstr("Page number: "); printintln(hs->dptr);
-#endif
         } // else
     } // if GET
     else
@@ -287,7 +278,6 @@ void httpd_recv(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData, cha
 #else //FLASH_THREAD
     parse_http_request(hs, &data[0], len, cPersData, cWbSvr2AppMgr);
 #endif //FLASH_THREAD
-
     // If we are required to send data
     if (hs->wpage_length != 0)
     {
@@ -320,7 +310,8 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
 {
     int i;
     int length_page;
-
+    char origin_header[] = "Access-Control-Allow-Origin: *\r\n";
+    int len_origin_header;
     httpd_state_t *hs = (httpd_state_t *) conn->appstate;
     length_page = (hs->wpage_length < FLASH_SIZE_PAGE) ? hs->wpage_length
                                                        : FLASH_SIZE_PAGE;
@@ -352,6 +343,15 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
                 {
                     setup_error_webpage(hs);
                 }
+            }
+            else if(hs->http_request_type == HTTP_REQ_GET_DATA)
+            {
+                // having this header to circumvent the "Same Origin Policy"
+                len_origin_header = strlen(origin_header);
+                length_page += len_origin_header;
+
+                memmove(hs->wpage_data+len_origin_header, hs->wpage_data, strlen(hs->wpage_data)+1);
+                memcpy(hs->wpage_data, origin_header, len_origin_header);
             }
             xtcp_send(tcp_svr, hs->wpage_data, length_page);
             break;
@@ -393,9 +393,7 @@ void httpd_send(chanend tcp_svr, xtcp_connection_t *conn, chanend cPersData)
             }
             else
             {
-#ifdef DEBUG_LEVEL_1
-                printstrln("unidentified request - should not get here");
-#endif //DEBUG_LEVEL_1
+                // should not get here
                 xtcp_complete_send(tcp_svr);
                 xtcp_close(tcp_svr, conn);
             }
@@ -496,3 +494,5 @@ static void setup_error_webpage(httpd_state_t *hs)
     hs->dptr = 0;
     hs->wpage_length = strlen(&wpage_error[0]);
 }
+
+/*=========================================================================*/

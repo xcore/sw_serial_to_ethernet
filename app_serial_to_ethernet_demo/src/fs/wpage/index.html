@@ -1,6 +1,7 @@
 <html><head>
-<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>
 <META HTTP-EQUIV='Expires' CONTENT='-1'>
+<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>
 <title>XMOS Serial to Ethernet</title>
 <script type='text/javascript'>
 // <!--
@@ -47,6 +48,11 @@ function processHttpResponseText(rtext)
    if(index_data)
    {
       updateWebpageData();
+      document.getElementById('error_status').innerHTML = 'No Error';
+   }
+   else
+   {
+      document.getElementById('error_status').innerHTML = rtext.substring(31, rtext.length);
    }
 }
 function createRequest(uartReqType)
@@ -63,7 +69,7 @@ function createRequest(uartReqType)
    {
       request = '~' + uartReqType + '~~' + wpdata[1] + '~@';
    }
-   httpRequest.open('GET', request, true);
+   httpRequest.open('GET', request+Math.random(), true);
    httpRequest.send(null);
    httpRequest.onreadystatechange = function() { alertContents(httpRequest); };
 }
@@ -110,16 +116,16 @@ function findAndSelect(selectBox, value)
 <option value='4'>4</option>
 <option value='5'>5</option>
 <option value='6'>6</option>
-<option value='7'>7</option></select></td>
+<option value='7'>7</option></select></td></tr>
 <tr><td>Parity Config</td><td><select id='pc'>
 <option value='0'>None</option>
 <option value='1'>Odd</option>
 <option value='2'>Even</option>
 <option value='3'>Mark</option>
-<option value='4'>Space</option></select></td>
+<option value='4'>Space</option></select></td></tr>
 <tr><td>Stop Bits</td><td><select id='sb'>
 <option value='0'>1</option>
-<option value='1'>2</option></select></td>
+<option value='1'>2</option></select></td></tr>
 <tr><td>Baud Rate</td><td><select id='br'>
 <option value='115200'>115200</option>
 <option value='57600'>57600</option>
@@ -134,16 +140,19 @@ function findAndSelect(selectBox, value)
 <option value='1200'>1200</option>
 <option value='600'>600</option>
 <option value='300'>300</option>
-<option value='150'>150</option></select></td>
+<option value='150'>150</option></select></td></tr>
 <tr><td>Character Length</td><td><select id='cl'>
 <option value='5'>5</option>
 <option value='6'>6</option>
 <option value='7'>7</option>
 <option value='8'>8</option>
-<option value='9'>9</option></td>
-<tr><td>Telnet Port</td><td><input type='text' id='tp' maxlength='5' size='5' /></td>
-<tr><td><a href='javascript:void(0);' onClick='createRequest(1);'>Get </a></td><td><a href='javascript:void(0);' onClick='createRequest(2);'>Set</a></td>
-<tr><td><a href='javascript:void(0);' onClick='createRequest(3);'>Save</a></td><td><a href='javascript:void(0);' onClick='createRequest(4);'>Restore</a></td>
+<option value='9'>9</option></td></tr>
+<tr><td>Telnet Port</td><td><input type='text' id='tp' maxlength='5' size='5' /></td></tr>
+<tr><td><a href='javascript:void(0);' onClick='createRequest(1);'>Get </a></td><td><a href='javascript:void(0);' onClick='createRequest(2);'>Set</a></td></tr>
+<tr><td><a href='javascript:void(0);' onClick='createRequest(3);'>Save</a></td><td><a href='javascript:void(0);' onClick='createRequest(4);'>Restore</a></td></tr>
+</table><br>
+<table border='1' width='500'>
+<tr><td width='50'>Status</td><td><p id='send_status'>----</p></td></tr>
+<tr><td width='50'>Error</td><td><p id='error_status'>----</p></td></tr>
 </table>
-<p id='send_status'>----</p>
 </body></html>

@@ -98,11 +98,10 @@ prototypes
 
 void app_manager_handle_uart_data(
 		streaming chanend cWbSvr2AppMgr,//TODO: Chk for real necessity of a streaming chnl
-		streaming chanend cAppMgr2WbSvr,
+		chanend cAppMgr2WbSvr,
 		streaming chanend cTxUART,
 		streaming chanend cRxUART);
 
-void fill_uart_channel_data_from_queue();
 void update_uart_rx_channel_state(
 		REFERENCE_PARAM(int, channel_id),
 		REFERENCE_PARAM(int, read_index),

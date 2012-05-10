@@ -44,7 +44,7 @@ static variables
 static int active_conn = -1;
 /* Flag to indicate whether app callback function utilizing telnet service
  * has been registered or not */
-static int register_app_callback = 0;
+static int register_app_callback;
 
 /*---------------------------------------------------------------------------
 implementation

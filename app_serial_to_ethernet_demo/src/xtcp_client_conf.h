@@ -8,6 +8,8 @@
 #define XTCP_VERBOSE_DEBUG
 
 #define UIP_USE_AUTOIP 1
+//#define UIP_PACKET_SPLIT_THRESHOLD 20
+
 #if 0
 #define UIP_USE_DHCP 0
 

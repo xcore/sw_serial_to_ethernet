@@ -1,2 +1,2 @@
-{ "/index.html", 0, 4827 },
-{ "/img/xmos_logo.gif", 19, 915 },
+{ "/index.html", 0, 5276 },
+{ "/img/xmos_logo.gif", 21, 915 },
