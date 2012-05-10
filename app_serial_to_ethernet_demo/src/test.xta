@@ -1,3 +1,3 @@
-analyze function receive_uart_channel_data
+analyze function uart_rx_receive_uart_channel_data
 set required - 8.68 us
 print summary
