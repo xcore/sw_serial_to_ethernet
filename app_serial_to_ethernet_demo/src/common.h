@@ -30,6 +30,8 @@ constants
 #define UART_APP_TX_CHAN_COUNT		8 // Must be Same as UART_TX_CHAN_COUNT
 #define TX_CHANNEL_FIFO_LEN			128 //This is a common length between app server and data manager
 #define RX_CHANNEL_FIFO_LEN			128
+#define RX_CHANNEL_MIN_PACKET_LEN                12
+#define RX_CHANNEL_FLUSH_TIMEOUT           10000000
 #ifndef NUM_HTTPD_CONNECTIONS
 /* Maximum number of concurrent connections */
 #define NUM_HTTPD_CONNECTIONS 10

@@ -21,6 +21,7 @@ include files
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <xs1.h>
 #include "app_manager.h"
 #include "debug.h"
 #include "common.h"
@@ -395,7 +396,8 @@ static void apply_default_uart_cfg_and_wait_for_muart_tx_rx_threads(
 **/
 void uart_rx_receive_uart_channel_data(
 		streaming chanend cUART,
-		unsigned channel_id)
+		unsigned channel_id,
+                timer tmr)
 {
 	unsigned uart_char, temp;
 	int write_index = 0;
@@ -436,6 +438,7 @@ void uart_rx_receive_uart_channel_data(
             }
             uart_rx_channel_state[channel_id].write_index = write_index;
             uart_rx_channel_state[channel_id].buf_depth++;
+            tmr :> uart_rx_channel_state[channel_id].last_added_timestamp;
 #ifdef DEBUG_LEVEL_3
             printstr("Added char to App Uart Rx buffer ");
         	printstr("write_index: ");
@@ -485,10 +488,12 @@ void uart_rx_receive_uart_channel_data(
 *
 **/
 static void poll_uart_rx_data_to_send_to_client(
-		chanend cAppMgr2WbSvr)
+                chanend cAppMgr2WbSvr,
+                timer tmr)
 {
 	int channel_id = 0;
-
+        int now;
+        int min_buf_level;
 	for (channel_id=0;channel_id<UART_RX_CHAN_COUNT;channel_id++)
 	{
 		if (TRUE == uart_rx_channel_state[channel_id].is_currently_serviced)
@@ -506,8 +511,25 @@ static void poll_uart_rx_data_to_send_to_client(
     }
 	uart_rx_channel_state[channel_id].is_currently_serviced = TRUE;
 
+
+        /* In general we do not want to send less that RX_CHANNEL_MIN_PACKET_LEN
+           bytes to the tcp handling thread.
+           However, in some cases there may be a small amount of data left in
+           the fifo followed by no activity. In this case we check for a
+           timeout and then send anything left in the fifo
+        */
+        tmr :> now;
+        if timeafter(now,
+                     uart_rx_channel_state[channel_id].last_added_timestamp +
+                     RX_CHANNEL_FLUSH_TIMEOUT) {
+            min_buf_level = 0;
+          }
+        else {
+          min_buf_level = RX_CHANNEL_MIN_PACKET_LEN;
+        }
+
 	//printint(buf_depth); TODO: Bug: Data for chnl 7 is always present
-	if ((uart_rx_channel_state[channel_id].buf_depth > 0) &&
+	if ((uart_rx_channel_state[channel_id].buf_depth > min_buf_level) &&
 			(uart_rx_channel_state[channel_id].buf_depth <= RX_CHANNEL_FIFO_LEN))
 	{
 		/* Send Uart Id and buffer depth */
@@ -944,7 +966,7 @@ void app_manager_handle_uart_data(
 #if 1
 		  case cRxUART :> rx_channel_id:
     		  //Read data from MUART RX thread
-			  uart_rx_receive_uart_channel_data(cRxUART, rx_channel_id);
+                    uart_rx_receive_uart_channel_data(cRxUART, rx_channel_id, txTimer);
 			  break;
 #endif
 		  /* Check for any UART data poll request from WS */
@@ -953,7 +975,7 @@ void app_manager_handle_uart_data(
 			  //if (UART_CONTROL_TOKEN == tok)
 			  if ('1' == tok)
 			  {
-				  poll_uart_rx_data_to_send_to_client(cAppMgr2WbSvr);
+                            poll_uart_rx_data_to_send_to_client(cAppMgr2WbSvr, txTimer);
 			  }
 			  //else if (PULL_UART_DATA_FROM_UART_TO_APP == tok)
 			  else if ('2' == tok)
