@@ -72,7 +72,7 @@ extern void fetch_user_data(
 **/
 void telnetd_recv_line(chanend tcp_svr,
                        int id,
-                       char line[],
+                       //char line[],
                        int len)
 {
 #ifdef DEBUG_LEVEL_3

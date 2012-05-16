@@ -55,11 +55,6 @@ on stdcore[0] : fl_SPIPorts flash_ports =
 /* MUART TX port configuration */
 #define PORT_TX on stdcore[1]: XS1_PORT_8B
 #define PORT_RX on stdcore[1]: XS1_PORT_8A
-//#define PORT_TX_TEMP_3 on stdcore[1]: XS1_CLKBLK_1
-/* MUART RX port configuration */
-//#define PORT_RX_TEMP_1 on stdcore[1]: XS1_PORT_8B
-//#define PORT_RX_TEMP_2 on stdcore[1]: XS1_PORT_1B
-//#define PORT_RX_TEMP_3 on stdcore[1]: XS1_CLKBLK_2
 
 on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
 /* Define 1 bit external clock */
@@ -147,7 +142,7 @@ s_multi_uart_rx_ports uart_rx_ports =
 xtcp_ipconfig_t ipconfig =
 {
 #ifndef DHCP_CONFIG
-       { 169, 254, 145, 96 }, // ip address (eg 192,168,0,2)
+       { 169, 254, 196, 178 }, // ip address (eg 192,168,0,2)
        { 255, 255, 0, 0 },     // netmask (eg 255,255,255,0)
        { 0, 0, 0, 0 }          // gateway (eg 192,168,0,1)
 #else

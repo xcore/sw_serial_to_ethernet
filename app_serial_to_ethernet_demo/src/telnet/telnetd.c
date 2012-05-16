@@ -21,7 +21,7 @@ typedef struct telnetd_state_t {
   int first_recv;
   xtcp_bufinfo_t bufinfo;
   //char line_buf_in[TELNET_LINE_BUFFER_LEN+1];
-  char line_buf_in[10+1];
+  //char line_buf_in[10+1];
   char outbuf[TELNET_LINE_BUFFER_LEN+1];  
 } telnetd_state_t;
 
@@ -164,16 +164,20 @@ static int parse_telnet_stream(chanend tcp_svr,
           hs->parse_state = PARSING_CMD;
           break;
         case CR:
-          hs->line_buf_in[hs->inptr] = NUL;
+          //hs->line_buf_in[hs->inptr] = NUL;
           actual_data[j] = CR;
           j++;
           hs->parse_state = PARSING_EOL;
           break;
         default:
+#if 0
           if (hs->inptr < TELNET_LINE_BUFFER_LEN && 
               data[i] != NUL &&
               !(data[i] & 0x80)) {
-            hs->line_buf_in[hs->inptr] = data[i];
+#else
+          if (data[i] != NUL) {
+#endif
+            //hs->line_buf_in[hs->inptr] = data[i];
             hs->inptr++;
             /* Invoke application registered call back function */
             application_callback_handler(conn, data[i],application_callback);
@@ -186,7 +190,8 @@ static int parse_telnet_stream(chanend tcp_svr,
       break;
     case PARSING_EOL:
       if (data[i] == LF) {
-        telnetd_recv_line(tcp_svr, hs->index, hs->line_buf_in, hs->inptr);
+        //telnetd_recv_line(tcp_svr, hs->index, hs->line_buf_in, hs->inptr);
+        telnetd_recv_line(tcp_svr, hs->index, hs->inptr);
         hs->inptr = 0;
         actual_data[j] = LF;
         j++;

@@ -50,7 +50,7 @@ int telnetd_recv_data(chanend tcp_svr, REFERENCE_PARAM(xtcp_connection_t, conn),
 
 void telnetd_recv_line(chanend tcp_svr,
                        int i,
-                       char line[],
+                       //char line[],
                        int len);
                        
 void telnetd_sent_line(chanend tcp_svr,

@@ -99,6 +99,14 @@
             <LinkEndpoint NodeId="0" Link="XLF"/>
             <LinkEndpoint NodeId="1" Link="XLG"/>
         </Link>
+<!--    </Links>  
+
+
+	<Links>-->
+		<Link Encoding="2wire" Delays="4,4" Flags="SOD">
+			<LinkEndpoint NodeId="0" Link="X0LA" />
+			<LinkEndpoint RoutingId="0x8000" Chanend="1" />
+		</Link>
     </Links>
   
     <ExternalDevices>
