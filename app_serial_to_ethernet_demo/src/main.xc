@@ -14,16 +14,16 @@
  -----------------------------------------------------------------------------
 
  ===========================================================================*/
- 
+
 /*---------------------------------------------------------------------------
  include files
  ---------------------------------------------------------------------------*/
 #include <platform.h>
 #include <xs1.h>
 #include "getmac.h"
-#include "uip_single_server.h" //Enable this for 2T Eth comp
-//#include "uip_server.h" //Enable this for 5T Eth comp
-//#include "ethernet_server.h" //Enable this for 5T Eth comp
+#include "uip_single_server.h"      //Enable this for 2T Eth comp
+//#include "uip_server.h"           //Enable this for 5T Eth comp
+//#include "ethernet_server.h"      //Enable this for 5T Eth comp
 #include "app_manager.h"
 #include "web_server.h"
 #include "multi_uart_rxtx.h"
@@ -35,15 +35,14 @@
  ---------------------------------------------------------------------------*/
 //#define	DHCP_CONFIG	1	/* Set this to use DHCP */
 #define		TWO_THREAD_ETH		1 //Enable this to use 2 thread ethernet component
-#define 	XSCOPE_EN 0     /* set this to 1 for xscope printing */
-
-#if XSCOPE_EN == 1
-#include <xscope.h>
-#endif
 
 /*---------------------------------------------------------------------------
  ports and clocks
  ---------------------------------------------------------------------------*/
+/* MUART TX port configuration */
+#define PORT_TX on stdcore[1]: XS1_PORT_8B
+#define PORT_RX on stdcore[1]: XS1_PORT_8A
+
 on stdcore[0] : fl_SPIPorts flash_ports =
 { PORT_SPI_MISO,
   PORT_SPI_SS,
@@ -52,14 +51,8 @@ on stdcore[0] : fl_SPIPorts flash_ports =
   XS1_CLKBLK_3
 };
 
-/* MUART TX port configuration */
-#define PORT_TX on stdcore[1]: XS1_PORT_8B
-#define PORT_RX on stdcore[1]: XS1_PORT_8A
-
 on stdcore[1]: clock uart_clock_tx = XS1_CLKBLK_1;
-/* Define 1 bit external clock */
-on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1F;
-
+on stdcore[1]: in port uart_ref_ext_clk = XS1_PORT_1F; /* Define 1 bit external clock */
 on stdcore[1]: clock uart_clock_rx = XS1_CLKBLK_2;
 
 #ifndef TWO_THREAD_ETH
@@ -92,30 +85,37 @@ on stdcore[0]: mii_interface_t mii =
     on stdcore[0]: smi_interface_t smi = {PORT_ETH_MDIO, PORT_ETH_MDC, 0};
 #endif
 #else //TWO_THREAD_ETH
-#define PORT_ETH_FAKE    on stdcore[0]: XS1_PORT_8A
+#define PORT_ETH_FAKE on stdcore[0]: XS1_PORT_8A
 
-on stdcore[0]: struct otp_ports otp_ports = { XS1_PORT_32B, XS1_PORT_16C, XS1_PORT_16D };
+on stdcore[0]: struct otp_ports otp_ports =
+{
+  XS1_PORT_32B,
+  XS1_PORT_16C,
+  XS1_PORT_16D
+};
 
 on stdcore[0]: mii_interface_t mii =
-  {
-    XS1_CLKBLK_1,
-    XS1_CLKBLK_2,
-
-    PORT_ETH_RXCLK_1,
-    PORT_ETH_ERR_1,
-    PORT_ETH_RXD_1,
-    PORT_ETH_RXDV_1,
-
-    PORT_ETH_TXCLK_1,
-    PORT_ETH_TXEN_1,
-    PORT_ETH_TXD_1,
-
-    PORT_ETH_FAKE,
-  };
+{
+ XS1_CLKBLK_1,
+ XS1_CLKBLK_2,
+ PORT_ETH_RXCLK_1,
+ PORT_ETH_ERR_1,
+ PORT_ETH_RXD_1,
+ PORT_ETH_RXDV_1,
+ PORT_ETH_TXCLK_1,
+ PORT_ETH_TXEN_1,
+ PORT_ETH_TXD_1,
+ PORT_ETH_FAKE,
+};
 
 on stdcore[0]: out port p_reset = XS1_PORT_8D;
-on stdcore[0]: smi_interface_t smi = { 0, PORT_ETH_MDIO_1, PORT_ETH_MDC_1 };
 on stdcore[0]: clock clk_smi = XS1_CLKBLK_5;
+on stdcore[0]: smi_interface_t smi =
+{
+  0,
+  PORT_ETH_MDIO_1,
+  PORT_ETH_MDC_1
+};
 
 #endif //TWO_THREAD_ETH
 
@@ -126,15 +126,8 @@ on stdcore[0]: clock clk_smi = XS1_CLKBLK_5;
 /*---------------------------------------------------------------------------
  global variables
  ---------------------------------------------------------------------------*/
-s_multi_uart_tx_ports uart_tx_ports =
-{
-    PORT_TX
-};
-
-s_multi_uart_rx_ports uart_rx_ports =
-{
-	PORT_RX
-};
+s_multi_uart_tx_ports uart_tx_ports = { PORT_TX };
+s_multi_uart_rx_ports uart_rx_ports = {	PORT_RX };
 
 /* IP Config - change this to suit your network.
  * Leave with all 0 values to use DHCP
@@ -159,6 +152,7 @@ xtcp_ipconfig_t ipconfig =
 /*---------------------------------------------------------------------------
  implementation
  ---------------------------------------------------------------------------*/
+
 
 #ifndef TWO_THREAD_ETH
 /** =========================================================================
@@ -224,9 +218,11 @@ int main(void)
     chan connect_status;
 #endif //TWO_THREAD_ETH
     chan xtcp[1];
+
 #ifdef FLASH_THREAD
     chan cPersData;
 #endif //FLASH_THREAD
+
 	streaming chan cWbSvr2AppMgr;
 	chan cAppMgr2WbSvr;
 	streaming chan cTxUART;
@@ -246,7 +242,7 @@ int main(void)
 	                mac_tx,
 	                connect_status,
 	                reset);
-	            
+
 	            /* The TCP/IP server thread */
 	            on stdcore[0]: uip_server(mac_rx[0],
 	                mac_tx[0],
@@ -258,64 +254,27 @@ int main(void)
         on stdcore[0]:
         {
             char mac_address[6];
-
             ethernet_getmac_otp(otp_ports, mac_address);
-
-            // Bring PHY out of reset
-            //p_reset <: 0x2;
-
             // Start server
             uipSingleServer(clk_smi, null, smi, mii, xtcp, 1, ipconfig, mac_address);
         }
 #endif //TWO_THREAD_ETH
 
-#if XSCOPE_EN == 1
-	            on stdcore[0]: {
-	                xscope_register (0 , 0 , " " , 0, " " );
-	                xscope_config_io ( XSCOPE_IO_BASIC );
-	                dummy();
-	            }
-#endif
-
 #ifdef FLASH_THREAD
 	            on stdcore[0]: flash_data_access(cPersData);
 #endif //FLASH_THREAD
-	            /*
-	            on stdcore[0]: dummy();
-	            on stdcore[0]: dummy();
-	            on stdcore[0]: dummy();
-	            on stdcore[0]: dummy();
-	            on stdcore[0]: dummy();
-	            */
-	            
-	            /* web server thread for handling and servicing http requests
-	            * and telnet data communication */
+
+	            /* web server thread for handling and servicing http requests and telnet data communication */
 #ifndef FLASH_THREAD
 	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cAppMgr2WbSvr);
 #else //FLASH_THREAD
 	            on stdcore[1]: web_server(xtcp[0], cWbSvr2AppMgr, cAppMgr2WbSvr, cPersData);
 #endif //FLASH_THREAD
-	            
-	            /* The multi-uart application manager thread to handle uart
-	            * data communication to web server clients */
+
+	            /* The multi-uart application manager thread to handle uart data communication to web server clients */
 	            on stdcore[1]: app_manager_handle_uart_data(cWbSvr2AppMgr, cAppMgr2WbSvr, cTxUART, cRxUART);
-#if 0
-	            /* Multi-uart transmit thread */
-	            on stdcore[1]: run_multi_uart_tx( cTxUART, uart_tx_ports, uart_clock_tx );
-	            
-	            /* Multi-uart receive thread */
-	            on stdcore[1]: run_multi_uart_rx( cRxUART, uart_rx_ports, uart_clock_rx );
-#else
 	            /* run the multi-uart RX & TX with a common external clock - (2 threads) */
 	            on stdcore[1]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, uart_clock_rx, uart_ref_ext_clk, uart_clock_tx);
-#endif
-#if 0
-	            on stdcore[1]: dummy();
-	            on stdcore[1]: dummy();
-	            on stdcore[1]: dummy();
-	            on stdcore[1]: dummy();
-#endif
 	 } // par
-
 	return 0;
 }

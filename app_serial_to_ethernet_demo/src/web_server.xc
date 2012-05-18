@@ -638,10 +638,13 @@ void web_server_handle_event(chanend tcp_svr,
 
                     TempLen = telnetd_recv_data(tcp_svr, conn, g_telnet_recd_data_buffer[0], g_telnet_actual_data_buffer[0]);
 #if ENABLE_XSCOPE == 1
-                    printstrln("***Current Pointers***");
-                    printstr("Buffer Depth = "); printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
-                    printstr("TCP Data Length = "); printintln(TempLen);
-                    printstrln("*****************************************************");
+                    if(xtcp_recd_data_buffer[uart_id].buf_depth >= ((XTCP_CLIENT_BUF_SIZE * 2) - 1))
+                    {
+                        printint(uart_id); printstrln(" ***Losing Data***");
+                        printint(uart_id); printstr(" Buffer Depth = "); printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
+                        printint(uart_id); printstr(" TCP Data Length = "); printintln(TempLen);
+                        printint(uart_id); printstrln(" *****************************************************");
+                    }
 #endif
                     /*
                      * We receive the TCP data regardless of it being 'paused'.
@@ -667,18 +670,12 @@ void web_server_handle_event(chanend tcp_svr,
                     if (xtcp_recd_data_buffer[uart_id].buf_depth + TempLen >= XTCP_CLIENT_BUF_SIZE/2)
                     {
 #if ENABLE_XSCOPE == 1
-                        printstrln("!!!Pause!!!");
+                        //printint(uart_id); printstrln(" !!!Pause!!!");
 #endif
                         /* Pause the connection till buffer is consumed */
                         xtcp_pause(tcp_svr, conn);
                         /* Upon data consumption, unpause connection */
                     }
-
-#if ENABLE_XSCOPE == 1
-                        printstrln("***Updating buffers***");
-                        printstr("Write pointer = "); printintln(xtcp_recd_data_buffer[uart_id].write_index);
-                        printstr("TCP Data Length = "); printintln(TempLen);
-#endif
 
                     for (i=0; i<TempLen; i++)
                     {
@@ -748,10 +745,6 @@ static void send_uart_tx_data(chanend tcp_svr, chanend cAppMgr2WbSvr)
     data_to_send = (xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth > buf_depth_avialable) ? buf_depth_avialable : xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth;
     cAppMgr2WbSvr <: data_to_send; //Amount of bytes to send
 
-#if ENABLE_XSCOPE == 1
-        printstrln("***Updating buffers***");
-        printstr("Read pointer = "); printintln(xtcp_recd_data_buffer[uart_id].read_index);
-#endif
     /* Get UART data */
     for (i=0; i<data_to_send; i++)
     {
@@ -765,17 +758,13 @@ static void send_uart_tx_data(chanend tcp_svr, chanend cAppMgr2WbSvr)
         xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth--;
     }
 
-#if ENABLE_XSCOPE == 1
-    printstr("Buffer depth after read = "); printintln(xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth);
-#endif
-
     if (xtcp_recd_data_buffer[g_UartTxNumToSend].buf_depth <= 0)
     {
         xtcp_connection_t conn;
         conn.id = fetch_conn_id_for_uart_id(uart_id);
         xtcp_unpause(tcp_svr, conn);
 #if ENABLE_XSCOPE == 1
-            printstrln("***Unpause***");
+        //printint(uart_id); printstrln(" ***Unpause***");
 #endif
     }
 
