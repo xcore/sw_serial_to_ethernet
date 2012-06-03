@@ -74,6 +74,9 @@ typedef struct STRUCT_USER_DATA_FIFO
     unsigned buf_depth; //depth of buffer to be consumed
 }s_user_data_fifo;
 
+
+#define XTCP_RECD_BUF_SIZE UIP_CONF_RECEIVE_WINDOW
+
 /* Data structure to hold UART X data received from xtcp connections */
 typedef struct STRUCT_XTCP_RECD_DATA_BUFFERS
 {
@@ -83,7 +86,7 @@ typedef struct STRUCT_XTCP_RECD_DATA_BUFFERS
     int write_index; //Input data to Tx api
     int telnet_recd_data_index; //TODO: TBR
     unsigned buf_depth; //depth of buffer to be consumed
-    char telnet_recd_data[XTCP_CLIENT_BUF_SIZE * 2];
+    char telnet_recd_data[XTCP_RECD_BUF_SIZE];
     e_bool is_currently_serviced;
 }s_xtcp_recd_data_fifo;
 
@@ -122,8 +125,8 @@ int gPollForSendingUartDataToUartTx; //0 Initially reset this
 int gPollForTelnetCommandData; //0 Initially reset this
 
 int g_UartTxNumToSend;
-char g_telnet_recd_data_buffer[XTCP_CLIENT_BUF_SIZE];
-char g_telnet_actual_data_buffer[XTCP_CLIENT_BUF_SIZE];
+char g_telnet_recd_data_buffer[UIP_CONF_RECEIVE_WINDOW];
+char g_telnet_actual_data_buffer[UIP_CONF_RECEIVE_WINDOW];
 
 /*---------------------------------------------------------------------------
  implementation
@@ -612,6 +615,7 @@ void web_server_handle_event(chanend tcp_svr,
                 telnetd_init_state(tcp_svr, conn);
                 /* Note connection details so that data is manageable at server level */
                 update_user_conn_details(conn);
+                xtcp_ack_recv_mode(tcp_svr, conn);
             }
             break;
             case XTCP_RECV_DATA:
@@ -638,7 +642,7 @@ void web_server_handle_event(chanend tcp_svr,
 
                     TempLen = telnetd_recv_data(tcp_svr, conn, g_telnet_recd_data_buffer[0], g_telnet_actual_data_buffer[0]);
 #if ENABLE_XSCOPE == 1
-                    if(xtcp_recd_data_buffer[uart_id].buf_depth >= ((XTCP_CLIENT_BUF_SIZE * 2) - 1))
+                    if(xtcp_recd_data_buffer[uart_id].buf_depth >= ((XTCP_RECD_BUF_SIZE ) - 1))
                     {
                         printint(uart_id); printstrln(" ***Losing Data***");
                         printint(uart_id); printstr(" Buffer Depth = "); printintln(xtcp_recd_data_buffer[uart_id].buf_depth);
@@ -653,13 +657,13 @@ void web_server_handle_event(chanend tcp_svr,
                      * a pause issue; this will be lost if we do not consume it.
                      *
                      * This is the reason why 'xtcp_recd_data_buffer[]' is of
-                     * size (XTCP_CLIENT_BUF_SIZE * 2). So that, we can
+                     * size (XTCP_RECD_BUF_SIZE * 2). So that, we can
                      * accommodate an extra (worst case) packet from TCP after
                      * the pause request.
                      *
                      * The reason why we place the below 'pause' threshold as
-                     * (XTCP_CLIENT_BUF_SIZE/2) is not confidently known. We
-                     * tried placing this threshold as XTCP_CLIENT_BUF_SIZE but
+                     * (XTCP_RECD_BUF_SIZE/2) is not confidently known. We
+                     * tried placing this threshold as XTCP_RECD_BUF_SIZE but
                      * that did not work (data loss). So, we assumed that there
                      * might be two packets arriving from the TCP after pause.
                      * So, we get the first packet and store it in our x2 buffer
@@ -667,13 +671,14 @@ void web_server_handle_event(chanend tcp_svr,
                      * the write / read pointers are beyond what will be
                      * over-written in the buffer. */
 
-                    if (xtcp_recd_data_buffer[uart_id].buf_depth + TempLen >= XTCP_CLIENT_BUF_SIZE/2)
+                    if (xtcp_recd_data_buffer[uart_id].buf_depth + TempLen >= XTCP_RECD_BUF_SIZE/2)
                     {
 #if ENABLE_XSCOPE == 1
                         //printint(uart_id); printstrln(" !!!Pause!!!");
 #endif
                         /* Pause the connection till buffer is consumed */
-                        xtcp_pause(tcp_svr, conn);
+
+                      //xtcp_pause(tcp_svr, conn);
                         /* Upon data consumption, unpause connection */
                     }
 
@@ -681,7 +686,7 @@ void web_server_handle_event(chanend tcp_svr,
                     {
                         xtcp_recd_data_buffer[uart_id].telnet_recd_data[xtcp_recd_data_buffer[uart_id].write_index] = g_telnet_actual_data_buffer[i];
                         xtcp_recd_data_buffer[uart_id].write_index++;
-                        if (xtcp_recd_data_buffer[uart_id].write_index >= (XTCP_CLIENT_BUF_SIZE * 2))
+                        if (xtcp_recd_data_buffer[uart_id].write_index >= (XTCP_RECD_BUF_SIZE))
                         {
                             xtcp_recd_data_buffer[uart_id].write_index = 0;
                         }
@@ -751,7 +756,7 @@ static void send_uart_tx_data(chanend tcp_svr, chanend cAppMgr2WbSvr)
         /* Send Uart X data to MUART TX */
         cAppMgr2WbSvr <: xtcp_recd_data_buffer[g_UartTxNumToSend].telnet_recd_data[xtcp_recd_data_buffer[g_UartTxNumToSend].read_index];
         xtcp_recd_data_buffer[g_UartTxNumToSend].read_index++;
-        if (xtcp_recd_data_buffer[g_UartTxNumToSend].read_index >= XTCP_CLIENT_BUF_SIZE * 2)
+        if (xtcp_recd_data_buffer[g_UartTxNumToSend].read_index >= XTCP_RECD_BUF_SIZE)
         {
             xtcp_recd_data_buffer[g_UartTxNumToSend].read_index = 0;
         }
@@ -762,7 +767,8 @@ static void send_uart_tx_data(chanend tcp_svr, chanend cAppMgr2WbSvr)
     {
         xtcp_connection_t conn;
         conn.id = fetch_conn_id_for_uart_id(uart_id);
-        xtcp_unpause(tcp_svr, conn);
+        //xtcp_unpause(tcp_svr, conn);
+        xtcp_ack_recv(tcp_svr, conn);
 #if ENABLE_XSCOPE == 1
         //printint(uart_id); printstrln(" ***Unpause***");
 #endif
