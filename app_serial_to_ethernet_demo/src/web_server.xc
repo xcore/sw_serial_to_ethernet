@@ -650,37 +650,6 @@ void web_server_handle_event(chanend tcp_svr,
                         printint(uart_id); printstrln(" *****************************************************");
                     }
 #endif
-                    /*
-                     * We receive the TCP data regardless of it being 'paused'.
-                     * Ideally, the TCP should have stopped receiving data on a
-                     * pause request. However, if a TCP packet comes in before
-                     * a pause issue; this will be lost if we do not consume it.
-                     *
-                     * This is the reason why 'xtcp_recd_data_buffer[]' is of
-                     * size (XTCP_RECD_BUF_SIZE * 2). So that, we can
-                     * accommodate an extra (worst case) packet from TCP after
-                     * the pause request.
-                     *
-                     * The reason why we place the below 'pause' threshold as
-                     * (XTCP_RECD_BUF_SIZE/2) is not confidently known. We
-                     * tried placing this threshold as XTCP_RECD_BUF_SIZE but
-                     * that did not work (data loss). So, we assumed that there
-                     * might be two packets arriving from the TCP after pause.
-                     * So, we get the first packet and store it in our x2 buffer
-                     * and by the time we get the second packet, we hope that
-                     * the write / read pointers are beyond what will be
-                     * over-written in the buffer. */
-
-                    if (xtcp_recd_data_buffer[uart_id].buf_depth + TempLen >= XTCP_RECD_BUF_SIZE/2)
-                    {
-#if ENABLE_XSCOPE == 1
-                        //printint(uart_id); printstrln(" !!!Pause!!!");
-#endif
-                        /* Pause the connection till buffer is consumed */
-
-                      //xtcp_pause(tcp_svr, conn);
-                        /* Upon data consumption, unpause connection */
-                    }
 
                     for (i=0; i<TempLen; i++)
                     {
@@ -767,10 +736,13 @@ static void send_uart_tx_data(chanend tcp_svr, chanend cAppMgr2WbSvr)
     {
         xtcp_connection_t conn;
         conn.id = fetch_conn_id_for_uart_id(uart_id);
-        //xtcp_unpause(tcp_svr, conn);
+
+        // Now that the buffer has been processed we can ack the data
+        // that has been received on this connection. This will allow the next
+        // chunk of data to be received on the tcp connection.
         xtcp_ack_recv(tcp_svr, conn);
 #if ENABLE_XSCOPE == 1
-        //printint(uart_id); printstrln(" ***Unpause***");
+        //printint(uart_id); printstrln(" ***ack_recv***");
 #endif
     }
 
