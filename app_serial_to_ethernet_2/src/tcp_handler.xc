@@ -11,7 +11,8 @@
 void tcp_handler(chanend c_xtcp,
                  chanend c_uart_data,
                  chanend c_uart_config,
-                 chanend ?c_flash)
+                 chanend ?c_flash_web,
+                 chanend ?c_flash_data)
 {
   timer tmr;
   int t;
@@ -19,7 +20,7 @@ void tcp_handler(chanend c_xtcp,
   telnet_to_uart_init(c_xtcp, c_uart_data);
   telnet_config_init(c_xtcp);
   udp_config_init(c_xtcp);
-  s2e_webserver_init(c_xtcp, c_flash, c_uart_config);
+  s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config);
 
   while (1) {
     xtcp_connection_t conn;
@@ -31,12 +32,12 @@ void tcp_handler(chanend c_xtcp,
         telnet_to_uart_event_handler(c_xtcp, c_uart_data, conn);
         telnet_config_event_handler(c_xtcp, c_uart_config, conn);
         udp_config_event_handler(c_xtcp, c_uart_config, conn);
-        s2e_webserver_event_handler(c_xtcp, c_flash, c_uart_config, conn);
+        s2e_webserver_event_handler(c_xtcp, c_flash_web, c_uart_config, conn);
         break;
       case telnet_to_uart_notification_handler(c_xtcp, c_uart_data);
 #ifdef WEB_SERVER_USE_FLASH
-      case web_server_cache_request(c_flash):
-        web_server_cache_handler(c_flash, c_xtcp);
+      case web_server_cache_request(c_flash_web):
+        web_server_cache_handler(c_flash_web, c_xtcp);
         break;
 #endif
       }

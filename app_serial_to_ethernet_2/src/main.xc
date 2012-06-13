@@ -100,7 +100,7 @@ int main(void) {
 	chan c_xtcp[1];
         chan c_uart_data, c_uart_config;
         #ifdef S2E_FLASH_THREAD
-        chan c_flash;
+        chan c_flash_web, c_flash_data;
         #endif
         streaming chan c_uart_rx, c_uart_tx;
 
@@ -117,15 +117,15 @@ int main(void) {
         }
 
         #ifdef S2E_FLASH_THREAD
-        on stdcore[0]: s2e_flash(c_flash,flash_ports);
+        on stdcore[0]: s2e_flash(c_flash_web, c_flash_data, flash_ports);
         #endif
 
         on stdcore[UART_CORE]: tcp_handler(c_xtcp[0], c_uart_data,
                                    c_uart_config,
                                    #ifdef S2E_FLASH_THREAD
-                                   c_flash
+                                   c_flash_web, c_flash_data
                                    #else
-                                   null
+                                   null, null
                                    #endif
                                    );
 

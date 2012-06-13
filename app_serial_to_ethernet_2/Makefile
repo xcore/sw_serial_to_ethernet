@@ -22,8 +22,10 @@ APP_NAME =
 
 XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lxscope -lflash
 
+XCC_C_FLAGS = $(XCC_FLAGS) -Os
+
 # The USED_MODULES variable lists other module used by the application.
-USED_MODULES = module_xtcp module_mii_singlethread module_ethernet_smi module_multi_uart module_xc_ptr module_mutual_thread_comm module_website
+USED_MODULES = module_xtcp module_mii_singlethread module_ethernet_smi module_multi_uart module_xc_ptr module_website module_mutual_thread_comm
 
 # This uses the tcp mac filtering in module_xtcpxc
 USE_XTCP_MAC_CUSTOM_FILTER=1

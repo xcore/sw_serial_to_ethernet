@@ -3,7 +3,8 @@
 
 #include <flash.h>
 
-void s2e_flash(chanend c_flash,
+void s2e_flash(chanend c_flash_web,
+               chanend c_flash_data,
                fl_SPIPorts &flash_ports);
 
 

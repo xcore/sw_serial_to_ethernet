@@ -5,7 +5,8 @@
 void tcp_handler(chanend c_xtcp,
                  chanend c_uart_data,
                  chanend c_uart_config,
-                 chanend ?c_flash);
+                 chanend ?c_flash_web,
+                 chanend ?c_flash_data);
 #endif
 
 #endif // __TCP_HANDLER_H__

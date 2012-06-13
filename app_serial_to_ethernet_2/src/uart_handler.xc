@@ -52,7 +52,7 @@ void uart_set_config(chanend c_uart_config,
   c_uart_config <: data;
 }
 
-
+#pragma unsafe arrays
 static void push_to_uart_rx_buffer(uart_rx_info &st,
                                    unsigned uart_char,
                                    chanend c_uart_data,
@@ -139,6 +139,7 @@ static void rx_notify_tcp_handler(chanend c_uart_data,
 }
 
 
+#pragma unsafe arrays
 static void uart_configure_tx_channel(int i)
 {
   uart_tx_initialise_channel(i,
@@ -149,6 +150,7 @@ static void uart_configure_tx_channel(int i)
                              uart_config[i].char_len);
 }
 
+#pragma unsafe arrays
 static void uart_configure_rx_channel(int i)
 {
   uart_rx_initialise_channel(i,
@@ -159,6 +161,7 @@ static void uart_configure_rx_channel(int i)
                              uart_config[i].char_len);
 }
 
+#pragma unsafe arrays
 void uart_handler(chanend c_uart_data,
                   chanend c_uart_config,
                  streaming chanend c_uart_rx,
@@ -172,6 +175,7 @@ void uart_handler(chanend c_uart_data,
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
 
+    uart_config[i].channel_id = i;
     uart_config[i].parity = even;
     uart_config[i].stop_bits = sb_1;
     uart_config[i].baud = 115200;

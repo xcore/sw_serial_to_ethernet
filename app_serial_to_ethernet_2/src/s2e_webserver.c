@@ -8,16 +8,21 @@
 #include <string.h>
 #include "print.h"
 #include "telnet_to_uart.h"
+#include "s2e_validation.h"
+
+typedef struct app_state_t {
+  chanend c_uart_config;
+  chanend c_xtcp;
+} app_state_t;
+
+static app_state_t app_state;
 
 static uart_config_data_t cached_uart_data;
 
-static char success_msg[] = "<p>Uart configuration set successfully.</p>";
+static char success_msg[] = "Uart configuration set successfully.";
 
-static char bad_parity_msg[] = "<p>Invalid parity setting.</p>";
-static char bad_baudrate_msg[] = "<p>Invalid baud rate setting.</p>";
-static char bad_stop_bits_msg[] = "<p>Invalid stop bits setting.</p>";
-static char bad_char_len_msg[] = "<p>Invalid char length setting.</p>";
-static char bad_telnet_port_msg[] = "<p>Invalid telnet port setting.</p>";
+static int pending_telnet_port_change_id = -1;
+static int pending_telnet_port_change_port = -1;
 
 static int output_msg(char buf[], const char msg[])
 {
@@ -44,7 +49,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
   int val;
   uart_config_data_t data;
   int telnet_port;
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
+  char *err_msg;
 
   if (!web_server_is_post(connection_state))
     return 0;
@@ -57,40 +63,67 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
   val = get_int_param("pc",connection_state,&err);
   if (err)
-    return output_msg(buf, bad_parity_msg);
+    return output_msg(buf, s2e_validation_bad_parity_msg);
   data.parity = val;
 
   val = get_int_param("sb",connection_state,&err);
   if (err)
-    return output_msg(buf, bad_stop_bits_msg);
+    return output_msg(buf, s2e_validation_bad_stop_bits_msg);
   data.stop_bits = val;
 
   val = get_int_param("br",connection_state,&err);
   if (err)
-    return output_msg(buf, bad_baudrate_msg);
+    return output_msg(buf, s2e_validation_bad_baudrate_msg);
   data.baud = val;
 
   val = get_int_param("cl",connection_state,&err);
   if (err)
-    return output_msg(buf, bad_char_len_msg);
+    return output_msg(buf, s2e_validation_bad_char_len_msg);
   data.char_len = val;
 
   val = get_int_param("tp",connection_state,&err);
   if (err)
-    return output_msg(buf, bad_telnet_port_msg);
+    return output_msg(buf, s2e_validation_bad_telnet_port_msg);
 
   telnet_port = val;
+
+  data.polarity = 0;
+
+  err_msg = s2e_validate_uart_config(&data);
+
+  if (err_msg)
+    return output_msg(buf, err_msg);
+
+  err_msg = s2e_validate_telnet_port(data.channel_id, telnet_port);
+
+  if (err_msg)
+    return output_msg(buf, err_msg);
 
   // Do the setting
 
   uart_set_config(c_uart_config, &data);
+
+  // We have to delay the changing of the telnet port until after the
+  // page is rendered so we can use the tcp channel
+  pending_telnet_port_change_id = data.channel_id;
+  pending_telnet_port_change_port = telnet_port;
+
 
   cached_uart_data.channel_id = -1;
 
   return output_msg(buf, success_msg);
 }
 
-
+void s2e_post_render(int app_state, int connection_state)
+{
+  chanend c_xtcp = (chanend) ((app_state_t *) app_state)->c_xtcp;
+  if (pending_telnet_port_change_id != -1) {
+    telnet_to_uart_set_port(c_xtcp,
+                            pending_telnet_port_change_id,
+                            pending_telnet_port_change_port);
+    pending_telnet_port_change_id = -1;
+  }
+}
 static int update_cache(chanend c_uart_config,
                         int connection_state)
 {
@@ -114,7 +147,7 @@ static int update_cache(chanend c_uart_config,
 
 int s2e_web_get_char_len(char buf[], int app_state, int connection_state)
 {
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
   int id = update_cache(c_uart_config, connection_state);
   if (id == -1)
@@ -126,7 +159,7 @@ int s2e_web_get_char_len(char buf[], int app_state, int connection_state)
 
 int s2e_web_get_port(char buf[], int app_state, int connection_state)
 {
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
   int id = update_cache(c_uart_config, connection_state);
   if (id == -1)
@@ -138,7 +171,7 @@ int s2e_web_get_port(char buf[], int app_state, int connection_state)
 
 int s2e_web_get_baud(char buf[], int app_state, int connection_state)
 {
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
   int id = update_cache(c_uart_config, connection_state);
   if (id == -1)
@@ -151,7 +184,7 @@ int s2e_web_get_baud(char buf[], int app_state, int connection_state)
 int s2e_web_get_parity_selected(char buf[], int app_state, int connection_state,
 int parity)
 {
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
   int id = update_cache(c_uart_config, connection_state);
   if (id == -1)
@@ -168,7 +201,7 @@ int parity)
 
 int s2e_web_get_stop_bits_selected(char buf[], int app_state, int connection_state, int stop_bits)
 {
-  chanend c_uart_config = (chanend) app_state;
+  chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
   int id = update_cache(c_uart_config, connection_state);
   if (id == -1)
@@ -187,8 +220,13 @@ int s2e_web_get_stop_bits_selected(char buf[], int app_state, int connection_sta
 
 void s2e_webserver_init(chanend c_xtcp, chanend c_flash, chanend c_uart_config)
 {
-  web_server_init(c_xtcp, c_flash);
-  web_server_set_app_state(c_uart_config);
+  web_server_init(c_xtcp, c_flash, NULL);
+  // Store off these channels to be used by the functions called whilst
+  // rendering web pages
+  app_state.c_uart_config = c_uart_config;
+  app_state.c_xtcp = c_xtcp;
+
+  web_server_set_app_state((int) &app_state);
   cached_uart_data.channel_id = -1;
 }
 

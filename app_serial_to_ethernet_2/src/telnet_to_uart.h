@@ -18,5 +18,7 @@ int telnet_to_uart_get_port(int id);
 
 void telnet_to_uart_set_port(chanend c_xtcp, int id, int telnet_port);
 
+int telnet_to_uart_port_used_elsewhere(int id, int telnet_port);
+
 #endif // __TELNET_TO_UART_H__
 

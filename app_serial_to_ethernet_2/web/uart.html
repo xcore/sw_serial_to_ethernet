@@ -1,7 +1,7 @@
 <html><body>
     <h1>Serial To Ethernet: Uart {% web_server_copy_param("id", connection_state, buf) %}</h1>
 
-    {% s2e_web_configure(buf, app_state, connection_state) %}
+    <p>{% s2e_web_configure(buf, app_state, connection_state) %}</p>
 
     <form name="form" action = "" method="post">
       <input type="hidden" name="id" value="{% web_server_copy_param("id", connection_state, buf) %}"/>
