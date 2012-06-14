@@ -71,7 +71,11 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
       mutual_comm_notify(c_uart_data, mstate);
       }
   } else {
+#ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
+    printstr("RxOverflow");
+#endif
+
   }
 
   return;

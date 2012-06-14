@@ -1,16 +1,24 @@
 <?xml version="1.0" ?>
 <xpd>
     <dependency repo = "sc_xtcp">
-        <githash>cb9221d0f4aa3e097db347ace925041ef9cd2697</githash>
+        <githash>e3d4fb2dee68bed425ee52da8c64e334d63b9f75</githash>
         <uri>git@github.com:xcore/sc_xtcp.git</uri>
     </dependency>
     <dependency repo = "xcommon">
-        <githash>f035daf04c248b398925a9ac74a60719d9f194c3</githash>
+        <githash>155499f2d61b343e430acb0f9b289d5961399c2e</githash>
         <uri>https://github.com/xcore/xcommon.git</uri>
     </dependency>
     <dependency repo = "sc_ethernet">
-        <githash>8b17eb975480f3dd33739a9dd430fb0cd6e7cb0b</githash>
+        <githash>0ab30f395c48e657d12f96659029661f6c5d8797</githash>
         <uri>git@github.com:xcore/sc_ethernet.git</uri>
+    </dependency>
+    <dependency repo = "sc_util">
+        <githash>1a56a319fa999e070b766675817a2ec2f50d88fd</githash>
+        <uri>git@github.com:xcore/sc_util</uri>
+    </dependency>
+    <dependency repo = "sc_website">
+        <githash>a5a177a44104807058a0cebd1ae2511b8fa22882</githash>
+        <uri>git@github.com:xcore/sc_website.git</uri>
     </dependency>
     <description>Multiple UART to Ethernet (TELNET) bridge, plus web server controller</description>
     <location>https://github.com/xcore/sc_multi_uart.git</location>
