@@ -73,7 +73,7 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
   } else {
 #ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
-    printstr("RxOverflow");
+    printchar('!');
 #endif
 
   }
@@ -136,9 +136,16 @@ static void rx_notify_tcp_handler(chanend c_uart_data,
 {
   if (!st.notified && flush_rx_buffer(st))
     {
+      int is_inflight;
       c_uart_data <: UART_RX_DATA_READY;
       c_uart_data <: uart_id;
-      st.notified = 1;
+      c_uart_data :> is_inflight;
+      if (is_inflight)
+        st.notified = 1;
+      else {
+        // The other side has dumped the data
+        st.current_buffer_len = 0;
+      }
     }
 }
 
@@ -213,8 +220,20 @@ void uart_handler(chanend c_uart_data,
 
   while (1) {
     int is_data_request;
+    #pragma ordered
     select
       {
+      case c_uart_rx :> char channel_id:
+        { unsigned uart_char;
+          uart_char = (unsigned) uart_rx_grab_char(channel_id);
+          if(uart_rx_validate_char(channel_id, uart_char) == 0) {
+            push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
+                                   uart_char,
+                                   c_uart_data,
+                                   mstate);
+          }
+        }
+        break;
       case mutual_comm_transaction(c_uart_data,
                                    is_data_request,
                                    mstate):
@@ -251,17 +270,6 @@ void uart_handler(chanend c_uart_data,
         mutual_comm_complete_transaction(c_uart_data,
                                          is_data_request,
                                          mstate);
-        break;
-      case c_uart_rx :> char channel_id:
-        { unsigned uart_char;
-          uart_char = (unsigned) uart_rx_grab_char(channel_id);
-          if(uart_rx_validate_char(channel_id, uart_char) == 0) {
-            push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
-                                   uart_char,
-                                   c_uart_data,
-                                   mstate);
-          }
-        }
         break;
       case c_uart_config :> int cmd:
         switch (cmd)

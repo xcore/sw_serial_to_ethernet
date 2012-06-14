@@ -120,10 +120,16 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
                                   close_request);
         if (close_request)
           xtcp_close(c_xtcp, conn);
-        mutual_comm_initiate(c_uart_data);
-        c_uart_data <: NEW_UART_TX_DATA;
-        c_uart_data <: uart_id;
-        c_uart_data <: len;
+        if (len) {
+          mutual_comm_initiate(c_uart_data);
+          c_uart_data <: NEW_UART_TX_DATA;
+          c_uart_data <: uart_id;
+          c_uart_data <: len;
+        }
+        else {
+          // no data to send over uart
+          xtcp_ack_recv(c_xtcp, conn);
+        }
         break;
       case XTCP_REQUEST_DATA:
       case XTCP_SENT_DATA:
@@ -174,25 +180,34 @@ static void handle_notification(chanend c_xtcp,
   int cmd, uart_id=0;
   xtcp_connection_t conn;
 
-  while (uart_id != -1) {
+  while (1) {
     c_uart_data :> cmd;
     c_uart_data :> uart_id;
 
     conn.id = get_conn_id_from_uart_id(uart_id);
 
-    if (conn.id != -1) {
-      switch (cmd)
-        {
-        case SENT_UART_TX_DATA:
-          xtcp_ack_recv(c_xtcp, conn);
-          break;
-        case UART_RX_DATA_READY:
-          xtcp_init_send(c_xtcp, conn);
-          break;
-        }
-    }
-  }
+    if (cmd == -1)
+      break;
 
+    switch (cmd)
+      {
+      case SENT_UART_TX_DATA:
+        if (conn.id != -1)
+          xtcp_ack_recv(c_xtcp, conn);
+        break;
+      case UART_RX_DATA_READY:
+        if (conn.id != -1) {
+          xtcp_init_send(c_xtcp, conn);
+          // Tell the other side that we are sending the data on
+          c_uart_data <: 1;
+        }
+        else {
+          // Tell the other side to clear the incoming data
+          c_uart_data <: 0;
+        }
+        break;
+      }
+  }
 }
 
 
