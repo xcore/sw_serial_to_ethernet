@@ -13,6 +13,7 @@ typedef struct uart_channel_info {
   int conn_id;
   int ip_port;
   int sending_welcome;
+  int sending_data;
   int parse_state;
 } uart_channel_info;
 
@@ -108,6 +109,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
       case XTCP_NEW_CONNECTION:
         uart_channel_state[uart_id].conn_id = conn.id;
         uart_channel_state[uart_id].sending_welcome = 1;
+        uart_channel_state[uart_id].sending_data = 0;
         init_telnet_parse_state(uart_channel_state[uart_id].parse_state);
         xtcp_ack_recv_mode(c_xtcp, conn);
         xtcp_init_send(c_xtcp, conn);
@@ -145,12 +147,16 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
           c_uart_data <: uart_id;
           c_uart_data :> uart_channel_state[uart_id].current_rx_buffer;
           c_uart_data :> uart_channel_state[uart_id].current_rx_buffer_length;
-          if (uart_channel_state[uart_id].current_rx_buffer == -1)
+          if (uart_channel_state[uart_id].current_rx_buffer == -1) {
             xtcp_complete_send(c_xtcp);
-          else
+            uart_channel_state[uart_id].sending_data = 0;
+          }
+          else {
+            uart_channel_state[uart_id].sending_data = 1;
             xtcp_send(c_xtcp,
                       uart_channel_state[uart_id].uart_rx_buffer[uart_channel_state[uart_id].current_rx_buffer],
                       uart_channel_state[uart_id].current_rx_buffer_length);
+          }
         }
         break;
       case XTCP_RESEND_DATA:
@@ -197,7 +203,8 @@ static void handle_notification(chanend c_xtcp,
         break;
       case UART_RX_DATA_READY:
         if (conn.id != -1) {
-          xtcp_init_send(c_xtcp, conn);
+          if (!uart_channel_state[uart_id].sending_data)
+            xtcp_init_send(c_xtcp, conn);
           // Tell the other side that we are sending the data on
           c_uart_data <: 1;
         }
