@@ -270,8 +270,9 @@ void uart_handler(chanend c_uart_data,
           case GET_UART_RX_DATA_TO_SEND:
             if (flush_rx_buffer(uart_rx_state[uart_id])) {
               int len = uart_rx_state[uart_id].current_buffer_len;
-              xc_ptr buf = uart_rx_state[uart_id].current_buffer;
-              c_uart_data <: buf;
+              int cur_buf = uart_rx_state[uart_id].current_buffer;
+              xc_ptr buf = uart_rx_state[uart_id].buffer[cur_buf];
+              c_uart_data <: cur_buf;
               c_uart_data <: len;
 
               #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
@@ -284,7 +285,8 @@ void uart_handler(chanend c_uart_data,
                 1 - uart_rx_state[uart_id].current_buffer;
 
               #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
-              buf = uart_rx_state[uart_id].current_buffer;
+              cur_buf = uart_rx_state[uart_id].current_buffer;
+              buf = uart_rx_state[uart_id].buffer[cur_buf];
               for (int i=0;i<UART_RX_MAX_PACKET_SIZE;i++)
                 write_byte_via_xc_ptr_indexed(buf, i, 'B');
               #endif
