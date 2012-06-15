@@ -116,6 +116,10 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
         break;
       case XTCP_RECV_DATA:
         len = xtcp_recv(c_xtcp, uart_channel_state[uart_id].uart_tx_buffer);
+        #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
+        for (int i=len;i<UIP_CONF_RECEIVE_WINDOW;i++)
+          uart_channel_state[uart_id].uart_tx_buffer[i] = 'C';
+        #endif
         len = parse_telnet_buffer(uart_channel_state[uart_id].uart_tx_buffer,
                                   len,
                                   uart_channel_state[uart_id].parse_state,

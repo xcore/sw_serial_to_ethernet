@@ -227,10 +227,25 @@ void uart_handler(chanend c_uart_data,
         { unsigned uart_char;
           uart_char = (unsigned) uart_rx_grab_char(channel_id);
           if(uart_rx_validate_char(channel_id, uart_char) == 0) {
-            push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
-                                   uart_char,
-                                   c_uart_data,
-                                   mstate);
+            #ifdef S2E_DEBUG_BROADCAST_UART_0
+              // In this debug mode the data from uart 0 is sent to
+              // all connections
+              if (channel_id == 0) {
+                for (int i=0;i<NUM_UART_CHANNELS;i++)
+                  push_to_uart_rx_buffer(uart_rx_state[(int) i],
+                                         uart_char,
+                                         c_uart_data,
+                                         mstate);
+              }
+              else {
+                // Drop anything coming in on the other serial ports
+              }
+            #else
+              push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
+                                     uart_char,
+                                     c_uart_data,
+                                     mstate);
+            #endif
           }
         }
         break;
@@ -254,10 +269,27 @@ void uart_handler(chanend c_uart_data,
             break;
           case GET_UART_RX_DATA_TO_SEND:
             if (flush_rx_buffer(uart_rx_state[uart_id])) {
-              c_uart_data <: uart_rx_state[uart_id].current_buffer;
-              c_uart_data <: uart_rx_state[uart_id].current_buffer_len;
+              int len = uart_rx_state[uart_id].current_buffer_len;
+              xc_ptr buf = uart_rx_state[uart_id].current_buffer;
+              c_uart_data <: buf;
+              c_uart_data <: len;
+
+              #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
+              for (int i=len;i<UART_RX_MAX_PACKET_SIZE;i++) {
+                write_byte_via_xc_ptr_indexed(buf, i, 'A');
+              }
+              #endif
+
               uart_rx_state[uart_id].current_buffer =
                 1 - uart_rx_state[uart_id].current_buffer;
+
+              #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
+              buf = uart_rx_state[uart_id].current_buffer;
+              for (int i=0;i<UART_RX_MAX_PACKET_SIZE;i++)
+                write_byte_via_xc_ptr_indexed(buf, i, 'B');
+              #endif
+
+
               uart_rx_state[uart_id].current_buffer_len = 0;
               uart_rx_state[uart_id].notified = 0;
             } else {
