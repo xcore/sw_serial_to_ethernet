@@ -3,6 +3,22 @@
 #include "xccompat.h"
 #include "xtcp_client.h"
 #include "mutual_thread_comm.h"
+#include "s2e_conf.h"
+
+typedef struct uart_channel_state_t {
+  char uart_tx_buffer[UIP_CONF_RECEIVE_WINDOW];
+  char uart_rx_buffer[2][UART_RX_MAX_PACKET_SIZE];
+  int current_rx_buffer;
+  int current_rx_buffer_length;
+  int conn_id;
+  int ip_port;
+  int sending_welcome;
+  int sending_data;
+  int parse_state;
+} uart_channel_state_t;
+
+
+
 
 void telnet_to_uart_init(chanend c_xtcp, chanend c_uart_data);
 

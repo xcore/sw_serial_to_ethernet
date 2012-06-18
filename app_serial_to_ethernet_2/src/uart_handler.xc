@@ -30,20 +30,6 @@ typedef struct uart_rx_info {
 #define UART_HANDLER_PERIODIC_TIME 1000
 #define UART_RX_FLUSH_DELAY 2000000
 
-static uart_tx_info uart_tx_state[NUM_UART_CHANNELS];
-static uart_rx_info uart_rx_state[NUM_UART_CHANNELS];
-
-static uart_config_data_t uart_config[NUM_UART_CHANNELS];
-
-
-void uart_get_config(chanend c_uart_config,
-                     uart_config_data_t &data)
-{
-  c_uart_config <: UART_HANDLER_GET_UART_CONFIG;
-  c_uart_config <: data.channel_id;
-  c_uart_config :> data;
-}
-
 void uart_set_config(chanend c_uart_config,
                      uart_config_data_t &data)
 {
@@ -151,25 +137,27 @@ static void rx_notify_tcp_handler(chanend c_uart_data,
 
 
 #pragma unsafe arrays
-static void uart_configure_tx_channel(int i)
+static void uart_configure_tx_channel(int i,
+                                      uart_config_data_t &data)
 {
   uart_tx_initialise_channel(i,
-                             uart_config[i].parity,
-                             uart_config[i].stop_bits,
-                             uart_config[i].polarity,
-                             uart_config[i].baud,
-                             uart_config[i].char_len);
+                             data.parity,
+                             data.stop_bits,
+                             data.polarity,
+                             data.baud,
+                             data.char_len);
 }
 
 #pragma unsafe arrays
-static void uart_configure_rx_channel(int i)
+static void uart_configure_rx_channel(int i,
+                                      uart_config_data_t &data)
 {
   uart_rx_initialise_channel(i,
-                             uart_config[i].parity,
-                             uart_config[i].stop_bits,
-                             uart_config[i].polarity,
-                             uart_config[i].baud,
-                             uart_config[i].char_len);
+                             data.parity,
+                             data.stop_bits,
+                             data.polarity,
+                             data.baud,
+                             data.char_len);
 }
 
 #pragma unsafe arrays
@@ -182,22 +170,27 @@ void uart_handler(chanend c_uart_data,
   int periodic_timeout;
   mutual_comm_state_t mstate;
   char go;
+  uart_config_data_t config;
+  uart_tx_info uart_tx_state[NUM_UART_CHANNELS];
+  uart_rx_info uart_rx_state[NUM_UART_CHANNELS];
+
   mutual_comm_init_state(mstate);
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
+    c_uart_config :> int cmd;
+    c_uart_config :> int id;
+    c_uart_config :> config;
+    uart_configure_tx_channel(i, config);
+    uart_configure_rx_channel(i, config);
+  }
 
-    uart_config[i].channel_id = i;
-    uart_config[i].parity = even;
-    uart_config[i].stop_bits = sb_1;
-    uart_config[i].baud = 115200;
-    uart_config[i].polarity = start_0;
-    uart_config[i].char_len = 8;
+  for (int i=0;i<NUM_UART_CHANNELS;i++) {
+
 
     c_uart_data :> uart_tx_state[i].buffer;
     uart_tx_state[i].len = 0;
     uart_tx_state[i].i = 0;
 
-    uart_configure_tx_channel(i);
 
     c_uart_data :> uart_rx_state[i].buffer[0];
     c_uart_data :> uart_rx_state[i].buffer[1];
@@ -205,7 +198,7 @@ void uart_handler(chanend c_uart_data,
     uart_rx_state[i].current_buffer_len = 0;
     uart_rx_state[i].notified = 0;
 
-    uart_configure_rx_channel(i);
+
   }
 
 
@@ -312,19 +305,13 @@ void uart_handler(chanend c_uart_data,
             int id;
             timer tmr;
             c_uart_config :> id;
-            c_uart_config :> uart_config[id];
+            c_uart_config :> config;
             uart_tx_reconf_pause(c_uart_tx, tmr);
             uart_rx_reconf_pause(c_uart_rx);
-            uart_configure_rx_channel(id);
-            uart_configure_tx_channel(id);
+            uart_configure_rx_channel(id, config);
+            uart_configure_tx_channel(id, config);
             uart_tx_reconf_enable(c_uart_tx);
             uart_rx_reconf_enable(c_uart_rx);
-            }
-            break;
-          case UART_HANDLER_GET_UART_CONFIG: {
-            int id;
-            c_uart_config :> id;
-            c_uart_config <: uart_config[id];
             }
             break;
         }

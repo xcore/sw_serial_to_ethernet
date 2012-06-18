@@ -5,22 +5,11 @@
 #include "telnet.h"
 #include <safestring.h>
 
-typedef struct uart_channel_info {
-  char uart_tx_buffer[UIP_CONF_RECEIVE_WINDOW];
-  char uart_rx_buffer[2][UART_RX_MAX_PACKET_SIZE];
-  int current_rx_buffer;
-  int current_rx_buffer_length;
-  int conn_id;
-  int ip_port;
-  int sending_welcome;
-  int sending_data;
-  int parse_state;
-} uart_channel_info;
 
 static char welcome_msg[] =
 "Welcome to serial to ethernet telnet server demo!\nThis server is connected to uart channel 0\n";
 
-static uart_channel_info uart_channel_state[NUM_UART_CHANNELS];
+static uart_channel_state_t uart_channel_state[NUM_UART_CHANNELS];
 
 #pragma unsafe arrays
 int telnet_to_uart_get_port(int id)
