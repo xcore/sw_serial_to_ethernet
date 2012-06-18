@@ -1,4 +1,5 @@
 #include "xtcp_client.h"
+#include "uart_config.h"
 #include "telnet_to_uart.h"
 #include "telnet_config.h"
 #include "s2e_webserver.h"
@@ -16,7 +17,9 @@ void tcp_handler(chanend c_xtcp,
 {
   timer tmr;
   int t;
+
   tmr :> t;
+  uart_config_init(c_uart_config);
   telnet_to_uart_init(c_xtcp, c_uart_data);
   telnet_config_init(c_xtcp);
   udp_config_init(c_xtcp);

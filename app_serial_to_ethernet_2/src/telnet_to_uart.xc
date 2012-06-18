@@ -5,7 +5,7 @@
 #include "telnet.h"
 #include <safestring.h>
 
-typedef struct uart_channel_info {
+typedef struct uart_channel_state_t {
   char uart_tx_buffer[UIP_CONF_RECEIVE_WINDOW];
   char uart_rx_buffer[2][UART_RX_MAX_PACKET_SIZE];
   int current_rx_buffer;
@@ -17,12 +17,13 @@ typedef struct uart_channel_info {
   int parse_state;
   int ack;
   int init_send;
-} uart_channel_info;
+} uart_channel_state_t;
+
 
 static char welcome_msg[] =
 "Welcome to serial to ethernet telnet server demo!\nThis server is connected to uart channel 0\n";
 
-static uart_channel_info uart_channel_state[NUM_UART_CHANNELS];
+static uart_channel_state_t uart_channel_state[NUM_UART_CHANNELS];
 
 #pragma unsafe arrays
 int telnet_to_uart_get_port(int id)

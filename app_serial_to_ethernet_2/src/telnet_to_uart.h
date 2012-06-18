@@ -3,6 +3,8 @@
 #include "xccompat.h"
 #include "xtcp_client.h"
 #include "mutual_thread_comm.h"
+#include "s2e_conf.h"
+
 
 void telnet_to_uart_init(chanend c_xtcp, chanend c_uart_data);
 

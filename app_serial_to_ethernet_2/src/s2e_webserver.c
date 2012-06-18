@@ -17,8 +17,6 @@ typedef struct app_state_t {
 
 static app_state_t app_state;
 
-static uart_config_data_t cached_uart_data;
-
 static char success_msg[] = "Uart configuration set successfully.";
 
 static int pending_telnet_port_change_id = -1;
@@ -42,6 +40,19 @@ static int get_int_param(const char param[],
   return atoi(param_str);
 }
 
+static int get_id_param(int connection_state)
+{
+  char *id_str = web_server_get_param("id",connection_state);
+
+  if (!id_str)
+    return -1;
+
+  int id = atoi(id_str);
+
+  if (id < 0 || id > NUM_UART_CHANNELS)
+    return -1;
+  return id;
+}
 
 int s2e_web_configure(char buf[], int app_state, int connection_state)
 {
@@ -109,7 +120,7 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
   pending_telnet_port_change_port = telnet_port;
 
 
-  cached_uart_data.channel_id = -1;
+  
 
   return output_msg(buf, success_msg);
 }
@@ -124,36 +135,17 @@ void s2e_post_render(int app_state, int connection_state)
     pending_telnet_port_change_id = -1;
   }
 }
-static int update_cache(chanend c_uart_config,
-                        int connection_state)
-{
-  char *id_str = web_server_get_param("id",connection_state);
-
-  if (!id_str)
-    return -1;
-
-  int id = atoi(id_str);
-
-  if (id < 0 || id > NUM_UART_CHANNELS)
-    return -1;
-
-  if (cached_uart_data.channel_id != id) {
-    cached_uart_data.channel_id = id;
-    uart_get_config(c_uart_config, &cached_uart_data);
-  }
-
-  return id;
-}
 
 int s2e_web_get_char_len(char buf[], int app_state, int connection_state)
 {
   chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
-  int id = update_cache(c_uart_config, connection_state);
+  int id = get_id_param(connection_state);
   if (id == -1)
     return 0;
 
-  int len = itoa(cached_uart_data.char_len, buf, 10, 0);
+  uart_config_data_t *data = uart_get_config(id);
+  int len = itoa(data->char_len, buf, 10, 0);
   return len;
 }
 
@@ -161,7 +153,7 @@ int s2e_web_get_port(char buf[], int app_state, int connection_state)
 {
   chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
-  int id = update_cache(c_uart_config, connection_state);
+  int id = get_id_param(connection_state);
   if (id == -1)
     return 0;
 
@@ -173,11 +165,13 @@ int s2e_web_get_baud(char buf[], int app_state, int connection_state)
 {
   chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
-  int id = update_cache(c_uart_config, connection_state);
+  int id = get_id_param(connection_state);
+
   if (id == -1)
     return 0;
 
-  int len = itoa(cached_uart_data.baud, buf, 10, 0);
+  uart_config_data_t *data = uart_get_config(id);
+  int len = itoa(data->baud, buf, 10, 0);
   return len;
 }
 
@@ -186,11 +180,12 @@ int parity)
 {
   chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
-  int id = update_cache(c_uart_config, connection_state);
+  int id = get_id_param(connection_state);
   if (id == -1)
     return 0;
 
-  if (cached_uart_data.parity == parity) {
+  uart_config_data_t *data = uart_get_config(id);
+  if (data->parity == parity) {
     char selstr[] = "selected";
     strcpy(buf, selstr);
     return strlen(selstr);
@@ -203,11 +198,12 @@ int s2e_web_get_stop_bits_selected(char buf[], int app_state, int connection_sta
 {
   chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
-  int id = update_cache(c_uart_config, connection_state);
+  int id = get_id_param(connection_state);
   if (id == -1)
     return 0;
 
-  if (cached_uart_data.stop_bits == stop_bits) {
+  uart_config_data_t *data = uart_get_config(id);
+  if (data->stop_bits == stop_bits) {
     char selstr[] = "selected";
     strcpy(buf, selstr);
     return strlen(selstr);
@@ -227,7 +223,7 @@ void s2e_webserver_init(chanend c_xtcp, chanend c_flash, chanend c_uart_config)
   app_state.c_xtcp = c_xtcp;
 
   web_server_set_app_state((int) &app_state);
-  cached_uart_data.channel_id = -1;
+  
 }
 
 void s2e_webserver_event_handler(chanend c_xtcp,
