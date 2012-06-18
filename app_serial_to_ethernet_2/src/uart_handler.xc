@@ -27,7 +27,6 @@ typedef struct uart_rx_info {
   int timestamp;
 } uart_rx_info;
 
-#define UART_HANDLER_PERIODIC_TIME 1000
 #define UART_RX_FLUSH_DELAY 2000000
 
 static uart_tx_info uart_tx_state[NUM_UART_CHANNELS];
@@ -65,11 +64,6 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
                                   st.current_buffer_len,
                                   uart_char);
     st.current_buffer_len += 1;
-    if (!st.notified &&
-        st.current_buffer_len >= UART_RX_MIN_PACKET_SIZE)
-      {
-      mutual_comm_notify(c_uart_data, mstate);
-      }
   } else {
 #ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
@@ -81,6 +75,10 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
   return;
 }
 
+static int tx_sent_all_data(uart_tx_info &st) {
+  return (st.len != 0 && st.i == st.len);
+}
+
 static void tx_send_data(streaming chanend c_uart_tx,
                          chanend c_uart_data,
                          mutual_comm_state_t &mstate,
@@ -90,14 +88,11 @@ static void tx_send_data(streaming chanend c_uart_tx,
   if (st.i < st.len) {
     int buffer_full;
     int datum;
-
     read_byte_via_xc_ptr_indexed(datum, st.buffer,st.i);
 
     buffer_full = uart_tx_put_char(uart_id, datum);
     if (buffer_full==0) {
       st.i += 1;
-      if (st.i == st.len)
-        mutual_comm_notify(c_uart_data, mstate);
     }
   }
 }
@@ -178,10 +173,11 @@ void uart_handler(chanend c_uart_data,
                  streaming chanend c_uart_rx,
                  streaming chanend c_uart_tx)
 {
-  timer tmr;
-  int periodic_timeout;
   mutual_comm_state_t mstate;
   char go;
+  int poll_index = 0;
+  int tx_notifier = -1, rx_notifier = -1;
+
   mutual_comm_init_state(mstate);
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
@@ -213,10 +209,6 @@ void uart_handler(chanend c_uart_data,
   c_uart_rx <: 1;
   do { c_uart_tx :> go; } while (go != MULTI_UART_GO);
   c_uart_tx <: 1;
-
-
-  tmr :> periodic_timeout;
-  periodic_timeout += UART_HANDLER_PERIODIC_TIME;
 
   while (1) {
     int is_data_request;
@@ -253,52 +245,62 @@ void uart_handler(chanend c_uart_data,
                                    is_data_request,
                                    mstate):
         if (is_data_request) {
-          for (int i=0;i<NUM_UART_CHANNELS;i++) {
-            rx_notify_tcp_handler(c_uart_data, uart_rx_state[i], i);
-            tx_notify_tcp_handler(c_uart_data, uart_tx_state[i], i);
+          //          for (int i=0;i<NUM_UART_CHANNELS;i++) {
+          if (rx_notifier != -1) {
+            rx_notify_tcp_handler(c_uart_data, uart_rx_state[rx_notifier],
+                                  rx_notifier);
+            rx_notifier = -1;
           }
+          if (tx_notifier != -1) {
+            tx_notify_tcp_handler(c_uart_data, uart_tx_state[tx_notifier],
+                                  tx_notifier);
+            tx_notifier = -1;
+          }
+            //          }
           c_uart_data <: -1;
           c_uart_data <: -1;
         } else {
-          int cmd, uart_id;
-          c_uart_data :> cmd;
-          c_uart_data :> uart_id;
-          switch (cmd) {
-          case NEW_UART_TX_DATA:
-            c_uart_data :> uart_tx_state[uart_id].len;
-            break;
-          case GET_UART_RX_DATA_TO_SEND:
-            if (flush_rx_buffer(uart_rx_state[uart_id])) {
-              int len = uart_rx_state[uart_id].current_buffer_len;
-              int cur_buf = uart_rx_state[uart_id].current_buffer;
-              xc_ptr buf = uart_rx_state[uart_id].buffer[cur_buf];
-              c_uart_data <: cur_buf;
-              c_uart_data <: len;
+          slave {
+            int cmd, uart_id;
+            c_uart_data :> cmd;
+            c_uart_data :> uart_id;
+            switch (cmd)
+              {
+              case NEW_UART_TX_DATA:
+              c_uart_data :> uart_tx_state[uart_id].len;
+                break;
+              case GET_UART_RX_DATA_TO_SEND:
+                if (flush_rx_buffer(uart_rx_state[uart_id])) {
+                  int len = uart_rx_state[uart_id].current_buffer_len;
+                  int cur_buf = uart_rx_state[uart_id].current_buffer;
+                  xc_ptr buf = uart_rx_state[uart_id].buffer[cur_buf];
+                  c_uart_data <: cur_buf;
+                  c_uart_data <: len;
 
-              #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
-              for (int i=len;i<UART_RX_MAX_PACKET_SIZE;i++) {
-                write_byte_via_xc_ptr_indexed(buf, i, 'A');
+#ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
+                  for (int i=len;i<UART_RX_MAX_PACKET_SIZE;i++) {
+                    write_byte_via_xc_ptr_indexed(buf, i, 'A');
+                  }
+#endif
+
+                  uart_rx_state[uart_id].current_buffer =
+                    1 - uart_rx_state[uart_id].current_buffer;
+
+#ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
+                  cur_buf = uart_rx_state[uart_id].current_buffer;
+                  buf = uart_rx_state[uart_id].buffer[cur_buf];
+                  for (int i=0;i<UART_RX_MAX_PACKET_SIZE;i++)
+                    write_byte_via_xc_ptr_indexed(buf, i, 'B');
+#endif
+
+                  uart_rx_state[uart_id].current_buffer_len = 0;
+                  uart_rx_state[uart_id].notified = 0;
+                } else {
+                  c_uart_data <: -1;
+                  c_uart_data <: -1;
+                }
+                break;
               }
-              #endif
-
-              uart_rx_state[uart_id].current_buffer =
-                1 - uart_rx_state[uart_id].current_buffer;
-
-              #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
-              cur_buf = uart_rx_state[uart_id].current_buffer;
-              buf = uart_rx_state[uart_id].buffer[cur_buf];
-              for (int i=0;i<UART_RX_MAX_PACKET_SIZE;i++)
-                write_byte_via_xc_ptr_indexed(buf, i, 'B');
-              #endif
-
-
-              uart_rx_state[uart_id].current_buffer_len = 0;
-              uart_rx_state[uart_id].notified = 0;
-            } else {
-              c_uart_data <: -1;
-              c_uart_data <: -1;
-            }
-            break;
           }
         }
         mutual_comm_complete_transaction(c_uart_data,
@@ -329,17 +331,29 @@ void uart_handler(chanend c_uart_data,
             break;
         }
         break;
-      case tmr when timerafter(periodic_timeout) :> void:
-        periodic_timeout += UART_HANDLER_PERIODIC_TIME;
-        for (int i=0;i<NUM_UART_CHANNELS;i++) {
-          tx_send_data(c_uart_tx,
-                       c_uart_data,mstate,
-                       uart_tx_state[i],
-                       i);
+      default:
+        tx_send_data(c_uart_tx,
+                     c_uart_data,mstate,
+                     uart_tx_state[poll_index],
+                     poll_index);
+
+        if (tx_notifier == -1 &&
+            tx_sent_all_data(uart_tx_state[poll_index]))
+          {
+            tx_notifier = poll_index;
+            mutual_comm_notify(c_uart_data, mstate);
+          }
+
+        if (rx_notifier == -1 &&
+            !uart_rx_state[poll_index].notified &&
+            flush_rx_buffer(uart_rx_state[poll_index])) {
+          mutual_comm_notify(c_uart_data,mstate);
+          rx_notifier = poll_index;
         }
-        for (int i=0;i<NUM_UART_CHANNELS;i++)
-          if (!uart_rx_state[i].notified && flush_rx_buffer(uart_rx_state[i]))
-            mutual_comm_notify(c_uart_data,mstate);
+
+        poll_index++;
+        if (poll_index >= NUM_UART_CHANNELS)
+          poll_index = 0;
         break;
       }
   }

@@ -15,6 +15,8 @@ typedef struct uart_channel_info {
   int sending_welcome;
   int sending_data;
   int parse_state;
+  int ack;
+  int init_send;
 } uart_channel_info;
 
 static char welcome_msg[] =
@@ -60,6 +62,9 @@ void telnet_to_uart_init(chanend c_xtcp, chanend c_uart_data)
 
     c_uart_data <: array_to_xc_ptr(uart_channel_state[i].uart_rx_buffer[0]);
     c_uart_data <: array_to_xc_ptr(uart_channel_state[i].uart_rx_buffer[1]);
+
+    uart_channel_state[i].ack = 0;
+    uart_channel_state[i].init_send = 0;
 
     xtcp_listen(c_xtcp, uart_channel_state[i].ip_port, XTCP_PROTOCOL_TCP);
   }
@@ -128,9 +133,11 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
           xtcp_close(c_xtcp, conn);
         if (len) {
           mutual_comm_initiate(c_uart_data);
-          c_uart_data <: NEW_UART_TX_DATA;
-          c_uart_data <: uart_id;
-          c_uart_data <: len;
+          master {
+            c_uart_data <: NEW_UART_TX_DATA;
+            c_uart_data <: uart_id;
+            c_uart_data <: len;
+          }
         }
         else {
           // no data to send over uart
@@ -147,10 +154,12 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
         else {
           uart_channel_state[uart_id].sending_welcome = 0;
           mutual_comm_initiate(c_uart_data);
-          c_uart_data <: GET_UART_RX_DATA_TO_SEND;
-          c_uart_data <: uart_id;
-          c_uart_data :> uart_channel_state[uart_id].current_rx_buffer;
-          c_uart_data :> uart_channel_state[uart_id].current_rx_buffer_length;
+          master {
+            c_uart_data <: GET_UART_RX_DATA_TO_SEND;
+            c_uart_data <: uart_id;
+            c_uart_data :> uart_channel_state[uart_id].current_rx_buffer;
+            c_uart_data :> uart_channel_state[uart_id].current_rx_buffer_length;
+          }
           if (uart_channel_state[uart_id].current_rx_buffer == -1) {
             xtcp_complete_send(c_xtcp);
             uart_channel_state[uart_id].sending_data = 0;
@@ -190,9 +199,11 @@ static void handle_notification(chanend c_xtcp,
   int cmd, uart_id=0;
   xtcp_connection_t conn;
 
+
   while (1) {
     c_uart_data :> cmd;
     c_uart_data :> uart_id;
+
 
     conn.id = get_conn_id_from_uart_id(uart_id);
 
@@ -203,12 +214,14 @@ static void handle_notification(chanend c_xtcp,
       {
       case SENT_UART_TX_DATA:
         if (conn.id != -1)
-          xtcp_ack_recv(c_xtcp, conn);
+          uart_channel_state[uart_id].ack = 1;
+
         break;
       case UART_RX_DATA_READY:
         if (conn.id != -1) {
           if (!uart_channel_state[uart_id].sending_data)
-            xtcp_init_send(c_xtcp, conn);
+            uart_channel_state[uart_id].init_send = 1;
+
           // Tell the other side that we are sending the data on
           c_uart_data <: 1;
         }
@@ -218,6 +231,19 @@ static void handle_notification(chanend c_xtcp,
         }
         break;
       }
+  }
+
+  for (int i=0;i<NUM_UART_CHANNELS;i++) {
+    conn.id = get_conn_id_from_uart_id(i);
+    if (uart_channel_state[i].ack) {
+      uart_channel_state[i].ack = 0;
+      xtcp_ack_recv(c_xtcp, conn);
+    }
+    if (uart_channel_state[i].init_send) {
+      uart_channel_state[i].init_send = 0;
+      xtcp_init_send(c_xtcp, conn);
+    }
+
   }
 }
 
