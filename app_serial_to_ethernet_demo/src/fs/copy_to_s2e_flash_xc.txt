@@ -1,2 +1,0 @@
-{ "/index.html", 0, 5276 },
-{ "/img/xmos_logo.gif", 21, 915 },
