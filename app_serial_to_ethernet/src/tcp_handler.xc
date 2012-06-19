@@ -6,7 +6,7 @@
 #include "web_server.h"
 #include "mutual_thread_comm.h"
 #include "tcp_handler.h"
-#include "udp_config.h"
+#include "udp_discovery.h"
 #include <xs1.h>
 
 void tcp_handler(chanend c_xtcp,
@@ -22,7 +22,7 @@ void tcp_handler(chanend c_xtcp,
   uart_config_init(c_uart_config);
   telnet_to_uart_init(c_xtcp, c_uart_data);
   telnet_config_init(c_xtcp);
-  udp_config_init(c_xtcp);
+  udp_discovery_init(c_xtcp);
   s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config);
 
   while (1) {
@@ -34,7 +34,7 @@ void tcp_handler(chanend c_xtcp,
       case xtcp_event(c_xtcp, conn):
         telnet_to_uart_event_handler(c_xtcp, c_uart_data, conn);
         telnet_config_event_handler(c_xtcp, c_uart_config, conn);
-        udp_config_event_handler(c_xtcp, c_uart_config, conn);
+        udp_discovery_event_handler(c_xtcp, c_uart_config, conn);
         s2e_webserver_event_handler(c_xtcp, c_flash_web, c_uart_config, conn);
         break;
       case telnet_to_uart_notification_handler(c_xtcp, c_uart_data);
