@@ -23,7 +23,7 @@ void tcp_handler(chanend c_xtcp,
   telnet_to_uart_init(c_xtcp, c_uart_data);
   telnet_config_init(c_xtcp);
   udp_discovery_init(c_xtcp);
-  s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config);
+  s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config, c_flash_data);
 
   while (1) {
     xtcp_connection_t conn;

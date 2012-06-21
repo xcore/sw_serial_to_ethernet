@@ -14,5 +14,11 @@ Please choose uart to configure:
   <li><a href="uart.html?id=6">Uart 6</a></li>
   <li><a href="uart.html?id=7">Uart 7</a></li>
 </ul>
-
+<br>
+<form name="form" action = "" method="post">
+<table border='1'>
+<input type="submit" name="form_action" Value="Save"/><br><br>
+<input type="submit" name="form_action" Value="Restore"/><br>
+</form>
+<p>{% s2e_web_configure(buf, app_state, connection_state) %}</p>
 </body></html>
