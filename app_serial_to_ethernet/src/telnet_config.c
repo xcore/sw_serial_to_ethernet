@@ -46,7 +46,7 @@ typedef struct connection_state_t {
   int active;
   telnet_config_cmd_t cmd;
   telnet_config_cmd_t cmd_out;
-  uart_config_data_t *config_in;
+  uart_config_data_t config_in;
   uart_config_data_t config_out;
   int telnet_port_in;
   int telnet_port_out;
@@ -72,7 +72,6 @@ static connection_state_t telnet_config_states[TELNET_CONFIG_NUM_CONNECTIONS];
 void telnet_config_init(chanend c_xtcp) {
   for (int i=0;i<TELNET_CONFIG_NUM_CONNECTIONS;i++) {
     telnet_config_states[i].active = 0;
-    telnet_config_states[i].config_in = NULL;
   }
   xtcp_listen(c_xtcp, S2E_TELNET_CONFIG_PORT, XTCP_PROTOCOL_TCP);
 }
@@ -104,7 +103,6 @@ static void reset_parsing_state(connection_state_t *st)
   st->config_parsing_state0 = PARSING_VALUE;
   st->config_parsing_state1 = PARSING_START;
   st->buf_len = 0;
-  st->config_in = NULL;
 }
 
 static void store_value(connection_state_t *st)
@@ -120,31 +118,22 @@ static void store_value(connection_state_t *st)
       st->cmd = val;
       break;
     case PARSING_ID:
-      if (s2e_validate_channel_id(val) == NULL) {
-        st->config_in = uart_get_config(val);
-      }
-      else
-        st->config_in = NULL;
+      st->config_in.channel_id = val;
       break;
     case PARSING_PARITY:
-      if (st->config_in)
-        st->config_in->parity = val;
+      st->config_in.parity = val;
       break;
     case PARSING_STOP_BITS:
-      if (st->config_in)
-        st->config_in->stop_bits = val;
+      st->config_in.stop_bits = val;
       break;
     case PARSING_BAUD:
-      if (st->config_in)
-        st->config_in->baud = val;
+      st->config_in.baud = val;
       break;
     case PARSING_CHAR_LEN:
-      if (st->config_in)
-        st->config_in->char_len = val;
+      st->config_in.char_len = val;
       break;
     case PARSING_TELNET_PORT:
-      if (st->config_in)
-        st->telnet_port_in = val;
+      st->telnet_port_in = val;
       break;
     case PARSING_TERM:
       // should not get here
@@ -172,43 +161,35 @@ static void execute_command(chanend c_xtcp,
   switch (st->cmd)
     {
     case TELNET_CONFIG_CMD_SET:
-      if (!st->config_in) {
-        st->err = s2e_validation_bad_channel_id;
-        xtcp_init_send(c_xtcp, conn);
-        return;
-      }
-
-      st->err = s2e_validate_uart_config(st->config_in);
+      st->err = s2e_validate_uart_config(&st->config_in);
       if (st->err) {
         xtcp_init_send(c_xtcp, conn);
         return;
       }
-      st->err = s2e_validate_telnet_port(st->config_in->channel_id,
+
+      st->err = s2e_validate_telnet_port(st->config_in.channel_id,
                                          st->telnet_port_in);
       if (st->err) {
         xtcp_init_send(c_xtcp, conn);
         return;
       }
-      uart_set_config(c_uart_config, st->config_in);
+
+      uart_config_data_t *config = uart_get_config(st->config_in.channel_id);
+      *config = st->config_in;
+      uart_set_config(c_uart_config, &st->config_in);
       telnet_to_uart_set_port(c_xtcp,
-                              st->config_in->channel_id,
+                              st->config_in.channel_id,
                               st->telnet_port_in);
 
-      out_channel_id = st->config_in->channel_id;
+      out_channel_id = st->config_in.channel_id;
       break;
     case TELNET_CONFIG_CMD_GET:
-      if (!st->config_in) {
-        st->err = s2e_validation_bad_channel_id;
-        xtcp_init_send(c_xtcp, conn);
-        return;
-      }
-
-      st->err = s2e_validate_channel_id(st->config_in->channel_id);
+      st->err = s2e_validate_channel_id(st->config_in.channel_id);
       if (st->err) {
         xtcp_init_send(c_xtcp, conn);
         return;
       }
-      out_channel_id = st->config_in->channel_id;
+      out_channel_id = st->config_in.channel_id;
       break;
     case TELNET_CONFIG_CMD_SAVE:
       // TODO - send all the configs (got via uart_get_config) to the flash

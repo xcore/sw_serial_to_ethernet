@@ -68,9 +68,9 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
   val = get_int_param("id",connection_state,&err);
   if (err)
-    return 0;
-  data.channel_id = val;
+    return output_msg(buf, s2e_validation_bad_channel_id);
 
+  data.channel_id = val;
 
   val = get_int_param("pc",connection_state,&err);
   if (err)
@@ -112,6 +112,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
   // Do the setting
 
+  uart_config_data_t *config = uart_get_config(data.channel_id);
+  *config = data;
   uart_set_config(c_uart_config, &data);
 
   // We have to delay the changing of the telnet port until after the
@@ -120,7 +122,6 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
   pending_telnet_port_change_port = telnet_port;
 
 
-  
 
   return output_msg(buf, success_msg);
 }
