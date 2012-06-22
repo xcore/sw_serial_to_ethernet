@@ -90,7 +90,7 @@ static int update_data_location_in_flash(fl_SPIPorts &flash_ports)
     flash_sector_config = index_data_sector + UART_CONFIG;
     flash_address_config = fl_getSectorAddress(flash_sector_config);
     flash_sector_ipver = index_data_sector + IPVER;
-    flash_address_ipver = fl_getSectorAddress(flash_sector_config);
+    flash_address_ipver = fl_getSectorAddress(flash_sector_ipver);
 
     // return all ok
     return S2E_FLASH_OK;

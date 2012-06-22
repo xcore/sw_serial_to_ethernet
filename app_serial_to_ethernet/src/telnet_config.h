@@ -14,6 +14,7 @@ void telnet_config_init(chanend c_xtcp);
 
 void telnet_config_event_handler(chanend c_xtcp,
                                  chanend c_uart_config,
+                                 chanend c_flash_data,
                                  REFERENCE_PARAM(xtcp_connection_t, conn));
 
 #endif // __TELNET_CONFIG_H__

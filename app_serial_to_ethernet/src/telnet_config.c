@@ -165,6 +165,7 @@ static void store_value(connection_state_t *st)
 
 static void execute_command(chanend c_xtcp,
                             chanend c_uart_config,
+                            chanend c_flash_data,
                             xtcp_connection_t *conn,
                             connection_state_t *st)
 {
@@ -235,6 +236,7 @@ static void execute_command(chanend c_xtcp,
 
 static void parse_config(chanend c_xtcp,
                          chanend c_uart_config,
+                         chanend c_flash_data,
                          xtcp_connection_t *conn,
                          char *buf,
                          int len,
@@ -268,7 +270,7 @@ static void parse_config(chanend c_xtcp,
         break;
       case '@':
         if (st->config_parsing_state1 == PARSING_TERM) {
-          execute_command(c_xtcp, c_uart_config, conn, st);
+          execute_command(c_xtcp, c_uart_config, c_flash_data, conn, st);
           reset_parsing_state(st);
         }
         else {
@@ -328,6 +330,7 @@ static int construct_ack(connection_state_t *st,
 
 void telnet_config_event_handler(chanend c_xtcp,
                                  chanend c_uart_config,
+                                 chanend c_flash_data,
                                  xtcp_connection_t *conn)
 {
 
@@ -371,7 +374,7 @@ void telnet_config_event_handler(chanend c_xtcp,
                                   len,
                                   &st->telnet_parsing_state,
                                   &close_request);
-        parse_config(c_xtcp, c_uart_config, conn, buf, len, st);
+        parse_config(c_xtcp, c_uart_config, c_flash_data, conn, buf, len, st);
         if (close_request)
           xtcp_close(c_xtcp, conn);
         break;

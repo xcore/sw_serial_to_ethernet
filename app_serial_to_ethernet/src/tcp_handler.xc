@@ -33,7 +33,7 @@ void tcp_handler(chanend c_xtcp,
       {
       case xtcp_event(c_xtcp, conn):
         telnet_to_uart_event_handler(c_xtcp, c_uart_data, conn);
-        telnet_config_event_handler(c_xtcp, c_uart_config, conn);
+        telnet_config_event_handler(c_xtcp, c_uart_config, c_flash_data, conn);
         udp_discovery_event_handler(c_xtcp, c_uart_config, conn);
         s2e_webserver_event_handler(c_xtcp, c_flash_web, c_uart_config, conn);
         break;

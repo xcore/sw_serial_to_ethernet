@@ -77,7 +77,11 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
     web_form_req = web_server_get_param("form_action", connection_state);
 
-    if (strcmp(web_form_req, "Set") == 0)
+    if (strcmp(web_form_req, "Get") == 0)
+    {
+        return output_msg(buf, success_msg);
+    }
+    else if (strcmp(web_form_req, "Set") == 0)
     {
         val = get_int_param("id", connection_state, &err);
         if (err)
@@ -207,19 +211,6 @@ void s2e_post_render(int app_state, int connection_state)
     }
 }
 
-int s2e_web_get_char_len(char buf[], int app_state, int connection_state)
-{
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
-    int id = get_id_param(connection_state);
-    if (id == -1)
-        return 0;
-
-    uart_config_data_t *data = uart_get_config(id);
-    int len = itoa(data->char_len, buf, 10, 0);
-    return len;
-}
-
 int s2e_web_get_port(char buf[], int app_state, int connection_state)
 {
     chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
@@ -232,7 +223,54 @@ int s2e_web_get_port(char buf[], int app_state, int connection_state)
     return len;
 }
 
-int s2e_web_get_baud(char buf[], int app_state, int connection_state)
+int s2e_web_get_id_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int id)
+{
+    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
+
+    int id1 = get_id_param(connection_state);
+    if (id1 == -1)
+        return 0;
+
+    uart_config_data_t *data = uart_get_config(id1);
+    if (data->channel_id == id)
+    {
+        char selstr[] = "selected";
+        strcpy(buf, selstr);
+        return strlen(selstr);
+    }
+
+    return 0;
+}
+
+int s2e_web_get_cl_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int cl)
+{
+    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
+
+    int id = get_id_param(connection_state);
+    if (id == -1)
+        return 0;
+
+    uart_config_data_t *data = uart_get_config(id);
+    if (data->char_len == cl)
+    {
+        char selstr[] = "selected";
+        strcpy(buf, selstr);
+        return strlen(selstr);
+    }
+
+    return 0;
+}
+
+int s2e_web_get_br_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int br)
 {
     chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
@@ -242,14 +280,20 @@ int s2e_web_get_baud(char buf[], int app_state, int connection_state)
         return 0;
 
     uart_config_data_t *data = uart_get_config(id);
-    int len = itoa(data->baud, buf, 10, 0);
-    return len;
+    if (data->baud == br)
+    {
+        char selstr[] = "selected";
+        strcpy(buf, selstr);
+        return strlen(selstr);
+    }
+
+    return 0;
 }
 
-int s2e_web_get_parity_selected(char buf[],
-                                int app_state,
-                                int connection_state,
-                                int parity)
+int s2e_web_get_pc_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int parity)
 {
     chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 
@@ -268,10 +312,10 @@ int s2e_web_get_parity_selected(char buf[],
     return 0;
 }
 
-int s2e_web_get_stop_bits_selected(char buf[],
-                                   int app_state,
-                                   int connection_state,
-                                   int stop_bits)
+int s2e_web_get_sb_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int stop_bits)
 {
     chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
 

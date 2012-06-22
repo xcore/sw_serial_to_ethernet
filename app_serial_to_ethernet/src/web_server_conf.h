@@ -10,12 +10,30 @@
 
 // prototypes of functions called by the dynamic evaluation in the webpages
 void s2e_post_render(int app_state, int connection_state);
-
-int s2e_web_get_baud(char buf[], int app_state, int connection_state);
-int s2e_web_get_parity_selected(char buf[], int app_state, int connection_state, int parity);
-int s2e_web_get_stop_bits_selected(char buf[], int app_state, int connection_state, int sb);
-int s2e_web_get_char_len(char buf[], int app_state, int connection_state);
 int s2e_web_get_port(char buf[], int app_state, int connection_state);
-
-
 int s2e_web_configure(char buf[], int app_state, int connection_state);
+
+int s2e_web_get_id_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int id);
+
+int s2e_web_get_cl_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int cl);
+
+int s2e_web_get_br_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int br);
+
+int s2e_web_get_pc_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int parity);
+
+int s2e_web_get_sb_selected(char buf[],
+                            int app_state,
+                            int connection_state,
+                            int stop_bits);
