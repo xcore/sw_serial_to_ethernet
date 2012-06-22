@@ -128,6 +128,9 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
             return output_msg(buf, err_msg);
 
         // Do the setting
+
+        uart_config_data_t *config = uart_get_config(data.channel_id);
+        *config = data;
         uart_set_config(c_uart_config, &data);
 
         // We have to delay the changing of the telnet port until after the

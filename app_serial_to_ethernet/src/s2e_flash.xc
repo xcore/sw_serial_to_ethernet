@@ -204,15 +204,8 @@ void send_data_to_flash_thread(chanend c_flash_data, uart_config_data_t &data)
 
 void get_data_from_flash_thread(chanend c_flash_data, uart_config_data_t &data, int &telnet_port)
 {
-    uart_config_data_t temp_data;
-    int temp_telnet_port;
-    printstrln("here1");
-    c_flash_data :> temp_data;
-    printstrln("here2");
-    c_flash_data :> temp_telnet_port;
-    printstrln("here3");
-    data = temp_data;
-    telnet_port = temp_telnet_port;
+    c_flash_data :> data;
+    c_flash_data :> telnet_port;
 }
 
 int get_flash_access_result(chanend c_flash_data)
