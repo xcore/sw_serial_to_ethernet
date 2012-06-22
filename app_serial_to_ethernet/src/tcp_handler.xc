@@ -19,7 +19,7 @@ void tcp_handler(chanend c_xtcp,
   int t;
 
   tmr :> t;
-  uart_config_init(c_uart_config);
+  uart_config_init(c_uart_config, c_flash_data, c_xtcp);
   telnet_to_uart_init(c_xtcp, c_uart_data);
   telnet_config_init(c_xtcp);
   udp_discovery_init(c_xtcp);

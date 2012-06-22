@@ -14,6 +14,8 @@
 // define flash access commands
 #define FLASH_CMD_SAVE      1
 #define FLASH_CMD_RESTORE   2
+// data present in flash indicator
+#define FLASH_DATA_PRESENT  '$'
 
 #ifdef __XC__
 void s2e_flash(chanend c_flash_web,

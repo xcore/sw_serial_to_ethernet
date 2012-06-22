@@ -10,7 +10,6 @@
 #include "uart_config.h"
 #include "s2e_def.h"
 #include "itoa.h"
-#include <print.h>
 #include "telnet_to_uart.h"
 
 static int flash_sector_config = 0;
@@ -176,10 +175,22 @@ static void copy_char_array(char src[],
                             int src_offset,
                             int dest_offset)
 {
-    for(int i = src_offset; i < (src_offset + src_len); i++)
+    for(int i = 0; i < src_len; i++)
     {
-        dest[dest_offset + i] = '\0';
-        dest[dest_offset + i] = src[i];
+        dest[dest_offset + i] = src[src_offset + i];
+    }
+}
+
+/** =========================================================================
+ *  copy_char_array
+ *
+ *  CAUTION CAUTION HARD CODE
+ **/
+static void clear_array(char array[])
+{
+    for(int i = 0; i < 7; i++)
+    {
+        array[i] = '\0';
     }
 }
 
@@ -222,7 +233,8 @@ int get_flash_access_result(chanend c_flash_data)
  **/
 void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 {
-#ifdef WEB_SERVER_USE_FLASH
+//#ifdef WEB_SERVER_USE_FLASH
+#if 1
     int i, j, data_type;
     uart_config_data_t data_config;
     char flash_data[256];
@@ -255,7 +267,8 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                      * =========================================*/
                     case FLASH_CMD_SAVE:
                     {
-                        j = 0;
+                        flash_data[0] = FLASH_DATA_PRESENT;
+                        j = 1;
 
                         // get data type - requesting config / ipversion data
                         c_flash_data :> data_type;
@@ -326,7 +339,7 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                      * =========================================*/
                     case FLASH_CMD_RESTORE:
                     {
-                        j = 0;
+                        j = 1;
                         // get data type - CONFIG or IPVER
                         c_flash_data :> data_type;
                         // read from flash
@@ -335,6 +348,11 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                                                        flash_ports);
 
                         // send flash result
+                        if(flash_data[0] != FLASH_DATA_PRESENT)
+                        {
+                            flash_result = -1; // no saved config present, send error
+                        }
+
                         c_flash_data <: flash_result;
 
                         if(S2E_FLASH_OK == flash_result)
@@ -343,33 +361,33 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                             {
                                 for(i = 0; i < NUM_UART_CHANNELS; i++)
                                 {
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 1, j, 0);
-                                    j += 1;
-                                    data_config.channel_id = atoi(temp);
+                                    data_config.channel_id = atoi(temp); j += 1;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 1, j, 0);
-                                    j += 1;
-                                    data_config.parity = atoi(temp);
+                                    data_config.parity = atoi(temp); j += 1;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 1, j, 0);
-                                    j += 1;
-                                    data_config.stop_bits = atoi(temp);
+                                    data_config.stop_bits = atoi(temp); j += 1;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 1, j, 0);
-                                    j += 1;
-                                    data_config.polarity = atoi(temp);
+                                    data_config.polarity = atoi(temp); j += 1;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 6, j, 0);
-                                    j += 6;
-                                    data_config.baud = atoi(temp);
+                                    data_config.baud = atoi(temp); j += 6;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 1, j, 0);
-                                    j += 1;
-                                    data_config.char_len = atoi(temp);
+                                    data_config.char_len = atoi(temp); j += 1;
 
+                                    clear_array(temp);
                                     copy_char_array(flash_data, temp, 5, j, 0);
-                                    j += 5;
-                                    tel_port = atoi(temp);
+                                    tel_port = atoi(temp); j += 5;
 
                                     c_flash_data <: data_config;
                                     c_flash_data <: tel_port;

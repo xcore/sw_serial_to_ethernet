@@ -6,7 +6,6 @@
 #include "xc_ptr.h"
 #include "multi_uart_rx.h"
 #include "multi_uart_tx.h"
-#include "print.h"
 
 typedef enum uart_config_cmd_t {
   UART_HANDLER_GET_UART_CONFIG,
@@ -53,7 +52,7 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
   } else {
 #ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
-    printchar('!');
+    //printchar('!');
 #endif
 
   }

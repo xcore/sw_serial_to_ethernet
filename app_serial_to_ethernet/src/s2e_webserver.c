@@ -6,7 +6,6 @@
 #include "itoa.h"
 #include <stdlib.h>
 #include <string.h>
-#include "print.h"
 #include "telnet_to_uart.h"
 #include "s2e_validation.h"
 #include "s2e_flash.h"
@@ -177,7 +176,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
             {
                 get_data_from_flash_thread(c_flash_data, &data1, &telnet_port1);
 
-                // Do the setting
+                uart_config_data_t *config = uart_get_config(data1.channel_id);
+                *config = data1;
                 uart_set_config(c_uart_config, &data1);
 
                 // We have to delay the changing of the telnet port until after the

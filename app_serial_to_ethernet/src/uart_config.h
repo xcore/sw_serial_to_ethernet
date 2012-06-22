@@ -18,6 +18,8 @@ typedef struct uart_config_data_t {
 uart_config_data_t *uart_get_config(int i);
 #endif
 
-void uart_config_init(chanend c_uart_config);
+void uart_config_init(chanend c_uart_config,
+                      NULLABLE_RESOURCE(chanend, c_flash_data),
+                      NULLABLE_RESOURCE(chanend, c_xtcp));
 
 #endif
