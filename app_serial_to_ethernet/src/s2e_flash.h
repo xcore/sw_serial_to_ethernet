@@ -4,6 +4,7 @@
 #include <xccompat.h>
 #include <flash.h>
 #include "uart_config.h"
+#include "xtcp_client.h"
 
 // define flash error cases
 #define S2E_FLASH_ERROR     -1
@@ -31,6 +32,12 @@ void s2e_flash(chanend c_flash_web,
 int get_flash_access_result(chanend c_flash_data);
 
 void send_cmd_to_flash_thread(chanend c_flash_data, int data_type, int command);
+
+void get_ipconfig_from_flash_thread(chanend c_flash_data,
+                                    REFERENCE_PARAM(xtcp_ipconfig_t, ip));
+
+void send_ipconfig_to_flash_thread(chanend c_flash_data,
+                                   REFERENCE_PARAM(xtcp_ipconfig_t, ip));
 
 void send_data_to_flash_thread(chanend c_flash_data,
                                REFERENCE_PARAM(uart_config_data_t, data));

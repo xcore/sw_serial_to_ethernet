@@ -236,14 +236,33 @@ int get_flash_access_result(chanend c_flash_data)
 }
 
 /** =========================================================================
+ *  send_data_to_flash_thread
+ *
+ *
+ **/
+void send_ipconfig_to_flash_thread(chanend c_flash_data, xtcp_ipconfig_t &ip)
+{
+    c_flash_data <: ip;
+}
+
+/** =========================================================================
+ *  get_ipconfig_from_flash_thread
+ *
+ *
+ **/
+void get_ipconfig_from_flash_thread(chanend c_flash_data, xtcp_ipconfig_t &ip)
+{
+    c_flash_data :> ip;
+}
+
+/** =========================================================================
  *  s2e_flash
  *
  *
  **/
 void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 {
-//#ifdef WEB_SERVER_USE_FLASH
-#if 1
+#ifdef WEB_SERVER_USE_FLASH
     web_server_flash_init(flash_ports);
     update_data_location_in_flash(flash_ports);
 
