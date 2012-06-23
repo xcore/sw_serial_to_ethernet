@@ -242,19 +242,20 @@ int get_flash_access_result(chanend c_flash_data)
  **/
 void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 {
-#ifdef WEB_SERVER_USE_FLASH
-    int i, j, data_type;
-    uart_config_data_t data_config;
-    char flash_data[256];
-    char temp[7];
-    int flash_result;
-    int tel_port = 0;
-
+//#ifdef WEB_SERVER_USE_FLASH
+#if 1
     web_server_flash_init(flash_ports);
     update_data_location_in_flash(flash_ports);
 
     while (1)
     {
+        char flash_data[256];
+        int i, j, data_type;
+        uart_config_data_t data_config;
+        char temp[7];
+        int flash_result;
+        int tel_port = 0;
+
         select
         {
             case web_server_flash(c_flash, flash_ports);
@@ -327,7 +328,21 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                         else if(data_type == IPVER)
                         {
                             // get the IP and version details
-                            //c_flash_data :> _;
+                            xtcp_ipconfig_t ipconf;
+
+                            c_flash_data :> ipconf;
+
+                            flash_data[1] = ipconf.ipaddr[0];
+                            flash_data[2] = ipconf.ipaddr[1];
+                            flash_data[3] = ipconf.ipaddr[2];
+
+                            flash_data[4] = ipconf.netmask[0];
+                            flash_data[5] = ipconf.netmask[1];
+                            flash_data[6] = ipconf.netmask[2];
+
+                            flash_data[7] = ipconf.gateway[0];
+                            flash_data[8] = ipconf.gateway[1];
+                            flash_data[9] = ipconf.gateway[2];
 
                         } // else if(data_type == IPVER)
 
@@ -406,6 +421,21 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 
                             else if(data_type == IPVER)
                             {
+                                xtcp_ipconfig_t ipconf;
+
+                                ipconf.ipaddr[0] = flash_data[1];
+                                ipconf.ipaddr[1] = flash_data[2];
+                                ipconf.ipaddr[2] = flash_data[3];
+
+                                ipconf.netmask[0] = flash_data[4];
+                                ipconf.netmask[1] = flash_data[5];
+                                ipconf.netmask[2] = flash_data[6];
+
+                                ipconf.gateway[0] = flash_data[7];
+                                ipconf.gateway[1] = flash_data[8];
+                                ipconf.gateway[2] = flash_data[9];
+
+                                c_flash_data <: ipconf;
 
                             } // else if(data_type == IPVER)
 
