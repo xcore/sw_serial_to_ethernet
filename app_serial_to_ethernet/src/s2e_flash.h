@@ -8,14 +8,19 @@
 // define flash error cases
 #define S2E_FLASH_ERROR     -1
 #define S2E_FLASH_OK        0
-// Relative (to webpage image) Index sectors where the data is present
+
+// Relative (to webpage image) Index sectors (-1) where the data is present
 #define UART_CONFIG         0
 #define IPVER               1
+
 // define flash access commands
 #define FLASH_CMD_SAVE      1
 #define FLASH_CMD_RESTORE   2
-// data present in flash indicator
+
+// indicate that data present in flash
 #define FLASH_DATA_PRESENT  '$'
+
+
 
 #ifdef __XC__
 void s2e_flash(chanend c_flash_web,

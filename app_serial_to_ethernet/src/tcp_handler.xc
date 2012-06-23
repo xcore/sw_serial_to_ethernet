@@ -7,6 +7,7 @@
 #include "mutual_thread_comm.h"
 #include "tcp_handler.h"
 #include "udp_discovery.h"
+#include "s2e_def.h"
 #include <xs1.h>
 
 void tcp_handler(chanend c_xtcp,
@@ -17,10 +18,11 @@ void tcp_handler(chanend c_xtcp,
 {
   timer tmr;
   int t;
+  int telnet_ports[NUM_UART_CHANNELS];
 
   tmr :> t;
-  uart_config_init(c_uart_config, c_flash_data, c_xtcp);
-  telnet_to_uart_init(c_xtcp, c_uart_data);
+  uart_config_init(c_uart_config, c_flash_data, c_xtcp, telnet_ports[0]);
+  telnet_to_uart_init(c_xtcp, c_uart_data, telnet_ports);
   telnet_config_init(c_xtcp);
   udp_discovery_init(c_xtcp);
   s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config, c_flash_data);

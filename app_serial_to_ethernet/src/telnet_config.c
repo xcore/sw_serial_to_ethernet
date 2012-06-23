@@ -199,9 +199,6 @@ static void execute_command(chanend c_xtcp,
       out_channel_id = st->config_in.channel_id;
       break;
     case TELNET_CONFIG_CMD_SAVE:
-      // TODO - send all the configs (got via uart_get_config) to the flash
-      // thread for saving
-
         // Received Save request from web page
         send_cmd_to_flash_thread(c_flash_data, UART_CONFIG, FLASH_CMD_SAVE);
 
@@ -223,9 +220,6 @@ static void execute_command(chanend c_xtcp,
         break;
 
     case TELNET_CONFIG_CMD_RESTORE:
-      // TODO - retrieve all the configs from the flash
-      // thread and apply uart_set_config
-
         // Received Restore request from web page
         send_cmd_to_flash_thread(c_flash_data, UART_CONFIG, FLASH_CMD_RESTORE);
         flash_result = get_flash_access_result(c_flash_data);

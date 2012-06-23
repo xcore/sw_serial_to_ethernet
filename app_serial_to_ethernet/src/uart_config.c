@@ -9,24 +9,14 @@ static uart_config_data_t uart_config[NUM_UART_CHANNELS];
 
 uart_config_data_t *uart_get_config(int i)
 {
-  return &uart_config[i];
+    return &uart_config[i];
 }
 
-void uart_config_init(chanend c_uart_config, chanend c_flash_data, chanend c_xtcp)
+void uart_config_init(chanend c_uart_config,
+                      chanend c_flash_data,
+                      chanend c_xtcp,
+                      int *telnet_port_address)
 {
-#if 1
-    for (int i = 0; i < NUM_UART_CHANNELS; i++)
-    {
-        uart_config[i].channel_id = i;
-        uart_config[i].parity = even;
-        uart_config[i].stop_bits = sb_1;
-        uart_config[i].baud = 115200;
-        uart_config[i].polarity = start_0;
-        uart_config[i].char_len = 8;
-        uart_set_config(c_uart_config, &uart_config[i]);
-    }
-#else
-
     uart_config_data_t data1;
     int telnet_port1;
     int flash_result;
@@ -43,7 +33,7 @@ void uart_config_init(chanend c_uart_config, chanend c_flash_data, chanend c_xtc
             uart_config_data_t *config = uart_get_config(data1.channel_id);
             *config = data1;
             uart_set_config(c_uart_config, &data1);
-            telnet_to_uart_set_port(c_xtcp, data1.channel_id, telnet_port1);
+            telnet_port_address[i] = telnet_port1;
         }
     }
     else
@@ -57,9 +47,8 @@ void uart_config_init(chanend c_uart_config, chanend c_flash_data, chanend c_xtc
             uart_config[i].polarity = start_0;
             uart_config[i].char_len = 8;
             uart_set_config(c_uart_config, &uart_config[i]);
-            telnet_to_uart_set_port(c_xtcp, uart_config[i].channel_id, (TELNET_UART_BASE_PORT + i));
+            telnet_port_address[i] = TELNET_UART_BASE_PORT + i;
         }
     }
-#endif
 }
 

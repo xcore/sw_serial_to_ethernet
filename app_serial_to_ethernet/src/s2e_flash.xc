@@ -26,6 +26,7 @@ static int connect_flash(fl_SPIPorts &flash_ports)
 {
     // connect to flash
     if (0 != fl_connectToDevice(flash_ports, flash_devices, 1)) { return S2E_FLASH_ERROR; }
+
     // get flash type
     switch (fl_getFlashType())
     {
@@ -66,23 +67,16 @@ static int update_data_location_in_flash(fl_SPIPorts &flash_ports)
     while (done != 1)
     {
         temp = fl_getSectorSize(index_data_sector);
-        if ((total_rom_bytes - temp) <= 0)
-        {
-            done = 1;
-        }
-        else
-        {
-            total_rom_bytes -= temp;
-        }
 
-        if (index_data_sector < fl_getNumSectors())
-        {
-            index_data_sector++;
-        }
-        else
-        {
-            return S2E_FLASH_ERROR;
-        }
+        // check if image is contained within a sector
+        if ((total_rom_bytes - temp) <= 0) { done = 1; }
+        else { total_rom_bytes -= temp; }
+
+        // check if we haven't exceeded beyond available data sectors
+        // if exceeded, we have no more space to write in flash
+        if (index_data_sector < fl_getNumSectors()) { index_data_sector++; }
+        else { return S2E_FLASH_ERROR; }
+
     } // while
 
     // assuming that the config data size will not exceed sector size
@@ -184,7 +178,7 @@ static void copy_char_array(char src[],
 /** =========================================================================
  *  copy_char_array
  *
- *  CAUTION CAUTION HARD CODE
+ *  CAUTION CAUTION HARD CODE (7) - size of temp variable
  **/
 static void clear_array(char array[])
 {
@@ -195,7 +189,7 @@ static void clear_array(char array[])
 }
 
 /** =========================================================================
- *  flash_save_config
+ *  send_cmd_to_flash_thread
  *
  *
  **/
@@ -205,6 +199,11 @@ void send_cmd_to_flash_thread(chanend c_flash_data, int data_type, int command)
     c_flash_data <: data_type;
 }
 
+/** =========================================================================
+ *  send_data_to_flash_thread
+ *
+ *
+ **/
 void send_data_to_flash_thread(chanend c_flash_data, uart_config_data_t &data)
 {
     int tel_port;
@@ -213,12 +212,22 @@ void send_data_to_flash_thread(chanend c_flash_data, uart_config_data_t &data)
     c_flash_data <: tel_port;
 }
 
+/** =========================================================================
+ *  get_data_from_flash_thread
+ *
+ *
+ **/
 void get_data_from_flash_thread(chanend c_flash_data, uart_config_data_t &data, int &telnet_port)
 {
     c_flash_data :> data;
     c_flash_data :> telnet_port;
 }
 
+/** =========================================================================
+ *  get_flash_access_result
+ *
+ *
+ **/
 int get_flash_access_result(chanend c_flash_data)
 {
     int result;
@@ -233,8 +242,7 @@ int get_flash_access_result(chanend c_flash_data)
  **/
 void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 {
-//#ifdef WEB_SERVER_USE_FLASH
-#if 1
+#ifdef WEB_SERVER_USE_FLASH
     int i, j, data_type;
     uart_config_data_t data_config;
     char flash_data[256];

@@ -8,13 +8,11 @@
 #ifdef __XC__
 void uart_handler(chanend c_uart_data,
                   chanend c_uart_config,
-                 streaming chanend c_uart_rx,
-                 streaming chanend c_uart_tx);
+                  streaming chanend c_uart_rx,
+                  streaming chanend c_uart_tx);
 #endif
-
 
 void uart_set_config(chanend c_uart_config,
                      REFERENCE_PARAM(uart_config_data_t, data));
 
 #endif // __UART_HANDLER_H__
-

@@ -15,6 +15,8 @@ char s2e_validation_bad_char_len_msg[] = "Invalid char length setting.";
 char s2e_validation_bad_telnet_port_msg[] = "Invalid telnet port setting.";
 char s2e_validation_bad_channel_id[] = "Invalid uart id.";
 
+
+
 char *s2e_validate_channel_id(int channel_id)
 {
   if (channel_id < 0 || channel_id > NUM_UART_CHANNELS)
@@ -22,6 +24,7 @@ char *s2e_validate_channel_id(int channel_id)
 
   return NULL;
 }
+
 char *s2e_validate_uart_config(uart_config_data_t *config)
 {
   char *err;
