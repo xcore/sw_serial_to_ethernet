@@ -9,8 +9,8 @@
 #include "web_server.h"
 #include "uart_config.h"
 #include "s2e_def.h"
-#include "itoa.h"
 #include "telnet_to_uart.h"
+#include "copy_array.h"
 
 static int flash_sector_config = 0;
 static int flash_address_config = 0;
@@ -159,36 +159,6 @@ int write_to_flash(int data_type, char data[], fl_SPIPorts &flash_ports)
 }
 
 /** =========================================================================
- *  copy_char_array
- *
- *
- **/
-static void copy_char_array(char src[],
-                            char dest[],
-                            int src_len,
-                            int src_offset,
-                            int dest_offset)
-{
-    for(int i = 0; i < src_len; i++)
-    {
-        dest[dest_offset + i] = src[src_offset + i];
-    }
-}
-
-/** =========================================================================
- *  copy_char_array
- *
- *  CAUTION CAUTION HARD CODE (7) - size of temp variable
- **/
-static void clear_array(char array[])
-{
-    for(int i = 0; i < 7; i++)
-    {
-        array[i] = '\0';
-    }
-}
-
-/** =========================================================================
  *  send_cmd_to_flash_thread
  *
  *
@@ -268,13 +238,6 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
 
     while (1)
     {
-        char flash_data[256];
-        int i, j, data_type;
-        uart_config_data_t data_config;
-        char temp[7];
-        int flash_result;
-        int tel_port = 0;
-
         select
         {
             case web_server_flash(c_flash, flash_ports);
@@ -287,6 +250,10 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                 // Here we can handle commands to save/restore data from flash
                 // It needs to be stored after the web data (i.e. after
                 // WEB_SERVER_IMAGE_SIZE)
+
+                char flash_data[250];
+                int i, j, data_type;
+                int flash_result;
 
                 switch(cmd)
                 {
@@ -306,43 +273,18 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                             // get configuration data for all 8 channels
                             for(i = 0; i < NUM_UART_CHANNELS; i++)
                             {
+                                uart_config_data_t data_config;
+                                int tel_port;
+
                                 c_flash_data :> data_config;
                                 c_flash_data :> tel_port;
 
                                 // append data to flash_data array
-                                itoa(data_config.channel_id, temp, 10, 1);
-                                copy_char_array(temp, flash_data, 1, 0, j);
-                                j += 1;
-
-                                itoa(data_config.parity, temp, 10, 1);
-                                copy_char_array(temp, flash_data, 1, 0, j);
-                                j += 1;
-
-                                itoa(data_config.stop_bits, temp, 10, 1);
-                                copy_char_array(temp, flash_data, 1, 0, j);
-                                j += 1;
-
-                                itoa(data_config.polarity, temp, 10, 1);
-                                copy_char_array(temp, flash_data, 1, 0, j);
-                                j += 1;
-
-                                itoa(data_config.baud, temp, 10, 6);
-                                copy_char_array(temp, flash_data, 6, 0, j);
-                                j += 6;
-
-                                itoa(data_config.char_len, temp, 10, 1);
-                                copy_char_array(temp, flash_data, 1, 0, j);
-                                j += 1;
-
-                                itoa(tel_port, temp, 10, 5);
-                                copy_char_array(temp, flash_data, 5, 0, j);
-                                j += 5;
+                                j = copy_config_to_array(flash_data,  j,  data_config, tel_port);
 
                             } // for(i = 0; i < NUM_UART_CHANNELS; i++)
 
                         } // if(data_type == UART_CONFIG)
-
-
 
                         else if(data_type == IPVER)
                         {
@@ -403,40 +345,17 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                             {
                                 for(i = 0; i < NUM_UART_CHANNELS; i++)
                                 {
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 1, j, 0);
-                                    data_config.channel_id = atoi(temp); j += 1;
+                                    uart_config_data_t data_config;
+                                    int tel_port;
 
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 1, j, 0);
-                                    data_config.parity = atoi(temp); j += 1;
+                                    // append data to flash_data array
+                                    j = copy_config_from_array(flash_data, j, data_config, tel_port);
 
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 1, j, 0);
-                                    data_config.stop_bits = atoi(temp); j += 1;
-
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 1, j, 0);
-                                    data_config.polarity = atoi(temp); j += 1;
-
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 6, j, 0);
-                                    data_config.baud = atoi(temp); j += 6;
-
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 1, j, 0);
-                                    data_config.char_len = atoi(temp); j += 1;
-
-                                    clear_array(temp);
-                                    copy_char_array(flash_data, temp, 5, j, 0);
-                                    tel_port = atoi(temp); j += 5;
-
+                                    // send to channel
                                     c_flash_data <: data_config;
                                     c_flash_data <: tel_port;
-
                                 }
                             } // if(data_type == UART_CONFIG)
-
 
                             else if(data_type == IPVER)
                             {
