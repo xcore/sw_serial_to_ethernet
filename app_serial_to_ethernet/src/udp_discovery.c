@@ -4,6 +4,8 @@
 #include "xtcp_client.h"
 #include "xtcp_client_conf.h"
 #include "itoa.h"
+#include "s2e_flash.h"
+#include "util.h"
 
 typedef enum {
   UDP_DISC_CMD_IP_RESPOND=1,
@@ -52,6 +54,25 @@ static char invalid_udp_request[] = "Invalid UDP Server request";
 static xtcp_ipaddr_t broadcast_addr = {255,255,255,255};
 xtcp_ipconfig_t g_ipconfig;
 unsigned char g_mac_addr[6];
+
+
+#define USE_STATIC_IP   0
+
+xtcp_ipconfig_t ipconfig =
+{
+#if USE_STATIC_IP
+   {  169, 254, 196, 178},
+   {  255, 255, 0, 0},
+   {  0, 0, 0, 0}
+#else
+   { 0, 0, 0, 0 },
+   { 0, 0, 0, 0 },
+   { 0, 0, 0, 0 }
+#endif
+};
+
+
+
 
 static connection_state_t *get_new_state()
 {
@@ -211,7 +232,6 @@ static void parse_udp_buffer(chanend c_xtcp,
 	  for (k=0;k<4;k++) {
 	    g_ipconfig.ipaddr[k] = ipconfig_to_flash.ipaddr[k];
 	  }
-	  //Call chip reset function
 	}
 }
 
@@ -309,20 +329,29 @@ static int construct_udp_response(chanend c_xtcp,
 	  return strlen(buf);
 }
 
-void udp_discovery_init(chanend c_xtcp)
+void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p_ipconfig)
 {
-	xtcp_ipconfig_t *l_ipconfig;
+    int flash_result;
 
 	for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
 	  udp_disc_states[i].active = 0;
 	  udp_disc_states[i].conn_id = -1;
 	}
 
+	send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_RESTORE);
+	flash_result = get_flash_access_result(c_flash_data);
+	if(flash_result == S2E_FLASH_OK)
+	{
+	    get_ipconfig_from_flash_thread(c_flash_data, p_ipconfig);
+	}
+	else
+	  memcpy((char *)p_ipconfig, (char *)&ipconfig, sizeof(xtcp_ipconfig_t));
+
 	xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);
 }
 
 void udp_discovery_event_handler(chanend c_xtcp,
-                              chanend c_uart_config,
+                              chanend c_flash_data,
                               xtcp_connection_t *conn)
 {
 	int len;
@@ -370,6 +399,14 @@ void udp_discovery_event_handler(chanend c_xtcp,
 	            break;
 
 	          parse_udp_buffer(c_xtcp, conn, buf, len, st);
+
+	          if (st->cmd == UDP_DISC_CMD_IP_CHANGE) {
+	            send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_SAVE);
+	            send_ipconfig_to_flash_thread(c_flash_data, &g_ipconfig);
+
+	            /* Restart the device */
+	            chip_soft_reset();
+	          }
 	        break;
 	      case XTCP_REQUEST_DATA:
 	      case XTCP_RESEND_DATA:

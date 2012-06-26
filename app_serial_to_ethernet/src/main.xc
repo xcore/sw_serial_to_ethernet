@@ -52,16 +52,6 @@ on stdcore[ETH_CORE]: mii_interface_t mii =
 on stdcore[ETH_CORE]: out port p_mii_resetn = PORT_ETH_RST_N;
 on stdcore[ETH_CORE]: smi_interface_t smi = {0, PORT_ETH_MDIO_1, PORT_ETH_MDC_1};
 
-// IP Config - change this to suit your network.  Leave with all
-// 0 values to use DHCP
-xtcp_ipconfig_t ipconfig =
-{
-   { 169, 254, 196, 178 }, // ip address (eg 192,168,0,2)
-   { 255, 255, 0, 0 }, // netmask (eg 255,255,255,0)
-   { 0, 0, 0, 0 } // gateway (eg 192,168,0,1)
-};
-
-
 #define PORT_TX on stdcore[UART_CORE]: XS1_PORT_8B
 #define PORT_RX on stdcore[UART_CORE]: XS1_PORT_8A
 
@@ -110,6 +100,9 @@ int main(void) {
         on stdcore[ETH_CORE]:
         {
             char mac_address[6];
+            xtcp_ipconfig_t ipconfig;
+            c_xtcp[0] :> ipconfig;
+
             ethernet_getmac_otp(otp_ports, mac_address);
             // Start server
             uip_single_server(null, smi, mii, c_xtcp, 1,

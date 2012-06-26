@@ -28,10 +28,11 @@
 #define UDP_CMD_IP_CHANGE		    "XMOS S2E IPCHANGE "
 #endif
 
-void udp_discovery_init(chanend c_xtcp);
+void udp_discovery_init(chanend c_xtcp, chanend c_flash_data,
+                        REFERENCE_PARAM(xtcp_ipconfig_t, ipconfig));
 
 void udp_discovery_event_handler(chanend c_xtcp,
-                chanend c_uart_config,
+                chanend c_flash_data,
                 REFERENCE_PARAM(xtcp_connection_t, conn));
 
 #endif // __udp_discovery_h__
