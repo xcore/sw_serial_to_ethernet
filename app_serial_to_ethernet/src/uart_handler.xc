@@ -169,6 +169,12 @@ void uart_handler(chanend c_uart_data,
   uart_tx_info uart_tx_state[NUM_UART_CHANNELS];
   uart_rx_info uart_rx_state[NUM_UART_CHANNELS];
 
+#ifdef S2E_DEBUG_AUTO_TRAFFIC
+  timer tmr;
+  int time;
+  int i=0;
+  tmr :> time;
+#endif
 
   mutual_comm_init_state(mstate);
 
@@ -208,6 +214,15 @@ void uart_handler(chanend c_uart_data,
     #pragma ordered
     select
       {
+#ifdef S2E_DEBUG_AUTO_TRAFFIC
+      case tmr when timerafter(time) :> int _:
+        time += 10000;
+        push_to_uart_rx_buffer(uart_rx_state[0],i+48,c_uart_data,mstate);
+        i+=1;
+        if (i>9)
+          i=0;
+        break;
+#endif
       case c_uart_rx :> char channel_id:
         { unsigned uart_char;
           uart_char = (unsigned) uart_rx_grab_char(channel_id);

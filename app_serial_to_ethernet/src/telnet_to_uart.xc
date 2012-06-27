@@ -3,6 +3,7 @@
 #include "s2e_def.h"
 #include "xc_ptr.h"
 #include "telnet.h"
+#include <print.h>
 #include <safestring.h>
 
 typedef struct uart_channel_state_t {
@@ -90,7 +91,7 @@ static int get_conn_id_from_uart_id(int i) {
   return uart_channel_state[i].conn_id;
 }
 
-#pragma unsafe arrays
+//#pragma unsafe arrays
 void telnet_to_uart_event_handler(chanend c_xtcp,
                                   chanend c_uart_data,
                                   xtcp_connection_t &conn)
@@ -118,6 +119,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
         uart_channel_state[uart_id].sending_data = 0;
         init_telnet_parse_state(uart_channel_state[uart_id].parse_state);
         xtcp_ack_recv_mode(c_xtcp, conn);
+        xtcp_accept_partial_ack(c_xtcp, conn);
         xtcp_init_send(c_xtcp, conn);
         break;
       case XTCP_RECV_DATA:
@@ -152,20 +154,73 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
           welcome_msg[sizeof(welcome_msg)-3] = '0'+uart_id;
           xtcp_send(c_xtcp, welcome_msg, sizeof(welcome_msg));
         }
+        else if (uart_channel_state[uart_id].sending_welcome &&
+                 conn.outstanding > 0) {
+          xtcp_complete_send(c_xtcp);
+        }
         else {
+          int prev_buf = uart_channel_state[uart_id].current_rx_buffer;
+          int prev_len = uart_channel_state[uart_id].current_rx_buffer_length;
+          int new_buf;
+          int new_len;
           uart_channel_state[uart_id].sending_welcome = 0;
           mutual_comm_initiate(c_uart_data);
           master {
             c_uart_data <: GET_UART_RX_DATA_TO_SEND;
             c_uart_data <: uart_id;
-            c_uart_data :> uart_channel_state[uart_id].current_rx_buffer;
-            c_uart_data :> uart_channel_state[uart_id].current_rx_buffer_length;
+            c_uart_data :> new_buf;
+            c_uart_data :> new_len;
           }
-          if (uart_channel_state[uart_id].current_rx_buffer == -1) {
-            xtcp_complete_send(c_xtcp);
-            uart_channel_state[uart_id].sending_data = 0;
+          if (new_buf == -1) {
+            if (conn.outstanding == 0) {
+              xtcp_complete_send(c_xtcp);
+              uart_channel_state[uart_id].sending_data = 0;
+            }
+            else {
+              for (int i=0;i<conn.outstanding;i++)
+                uart_channel_state[uart_id].uart_rx_buffer[prev_buf][i] =
+                  uart_channel_state[uart_id].uart_rx_buffer[prev_buf][i+prev_len-conn.outstanding];
+
+              uart_channel_state[uart_id].current_rx_buffer_length = conn.outstanding;
+              xtcp_send(c_xtcp,
+                        uart_channel_state[uart_id].uart_rx_buffer[uart_channel_state[uart_id].current_rx_buffer],
+                        uart_channel_state[uart_id].current_rx_buffer_length);
+
+              uart_channel_state[uart_id].sending_data = 0;
+            }
+          }
+          else if (conn.outstanding != 0) {
+            int move_len;
+            move_len = new_len;
+            if (move_len+conn.outstanding > UART_RX_MAX_PACKET_SIZE)
+              move_len = UART_RX_MAX_PACKET_SIZE - conn.outstanding;
+
+            for (int i=move_len-1;i>=0;i--)
+              uart_channel_state[uart_id].uart_rx_buffer[new_buf][i+conn.outstanding] =
+                uart_channel_state[uart_id].uart_rx_buffer[new_buf][i];
+
+            for (int i=0;i<conn.outstanding;i++)
+              uart_channel_state[uart_id].uart_rx_buffer[new_buf][i] =
+                uart_channel_state[uart_id].uart_rx_buffer[prev_buf][prev_len-conn.outstanding+i];
+
+            new_len = move_len + conn.outstanding;
+
+            uart_channel_state[uart_id].current_rx_buffer = new_buf;
+            uart_channel_state[uart_id].current_rx_buffer_length = new_len;
+
+
+            uart_channel_state[uart_id].sending_data = 1;
+            xtcp_send(c_xtcp,
+                      uart_channel_state[uart_id].uart_rx_buffer[uart_channel_state[uart_id].current_rx_buffer],
+                      uart_channel_state[uart_id].current_rx_buffer_length);
+
+            //            xtcp_complete_send(c_xtcp);
           }
           else {
+
+            uart_channel_state[uart_id].current_rx_buffer = new_buf;
+            uart_channel_state[uart_id].current_rx_buffer_length = new_len;
+
             uart_channel_state[uart_id].sending_data = 1;
             xtcp_send(c_xtcp,
                       uart_channel_state[uart_id].uart_rx_buffer[uart_channel_state[uart_id].current_rx_buffer],
