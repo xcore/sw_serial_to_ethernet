@@ -349,7 +349,7 @@ void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p
 	else
 	  memcpy((char *)p_ipconfig, (char *)&ipconfig, sizeof(xtcp_ipconfig_t));
 
-	xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);
+	//xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);
 }
 
 #pragma unsafe arrays
@@ -363,6 +363,7 @@ void udp_discovery_event_handler(chanend c_xtcp,
 	    case XTCP_IFUP:
 	    	xtcp_get_ipconfig(c_xtcp, &g_ipconfig);
 	    	xtcp_get_mac_address(c_xtcp, g_mac_addr);
+	    	xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);////
 	        xtcp_connect(c_xtcp, OUTGOING_UDP_PORT, broadcast_addr, XTCP_PROTOCOL_UDP);
 	    case XTCP_IFDOWN:
 	    case XTCP_ALREADY_HANDLED:

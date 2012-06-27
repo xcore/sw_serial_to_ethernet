@@ -22,13 +22,11 @@ void tcp_handler(chanend c_xtcp,
   xtcp_ipconfig_t ipconfig;
 
   tmr :> t;
+  udp_discovery_init(c_xtcp, c_flash_data, ipconfig);
+  c_xtcp <: ipconfig;
   uart_config_init(c_uart_config, c_flash_data, c_xtcp, telnet_ports[0]);
   telnet_to_uart_init(c_xtcp, c_uart_data, telnet_ports);
   telnet_config_init(c_xtcp);
-
-  udp_discovery_init(c_xtcp, c_flash_data, ipconfig);
-  c_xtcp <: ipconfig;
-
   s2e_webserver_init(c_xtcp, c_flash_web, c_uart_config, c_flash_data);
 
   while (1) {
