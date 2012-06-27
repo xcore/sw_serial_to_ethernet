@@ -72,8 +72,7 @@ xtcp_ipconfig_t ipconfig =
 };
 
 
-
-
+#pragma unsafe arrays
 static connection_state_t *get_new_state()
 {
   for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
@@ -96,6 +95,7 @@ static connection_state_t *get_state_from_connection(xtcp_connection_t *conn)
   return NULL;
 }
 
+#pragma unsafe arrays
 static void xtcp_init_send_on_udp_response_port(chanend c_xtcp)
 {
 	xtcp_connection_t conn;
@@ -110,6 +110,7 @@ static void xtcp_init_send_on_udp_response_port(chanend c_xtcp)
 	  }
 }
 
+#pragma unsafe arrays
 static int check_for_resp_connection(void)
 {
 	for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
@@ -128,6 +129,7 @@ static void reset_connection_state(connection_state_t *st)
   st->reply_state = REPLY_START;
 }
 
+#pragma unsafe arrays
 static void parse_udp_buffer(chanend c_xtcp,
                          xtcp_connection_t *conn,
                          char *buf,
@@ -235,7 +237,7 @@ static void parse_udp_buffer(chanend c_xtcp,
 	}
 }
 
-
+#pragma unsafe arrays
 static int construct_udp_response(chanend c_xtcp,
         xtcp_connection_t *conn,
         char *buf,
@@ -350,6 +352,7 @@ void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p
 	xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);
 }
 
+#pragma unsafe arrays
 void udp_discovery_event_handler(chanend c_xtcp,
                               chanend c_flash_data,
                               xtcp_connection_t *conn)
