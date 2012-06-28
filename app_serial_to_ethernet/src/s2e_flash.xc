@@ -148,6 +148,8 @@ int write_to_flash(int data_type, char data[], fl_SPIPorts &flash_ports)
         address = flash_address_ipver;
     }
 
+    // connect to flash
+    if (S2E_FLASH_OK != connect_flash(flash_ports))  {return S2E_FLASH_ERROR;}
     // erase sector
     if (S2E_FLASH_OK != fl_eraseSector(sector))      {return S2E_FLASH_ERROR;}
     // write page
