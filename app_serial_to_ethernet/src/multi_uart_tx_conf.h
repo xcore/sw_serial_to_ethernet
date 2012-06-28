@@ -37,7 +37,7 @@
 /**
  * Define the buffer size in UART word entries - needs to be a power of 2 (i.e. 1,2,4,8,16,32)
  */
-#define UART_TX_BUF_SIZE    16
+#define UART_TX_BUF_SIZE    8
 
 /**
  * Define the number of channels that are to be supported, must fit in the port. Also, 

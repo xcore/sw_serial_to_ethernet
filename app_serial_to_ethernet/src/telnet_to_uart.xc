@@ -91,7 +91,7 @@ static int get_conn_id_from_uart_id(int i) {
   return uart_channel_state[i].conn_id;
 }
 
-//#pragma unsafe arrays
+#pragma unsafe arrays
 void telnet_to_uart_event_handler(chanend c_xtcp,
                                   chanend c_uart_data,
                                   xtcp_connection_t &conn)

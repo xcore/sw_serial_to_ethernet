@@ -8,6 +8,8 @@
 
 #define WEB_SERVER_FLASH_THREAD 1
 
+#define WEB_SERVER_NUM_CONNECTIONS 2
+
 // prototypes of functions called by the dynamic evaluation in the webpages
 void s2e_post_render(int app_state, int connection_state);
 
