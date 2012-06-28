@@ -7,49 +7,22 @@
 #include "s2e_flash.h"
 #include "util.h"
 
-typedef enum {
-  UDP_DISC_CMD_IP_RESPOND=1,
-  UDP_DISC_CMD_IP_CHANGE=2,
-} udp_disc_cmd_t;
-
-typedef enum {
-  PARSING_START,
-  PARSING_COMMON,
-  PARSING_IP_PART,
-  STORING_IP_PART,
-  PARSING_TERM
-} udp_disc_parsing_state_t;
-
-typedef enum {
-  REPLY_START,
-  FRAME_COMMON_PART,
-  FRAME_S2E_VERSION,
-  FRAME_MAC_VERSION,
-  FRAME_IP_VERSION,
-  REPLY_TERM
-} udp_disc_reply_state_t;
-
 typedef struct connection_state_t {
   int conn_id;
   int active;
-  udp_disc_cmd_t cmd;
-  udp_disc_parsing_state_t disc_parsing_state;
-  udp_disc_reply_state_t reply_state;
   int send_resp;
-  int resp_conn;
   char *err;
 } connection_state_t;
 
-static connection_state_t udp_disc_states[UIP_CONF_UDP_CONNS];
-static char buf[UDP_RECV_BUF_SIZE+1];
+static connection_state_t udp_disc_state;
+static char buf[UDP_RECV_BUF_SIZE];
 //UDP Response Format :: "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:xxx.xxx.xxx.xxx";
 static char *g_FirmwareVer = S2E_FIRMWARE_VER;
 static char *g_UdpQueryString = UDP_QUERY_S2E_IP;
 static char *g_UdpCmdIpChange = UDP_CMD_IP_CHANGE;
 
 static char *g_RespString = "XMOS S2E VER:;MAC%;IP@";
-static char invalid_ip_config[] = "Invalid IP config";
-static char invalid_udp_request[] = "Invalid UDP Server request";
+static char invalid_udp_request[] = "Invalid UDP Server request\n";
 
 static xtcp_ipaddr_t broadcast_addr = {255,255,255,255};
 xtcp_ipconfig_t g_ipconfig;
@@ -71,274 +44,98 @@ xtcp_ipconfig_t ipconfig =
 #endif
 };
 
-
-#pragma unsafe arrays
-static connection_state_t *get_new_state()
-{
-  for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
-    if (!udp_disc_states[i].active) {
-    	udp_disc_states[i].active = 1;
-      return &udp_disc_states[i];
-    }
-  }
-  return NULL;
-}
-
-static connection_state_t *get_state_from_connection(xtcp_connection_t *conn)
-{
-  for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
-    if (udp_disc_states[i].active &&
-    		udp_disc_states[i].conn_id == conn->id) {
-      return &udp_disc_states[i];
-    }
-  }
-  return NULL;
-}
-
-#pragma unsafe arrays
-static void xtcp_init_send_on_udp_response_port(chanend c_xtcp)
-{
-	xtcp_connection_t conn;
-
-	for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
-	  if (udp_disc_states[i].active &&
-	    udp_disc_states[i].resp_conn == 1) {
-		  conn.id = udp_disc_states[i].conn_id;
-		  xtcp_init_send(c_xtcp, &conn);
-		  return;
-	    }
-	  }
-}
-
-#pragma unsafe arrays
-static int check_for_resp_connection(void)
-{
-	for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
-	  if (udp_disc_states[i].active &&
-	    udp_disc_states[i].resp_conn == 1) {
-		  udp_disc_states[i].send_resp = 1;
-		  return 1;
-	    }
-	}
-	return 0;
-}
-
-static void reset_connection_state(connection_state_t *st)
-{
-  st->disc_parsing_state = PARSING_START;
-  st->reply_state = REPLY_START;
-}
-
 #pragma unsafe arrays
 static void parse_udp_buffer(chanend c_xtcp,
+		                 chanend c_flash_data,
                          xtcp_connection_t *conn,
                          char *buf,
-                         int len,
-                         connection_state_t *st)
+                         int len)
 {
-	int j = 0;
-	int k = 0;
-	unsigned char ip_cfg_char_recd[4];
-	xtcp_ipconfig_t ipconfig_to_flash;
-	char *end = buf + len;
+	if ('R' == buf[9]) {
+		udp_disc_state.send_resp = 1;
+		xtcp_init_send(c_xtcp, conn);
+	}
+	else if ('I' == buf[9]) {
+	  int j = 18;
+	  int k = 0;
+	  for (int i=j;i<len;i++) {
+		if (buf[i] == '.') {
+			buf[i] = '\0';
+			g_ipconfig.ipaddr[k] = (unsigned char) atoi(&buf[j]);
+			j = i+1;
+			k++;
+		}
+	  }
 
-	for (int i=0;i<2;i++) {
-	  if (!g_ipconfig.ipaddr[i]) {
-		st->err = invalid_ip_config;
-		xtcp_init_send_on_udp_response_port(c_xtcp);
-		reset_connection_state(st);
-		return;
+	  if (4 == k) {
+        send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_SAVE);
+        send_ipconfig_to_flash_thread(c_flash_data, &g_ipconfig);
+        chip_soft_reset();
 	  }
 	}
-
-	//while (buf < end) {
-	while (PARSING_TERM != st->disc_parsing_state) {
-	  switch (st->disc_parsing_state) {
-	    case PARSING_START:
-	      st->disc_parsing_state = PARSING_COMMON;
-	      break;
-	    case PARSING_COMMON:
-		  if ((*g_UdpQueryString == *buf) && (*g_UdpCmdIpChange == *g_UdpQueryString)) {
-		    buf++;
-		    g_UdpQueryString++;
-		    g_UdpCmdIpChange++;
-		  }
-		  else if (*g_UdpQueryString == *buf) {
-		    buf++;
-		    g_UdpQueryString++;
-
-		    if ('\0' == *g_UdpQueryString) {
-			  st->disc_parsing_state = PARSING_TERM;
-			  st->cmd = UDP_DISC_CMD_IP_RESPOND;
-			}
-	      }
-	      else if (*g_UdpCmdIpChange == *buf) {
-	    	buf++;
-	    	g_UdpCmdIpChange++;
-
-	    	if ('\0' == *g_UdpCmdIpChange)
-	    	  st->disc_parsing_state = PARSING_IP_PART;
-	      }
-	      else {
-	    	st->err = invalid_udp_request;
-	    	xtcp_init_send_on_udp_response_port(c_xtcp);
-	    	reset_connection_state(st);
-	      }
-	      break;
-	    case PARSING_IP_PART:
-	      if ( ( ('.' != *buf) || (3 == k) ) && (j < 3) ) {
-	    	ip_cfg_char_recd[j] = *buf;
-	    	j++;
-	    	//if (*buf != '\0')
-	    	  buf++;
-	      }
-	      else if (('.' == *buf) && (j < 4)) {
-	    	buf++;
-	    	ip_cfg_char_recd[j] = '\0';
-	    	st->disc_parsing_state = STORING_IP_PART;
-	      }
-	      else if ((3 == k) && (j < 4)) {
-	    	ip_cfg_char_recd[j] = '\0';
-	    	st->disc_parsing_state = STORING_IP_PART;
-	      }
-	      else if (j >= 4) {
-	    	st->err = invalid_ip_config;
-	    	xtcp_init_send_on_udp_response_port(c_xtcp);
-	    	reset_connection_state(st);
-	      }
-	      break;
-	    case STORING_IP_PART:
-    	  ipconfig_to_flash.ipaddr[k] = (unsigned char) atoi(ip_cfg_char_recd);
-	      j = 0;
-	      k++;
-
-	      if (4 == k) {
-	    	st->cmd = UDP_DISC_CMD_IP_CHANGE;
-	    	st->disc_parsing_state = PARSING_TERM;
-	      }
-	      else
-	    	st->disc_parsing_state = PARSING_IP_PART;
-
-	      break;
-	    case PARSING_TERM:
-	      break;
-	  }
-	}
-
-	if (st->cmd == UDP_DISC_CMD_IP_RESPOND) {
-		  if (check_for_resp_connection()) {
-			xtcp_init_send_on_udp_response_port(c_xtcp);
-		  }
-	}
-	else if (st->cmd == UDP_DISC_CMD_IP_CHANGE) {
-	  for (k=0;k<4;k++) {
-	    g_ipconfig.ipaddr[k] = ipconfig_to_flash.ipaddr[k];
-	  }
+	else {
+	  udp_disc_state.err = invalid_udp_request;
+	  xtcp_init_send(c_xtcp, conn);
 	}
 }
 
 #pragma unsafe arrays
-static int construct_udp_response(chanend c_xtcp,
-        xtcp_connection_t *conn,
-        char *buf,
-        connection_state_t *st)
+static void construct_udp_response(char *buf)
 {
-	  int i = 0;
-	  int len = 0;
+	int len = 0;
 
-	  while (1) {
-	    switch (st->reply_state) {
-	      case REPLY_START:
-	    	st->reply_state = FRAME_COMMON_PART;
-	      break;
-	      case FRAME_COMMON_PART:
-	    	*buf = *g_RespString;
-	    	buf++;
-	    	g_RespString++;
-	    	i=0;
+	memcpy(buf, g_RespString, 13);
+	buf += 13;
 
-			if (':' == *g_RespString) {
-	    	  *buf = *g_RespString;
-	    	  buf++;
-		      g_RespString++;
-			  st->reply_state = FRAME_S2E_VERSION;
-			}
-			else if ('%' == *g_RespString) {
-			  *buf = ':';
-			  buf++;
-		      g_RespString++;
-			  st->reply_state = FRAME_MAC_VERSION;
-			}
-			else if ('@' == *g_RespString) {
-			  *buf = ':';
-			  buf++;
-			  st->reply_state = FRAME_IP_VERSION;
-			}
-	      break;
-	      case FRAME_S2E_VERSION:
-	        *buf = *g_FirmwareVer;
-	    	buf++;
-	    	g_FirmwareVer++;
+	memcpy(buf, g_FirmwareVer, strlen(g_FirmwareVer));
+	buf += strlen(g_FirmwareVer);
+	*buf = ';';
+	buf++;
 
-			if ('\0' == *g_FirmwareVer) {
-			  st->reply_state = FRAME_COMMON_PART;
-			}
-	      break;
-	      case FRAME_MAC_VERSION:
-	        len = itoa((int)g_mac_addr[i], buf, 10, 0);
-	        i++;
-	        buf += len;
+	for (int i=0; i<6; i++) {
+	  len = itoa((int)g_mac_addr[i], buf, 10, 0);
 
-	        if (0 == len) {
-		    	  *buf = '0';
-		    	  buf++;
-	        }
-
-	        if (i<6) {
-	          *buf = ':';
-		      buf++;
-	        }
-	        else {
-	          st->reply_state = FRAME_COMMON_PART;
-	        }
-	      break;
-	      case FRAME_IP_VERSION:
-	    	len = itoa((int)g_ipconfig.ipaddr[i], buf, 10, 0);
-	    	i++;
-	    	buf += len;
-
-	        if (0 == len) {
-		    	  *buf = '0';
-		    	  buf++;
-	        }
-
-	        if (i<4) {
-	    	  *buf = '.';
-	    	  buf++;
-	    	}
-	    	else {
-	    	  buf++;
-	    	  *buf = '\0';
-	    	  st->reply_state = REPLY_TERM;
-	    	}
-	      break;
-	      case REPLY_TERM:
-	    	  reset_connection_state(st);
-	    	  return strlen(buf);
-	      break;
-	    }
+	  if (0 == len) {
+		*buf = '0';
 	  }
-	  return strlen(buf);
+	  else {
+		buf += len;
+	  }
+	  buf++;
+
+	  if (5!=i)
+		*buf = ':';
+	  else
+		*buf = ';';
+
+	  buf++;
+	}
+
+	for (int i=0; i<4; i++) {
+	  len = itoa((int)g_ipconfig.ipaddr[i], buf, 10, 0);
+	  buf += len;
+
+	  if (0 == len) {
+		*buf = '0';
+	  }
+	  buf++;
+
+	  if (3!=i) {
+	    *buf = '.';
+		buf++;
+	  }
+	  else {
+	    *buf = '\0';
+	  }
+    }
 }
 
 void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p_ipconfig)
 {
     int flash_result;
 
-	for (int i=0;i<UIP_CONF_UDP_CONNS;i++) {
-	  udp_disc_states[i].active = 0;
-	  udp_disc_states[i].conn_id = -1;
-	}
+	udp_disc_state.active = 0;
+	udp_disc_state.conn_id = -1;
 
 	send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_RESTORE);
 	flash_result = get_flash_access_result(c_flash_data);
@@ -349,7 +146,6 @@ void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p
 	else
 	  memcpy((char *)p_ipconfig, (char *)&ipconfig, sizeof(xtcp_ipconfig_t));
 
-	//xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);
 }
 
 #pragma unsafe arrays
@@ -363,7 +159,6 @@ void udp_discovery_event_handler(chanend c_xtcp,
 	    case XTCP_IFUP:
 	    	xtcp_get_ipconfig(c_xtcp, &g_ipconfig);
 	    	xtcp_get_mac_address(c_xtcp, g_mac_addr);
-	    	xtcp_listen(c_xtcp, INCOMING_UDP_PORT, XTCP_PROTOCOL_UDP);////
 	        xtcp_connect(c_xtcp, OUTGOING_UDP_PORT, broadcast_addr, XTCP_PROTOCOL_UDP);
 	    case XTCP_IFDOWN:
 	    case XTCP_ALREADY_HANDLED:
@@ -372,61 +167,37 @@ void udp_discovery_event_handler(chanend c_xtcp,
 	      break;
 	    }
 
-	  if ((INCOMING_UDP_PORT == conn->local_port) ||
-		  (OUTGOING_UDP_PORT == conn->local_port) ||
-		  (OUTGOING_UDP_PORT == conn->remote_port)) {
-		  connection_state_t *st = get_state_from_connection(conn);
-
+	  if (OUTGOING_UDP_PORT == conn->remote_port) {
 		  switch (conn->event)
 	      {
 		  case XTCP_NEW_CONNECTION:
-  	        st = get_new_state();
-  	        if (!st) {
-  	          xtcp_abort(c_xtcp, conn);
-  	          break;
-  	        }
-  	        st->conn_id = conn->id;
-  	        reset_connection_state(st);
-
-  	        if (XTCP_IPADDR_CMP(conn->remote_addr, broadcast_addr)) {
-  			  st->resp_conn = 1;
-  			  if (st->send_resp) {
-  				xtcp_init_send_on_udp_response_port(c_xtcp);
-  			  }
-  	        }
+			if (XTCP_IPADDR_CMP(conn->remote_addr, broadcast_addr)) {
+	  	        udp_disc_state.conn_id = conn->id;
+	  	        udp_disc_state.active = 1;
+	  	        xtcp_bind_local(c_xtcp, conn, INCOMING_UDP_PORT);
+			}
 	        break;
 	      case XTCP_RECV_DATA:
-	    	  len = xtcp_recv(c_xtcp, buf);
+	    	  //len = xtcp_recv(c_xtcp, buf);
+	    	  len = xtcp_recv_count(c_xtcp, buf, UDP_RECV_BUF_SIZE);
 	    	  buf[len] = '\0';
-	    	  //len = xtcp_recv_count(c_xtcp, buf, UDP_RECV_BUF_SIZE);
-	          if (!st || !st->active)
+	          if (!udp_disc_state.active)
 	            break;
 
-	          parse_udp_buffer(c_xtcp, conn, buf, len, st);
+	          parse_udp_buffer(c_xtcp, c_flash_data, conn, buf, len+1);
 
-	          if (st->cmd == UDP_DISC_CMD_IP_CHANGE) {
-	            send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_SAVE);
-	            send_ipconfig_to_flash_thread(c_flash_data, &g_ipconfig);
-
-	            /* Restart the device */
-	            chip_soft_reset();
-	          }
 	        break;
 	      case XTCP_REQUEST_DATA:
 	      case XTCP_RESEND_DATA:
-	          if (!st || !st->active)
+	          if (!udp_disc_state.active)
 	            break;
 
-	          if (st->send_resp) {
-	            int len = construct_udp_response(c_xtcp, conn, buf, st);
-	            //buf[len] = '\n';
-	            xtcp_send(c_xtcp, buf, len);
+	          if (udp_disc_state.send_resp) {
+	            construct_udp_response(buf);
+	            xtcp_send(c_xtcp, buf, strlen(buf));
 	          }
-	          else if (st->err) {
-	            int len = strlen(st->err);
-	            strcpy(buf, st->err);
-	            buf[len] = '\n';
-	            xtcp_send(c_xtcp, buf, len+1);
+	          else if (udp_disc_state.err) {
+	            xtcp_send(c_xtcp, udp_disc_state.err, strlen(udp_disc_state.err));
 	          }
 	          else {
 	            xtcp_complete_send(c_xtcp);
@@ -435,20 +206,14 @@ void udp_discovery_event_handler(chanend c_xtcp,
 	    	  break;
 	      case XTCP_SENT_DATA:
 	          xtcp_complete_send(c_xtcp);
-	          //xtcp_close(c_xtcp, conn);
-	          if (st) {
-	            st->send_resp = 0;
-	            st->err = NULL;
+	          if (udp_disc_state.active) {
+	        	udp_disc_state.send_resp = 0;
+	        	udp_disc_state.err = NULL;
 	          }
 	    	  break;
 	      case XTCP_CLOSED:
 	      case XTCP_ABORTED:
 	      case XTCP_TIMED_OUT:
-	        if (st) {
-	          st->active = 0;
-	          st->conn_id = -1;
-	        }
-	        break;
 	      default:
 	        break;
 	    }
