@@ -12,10 +12,9 @@ function get_config()
 // -->
 </script><body>
 <img src="images/xmos_logo.gif" alt='xmos_logo'/><br><br>
-<b>Serial To Ethernet Server Configuration</b><br><br>
-
+<b>Serial To Ethernet Server Configuration</b><br>
+<p>Response: {% s2e_web_configure(buf, app_state, connection_state) %}</p>
 <form name="form" action = "" method="post">
-
 <table border='1'>
 <tr><td width='150'>UART Channel</td>
 <td><select name='id' id='id' onChange='get_config();'>
@@ -28,8 +27,7 @@ function get_config()
 <option value='6' {% s2e_web_get_id_selected(buf,app_state,connection_state,6) %}>6</option>
 <option value='7' {% s2e_web_get_id_selected(buf,app_state,connection_state,7) %}>7</option>
 </select></td></tr>
-</table><br><br>
-
+</table><br>
 <table border='1'>
 <tr><td width='150'>Parity Config</td>
 <td><select name='pc' id='pc'>
@@ -39,13 +37,11 @@ function get_config()
 <option value='3' {% s2e_web_get_pc_selected(buf,app_state,connection_state,3) %}>Mark</option>
 <option value='4' {% s2e_web_get_pc_selected(buf,app_state,connection_state,4) %}>Space</option>
 </select></td></tr>
-
 <tr><td width='150'>Stop Bits</td>
 <td><select name='sb' id='sb'>
 <option value='0' {% s2e_web_get_sb_selected(buf,app_state,connection_state,0) %}>1</option>
 <option value='1' {% s2e_web_get_sb_selected(buf,app_state,connection_state,1) %}>2</option>
 </select></td></tr>
-
 <tr><td width='150'>Baud Rate</td>
 <td><select name='br' id='br'>
 <option value='115200' {% s2e_web_get_br_selected(buf,app_state,connection_state,115200) %} >115200</option>
@@ -63,7 +59,6 @@ function get_config()
 <option value='300'    {% s2e_web_get_br_selected(buf,app_state,connection_state,300) %}    >300</option>
 <option value='150'    {% s2e_web_get_br_selected(buf,app_state,connection_state,150) %}    >150</option>
 </select></td></tr>
-
 <tr><td width='150'>Character Length</td>
 <td><select name='cl' id='cl'>
 <option value='5' {% s2e_web_get_cl_selected(buf,app_state,connection_state,5) %}>5</option>
@@ -72,21 +67,15 @@ function get_config()
 <option value='8' {% s2e_web_get_cl_selected(buf,app_state,connection_state,8) %}>8</option>
 <option value='9' {% s2e_web_get_cl_selected(buf,app_state,connection_state,9) %}>9</option>
 </select></td></tr>
-
 <tr><td width='150'>Telnet Port</td>
 <td><input type='text' name='tp' id='tp' maxlength='5' size='5' value='{% s2e_web_get_port(buf, app_state, connection_state) %}'/></td>
+</table><br>
 
-</table><br><br>
 <table border='1'>
 <tr>
-<td><input type="submit" name="form_action" id='config_get' value="Get"/></td>
-<td><input type="submit" name="form_action" value="Set"/></td>
-</tr>
-<tr>
-<td><input type="submit" name="form_action" value="Save"/></td>
-<td><input type="submit" name="form_action" value="Restore"/></td>
-</tr>
-</table><br>
-</form>
-<p>Response: {% s2e_web_configure(buf, app_state, connection_state) %}</p></body>
-</html>
+<td width='150' align='center'><input type="submit" name="form_action" id='config_get' value="Get"/></td>
+<td width='150' align='center'><input type="submit" name="form_action" value="Set"/></td>
+</tr><tr>
+<td width='150' align='center'><input type="submit" name="form_action" value="Save"/></td>
+<td width='150' align='center'><input type="submit" name="form_action" value="Restore"/></td>
+</tr></table></form></body></html>

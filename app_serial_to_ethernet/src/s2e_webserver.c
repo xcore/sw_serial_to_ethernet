@@ -84,7 +84,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
     {
         val = get_int_param("id", connection_state, &err);
         if (err)
-            return 0;
+            return output_msg(buf, s2e_validation_bad_channel_id);
+
         data.channel_id = val;
 
         // Received Set request from web page
@@ -136,6 +137,9 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
         // page is rendered so we can use the tcp channel
         pending_telnet_port_change_id = data.channel_id;
         pending_telnet_port_change_port = telnet_port;
+
+        return output_msg(buf, success_msg);
+
     } // Set
     else if (strcmp(web_form_req, "Save") == 0)
     {
@@ -199,7 +203,7 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
         return output_msg(buf, error_msg);
     }
 
-    return output_msg(buf, success_msg);
+    return 0;
 }
 
 void s2e_post_render(int app_state, int connection_state)
