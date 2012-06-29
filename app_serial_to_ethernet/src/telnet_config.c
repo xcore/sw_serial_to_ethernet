@@ -5,10 +5,11 @@
 #include "telnet_to_uart.h"
 #include "uart_handler.h"
 #include "s2e_conf.h"
+#include "s2e_flash.h"
+#include "s2e_def.h"
 #include "xtcp_client.h"
 #include "mutual_thread_comm.h"
 #include "string.h"
-#include "print.h"
 #include "itoa.h"
 #include "s2e_validation.h"
 
@@ -66,6 +67,7 @@ static char welcome_msg[] =
   "Welcome to serial to ethernet telnet server demo!\nThis is the configuration server\n";
 
 static char invalid_cmd_msg[] = "Invalid command";
+static char flash_err_msg[] = "Flash error";
 
 static connection_state_t telnet_config_states[TELNET_CONFIG_NUM_CONNECTIONS];
 
@@ -154,10 +156,15 @@ static void store_value(connection_state_t *st)
 
 static void execute_command(chanend c_xtcp,
                             chanend c_uart_config,
+                            chanend c_flash_data,
                             xtcp_connection_t *conn,
                             connection_state_t *st)
 {
   int out_channel_id;
+  int flash_result;
+  uart_config_data_t data1;
+  int telnet_port1;
+
   switch (st->cmd)
     {
     case TELNET_CONFIG_CMD_SET:
@@ -192,15 +199,52 @@ static void execute_command(chanend c_xtcp,
       out_channel_id = st->config_in.channel_id;
       break;
     case TELNET_CONFIG_CMD_SAVE:
-      // TODO - send all the configs (got via uart_get_config) to the flash
-      // thread for saving
-      out_channel_id = 7;
-      break;
+        // Received Save request from web page
+        send_cmd_to_flash_thread(c_flash_data, UART_CONFIG, FLASH_CMD_SAVE);
+
+        for(int i = 0; i < NUM_UART_CHANNELS; i++)
+        {
+            uart_config_data_t *data1 = uart_get_config(i);
+            send_data_to_flash_thread(c_flash_data, data1);
+        }
+
+        flash_result = get_flash_access_result(c_flash_data);
+
+        if (flash_result != S2E_FLASH_OK)
+        {
+            st->err = flash_err_msg;
+            xtcp_init_send(c_xtcp, conn);
+            return;
+        }
+        out_channel_id = 7;
+        break;
+
     case TELNET_CONFIG_CMD_RESTORE:
-      // TODO - retrieve all the configs from the flash
-      // thread and apply uart_set_config
-      out_channel_id = 7;
-      break;
+        // Received Restore request from web page
+        send_cmd_to_flash_thread(c_flash_data, UART_CONFIG, FLASH_CMD_RESTORE);
+        flash_result = get_flash_access_result(c_flash_data);
+
+        if (flash_result == S2E_FLASH_OK)
+        {
+            for (int i = 0; i < NUM_UART_CHANNELS; i++)
+            {
+                get_data_from_flash_thread(c_flash_data, &data1, &telnet_port1);
+                uart_config_data_t *config = uart_get_config(data1.channel_id);
+                *config = data1;
+                uart_set_config(c_uart_config, &data1);
+                telnet_to_uart_set_port(c_xtcp, data1.channel_id, telnet_port1);
+            }
+        }
+        else
+        {
+            st->err = flash_err_msg;
+            xtcp_init_send(c_xtcp, conn);
+            return;
+        }
+
+        out_channel_id = 7;
+        break;
+
     default:
       st->err = invalid_cmd_msg;
       xtcp_init_send(c_xtcp, conn);
@@ -216,6 +260,7 @@ static void execute_command(chanend c_xtcp,
 
 static void parse_config(chanend c_xtcp,
                          chanend c_uart_config,
+                         chanend c_flash_data,
                          xtcp_connection_t *conn,
                          char *buf,
                          int len,
@@ -249,7 +294,7 @@ static void parse_config(chanend c_xtcp,
         break;
       case '@':
         if (st->config_parsing_state1 == PARSING_TERM) {
-          execute_command(c_xtcp, c_uart_config, conn, st);
+          execute_command(c_xtcp, c_uart_config, c_flash_data, conn, st);
           reset_parsing_state(st);
         }
         else {
@@ -309,6 +354,7 @@ static int construct_ack(connection_state_t *st,
 
 void telnet_config_event_handler(chanend c_xtcp,
                                  chanend c_uart_config,
+                                 chanend c_flash_data,
                                  xtcp_connection_t *conn)
 {
 
@@ -352,7 +398,7 @@ void telnet_config_event_handler(chanend c_xtcp,
                                   len,
                                   &st->telnet_parsing_state,
                                   &close_request);
-        parse_config(c_xtcp, c_uart_config, conn, buf, len, st);
+        parse_config(c_xtcp, c_uart_config, c_flash_data, conn, buf, len, st);
         if (close_request)
           xtcp_close(c_xtcp, conn);
         break;

@@ -5,7 +5,8 @@
 
 void s2e_webserver_init(chanend c_xtcp,
                         NULLABLE_RESOURCE(chanend, c_flash),
-                        chanend c_uart_config);
+                        chanend c_uart_config,
+                        NULLABLE_RESOURCE(chanend, c_flash_data));
 
 void s2e_webserver_event_handler(chanend c_xtcp,
                                  NULLABLE_RESOURCE(chanend, c_flash),

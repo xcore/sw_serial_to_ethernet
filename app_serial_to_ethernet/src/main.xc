@@ -18,7 +18,6 @@
 
 #define ETH_CORE 0
 #define UART_CORE 1
-#define S2E_FLASH_THREAD 1
 
 // Ethernet Ports
 on stdcore[ETH_CORE]: struct otp_ports otp_ports =
@@ -44,23 +43,13 @@ on stdcore[ETH_CORE]: mii_interface_t mii =
 	PORT_ETH_TXCLK_1,
 	PORT_ETH_TXEN_1,
 	PORT_ETH_TXD_1,
-        PORT_ETH_FAKE
+    PORT_ETH_FAKE
 };
 
 #define PORT_ETH_RST_N XS1_PORT_8D
 
 on stdcore[ETH_CORE]: out port p_mii_resetn = PORT_ETH_RST_N;
 on stdcore[ETH_CORE]: smi_interface_t smi = {0, PORT_ETH_MDIO_1, PORT_ETH_MDC_1};
-
-// IP Config - change this to suit your network.  Leave with all
-// 0 values to use DHCP
-xtcp_ipconfig_t ipconfig = {
-  //{ 0, 0, 0, 0 }, // ip address (eg 192,168,0,2)
-  { 192, 168, 1, 178 }, // ip address (eg 192,168,0,2)
-  { 0, 0, 0, 0 }, // netmask (eg 255,255,255,0)
-  { 0, 0, 0, 0 } // gateway (eg 192,168,0,1)
-};
-
 
 #define PORT_TX on stdcore[UART_CORE]: XS1_PORT_8B
 #define PORT_RX on stdcore[UART_CORE]: XS1_PORT_8A
@@ -72,8 +61,6 @@ on stdcore[UART_CORE]: clock clk_uart_tx = XS1_CLKBLK_4;
 on stdcore[UART_CORE]: in port p_uart_ref_ext_clk = XS1_PORT_1F; /* Define 1 bit external clock */
 on stdcore[UART_CORE]: clock clk_uart_rx = XS1_CLKBLK_5;
 
-
-#ifdef S2E_FLASH_THREAD
 on stdcore[0] : fl_SPIPorts flash_ports =
 { PORT_SPI_MISO,
   PORT_SPI_SS,
@@ -86,7 +73,6 @@ fl_DeviceSpec flash_devices[] =
 {
  FL_DEVICE_NUMONYX_M25P16,
 };
-#endif
 
 
 void xscope_user_init(void) {
@@ -99,9 +85,7 @@ void xscope_user_init(void) {
 int main(void) {
 	chan c_xtcp[1];
         chan c_uart_data, c_uart_config;
-        #ifdef S2E_FLASH_THREAD
         chan c_flash_web, c_flash_data;
-        #endif
         streaming chan c_uart_rx, c_uart_tx;
 
 	par
@@ -110,24 +94,20 @@ int main(void) {
         on stdcore[ETH_CORE]:
         {
             char mac_address[6];
+            xtcp_ipconfig_t ipconfig;
+            c_xtcp[0] :> ipconfig;
+
             ethernet_getmac_otp(otp_ports, mac_address);
             // Start server
             uip_single_server(null, smi, mii, c_xtcp, 1,
                               ipconfig, mac_address);
         }
 
-        #ifdef S2E_FLASH_THREAD
         on stdcore[0]: s2e_flash(c_flash_web, c_flash_data, flash_ports);
-        #endif
 
         on stdcore[UART_CORE]: tcp_handler(c_xtcp[0], c_uart_data,
-                                   c_uart_config,
-                                   #ifdef S2E_FLASH_THREAD
-                                   c_flash_web, c_flash_data
-                                   #else
-                                   null, null
-                                   #endif
-                                   );
+                                           c_uart_config,
+                                           c_flash_web, c_flash_data);
 
         on stdcore[UART_CORE]: uart_handler(c_uart_data, c_uart_config,
                                             c_uart_rx, c_uart_tx);

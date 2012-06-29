@@ -20,7 +20,12 @@ APP_NAME =
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to
 # xcc for the final link (mapping) stage.
 
-XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lxscope -lflash
+COMMA = ,
+ifneq ($(STATIC_IP),)
+STATIC_IP_FLAGS = -DSTATIC_IP={$(subst .,$(COMMA),$(STATIC_IP))}
+endif
+
+XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lxscope -lflash $(STATIC_IP_FLAGS)
 
 XCC_C_FLAGS = $(XCC_FLAGS) -Os
 

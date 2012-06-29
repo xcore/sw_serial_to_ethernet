@@ -53,15 +53,14 @@ void telnet_to_uart_set_port(chanend c_xtcp, int id, int ip_port)
 }
 
 #pragma unsafe arrays
-void telnet_to_uart_init(chanend c_xtcp, chanend c_uart_data)
+void telnet_to_uart_init(chanend c_xtcp, chanend c_uart_data, int telnet_port_address[])
 {
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
     uart_channel_state[i].current_rx_buffer = -1;
     uart_channel_state[i].conn_id = -1;
-    uart_channel_state[i].ip_port = TELNET_UART_BASE_PORT + i;
+    uart_channel_state[i].ip_port = telnet_port_address[i];
 
     c_uart_data <: array_to_xc_ptr(uart_channel_state[i].uart_tx_buffer);
-
     c_uart_data <: array_to_xc_ptr(uart_channel_state[i].uart_rx_buffer[0]);
     c_uart_data <: array_to_xc_ptr(uart_channel_state[i].uart_rx_buffer[1]);
 

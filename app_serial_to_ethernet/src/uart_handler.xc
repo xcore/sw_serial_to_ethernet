@@ -6,7 +6,6 @@
 #include "xc_ptr.h"
 #include "multi_uart_rx.h"
 #include "multi_uart_tx.h"
-#include "print.h"
 
 typedef enum uart_config_cmd_t {
   UART_HANDLER_GET_UART_CONFIG,
@@ -53,11 +52,9 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
   } else {
 #ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
-    printchar('!');
+    //printchar('!');
 #endif
-
   }
-
   return;
 }
 
@@ -188,19 +185,15 @@ void uart_handler(chanend c_uart_data,
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
 
-
     c_uart_data :> uart_tx_state[i].buffer;
     uart_tx_state[i].len = 0;
     uart_tx_state[i].i = 0;
-
 
     c_uart_data :> uart_rx_state[i].buffer[0];
     c_uart_data :> uart_rx_state[i].buffer[1];
     uart_rx_state[i].current_buffer = 0;
     uart_rx_state[i].current_buffer_len = 0;
     uart_rx_state[i].notified = 0;
-
-
   }
 
 
