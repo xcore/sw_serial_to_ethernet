@@ -26,7 +26,7 @@ typedef struct uart_rx_info {
   int timestamp;
 } uart_rx_info;
 
-#define UART_RX_FLUSH_DELAY 2000000
+#define UART_RX_FLUSH_DELAY 20000000
 
 void uart_set_config(chanend c_uart_config,
                      uart_config_data_t &data)
@@ -169,7 +169,7 @@ void uart_handler(chanend c_uart_data,
 #ifdef S2E_DEBUG_AUTO_TRAFFIC
   timer tmr;
   int time;
-  int i=0;
+  int i=0,u=0;
   tmr :> time;
 #endif
 
@@ -209,11 +209,15 @@ void uart_handler(chanend c_uart_data,
       {
 #ifdef S2E_DEBUG_AUTO_TRAFFIC
       case tmr when timerafter(time) :> int _:
-        time += 10000;
-        push_to_uart_rx_buffer(uart_rx_state[0],i+48,c_uart_data,mstate);
-        i+=1;
-        if (i>9)
-          i=0;
+        time += 1200;
+        push_to_uart_rx_buffer(uart_rx_state[u],i+48,c_uart_data,mstate);
+        u++;
+        if (u==8) {
+          u=0;
+          i+=1;
+          if (i>9)
+            i=0;
+        }
         break;
 #endif
       case c_uart_rx :> char channel_id:
@@ -234,10 +238,12 @@ void uart_handler(chanend c_uart_data,
                 // Drop anything coming in on the other serial ports
               }
             #else
+              #ifndef S2E_DEBUG_AUTO_TRAFFIC
               push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
                                      uart_char,
                                      c_uart_data,
                                      mstate);
+              #endif
             #endif
           }
         }
