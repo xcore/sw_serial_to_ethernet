@@ -18,6 +18,7 @@ typedef struct uart_channel_state_t {
   int parse_state;
   int ack;
   int init_send;
+  int txi;
 } uart_channel_state_t;
 
 
@@ -116,21 +117,25 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
         uart_channel_state[uart_id].conn_id = conn.id;
         uart_channel_state[uart_id].sending_welcome = 1;
         uart_channel_state[uart_id].sending_data = 0;
+        uart_channel_state[uart_id].txi = 0;
         init_telnet_parse_state(uart_channel_state[uart_id].parse_state);
         xtcp_ack_recv_mode(c_xtcp, conn);
         xtcp_accept_partial_ack(c_xtcp, conn);
         xtcp_init_send(c_xtcp, conn);
         break;
       case XTCP_RECV_DATA:
-        len = xtcp_recv(c_xtcp, uart_channel_state[uart_id].uart_tx_buffer);
+        len = xtcp_recvi(c_xtcp,
+                         uart_channel_state[uart_id].uart_tx_buffer,
+                         uart_channel_state[uart_id].txi);
         #ifdef S2E_DEBUG_WATERMARK_UNUSED_BUFFER_AREA
         for (int i=len;i<UIP_CONF_RECEIVE_WINDOW;i++)
           uart_channel_state[uart_id].uart_tx_buffer[i] = 'C';
         #endif
-        len = parse_telnet_buffer(uart_channel_state[uart_id].uart_tx_buffer,
-                                  len,
-                                  uart_channel_state[uart_id].parse_state,
-                                  close_request);
+        len = parse_telnet_bufferi(uart_channel_state[uart_id].uart_tx_buffer,
+                                   uart_channel_state[uart_id].txi,
+                                   len,
+                                   uart_channel_state[uart_id].parse_state,
+                                   close_request);
         if (close_request)
           xtcp_close(c_xtcp, conn);
         if (len) {
@@ -138,6 +143,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
           master {
             c_uart_data <: NEW_UART_TX_DATA;
             c_uart_data <: uart_id;
+            c_uart_data <: uart_channel_state[uart_id].txi;
             c_uart_data <: len;
           }
         }
@@ -145,6 +151,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
           // no data to send over uart
           xtcp_ack_recv(c_xtcp, conn);
         }
+        uart_channel_state[uart_id].txi += len;
         break;
       case XTCP_REQUEST_DATA:
       case XTCP_SENT_DATA:
@@ -268,9 +275,9 @@ static void handle_notification(chanend c_xtcp,
     switch (cmd)
       {
       case SENT_UART_TX_DATA:
+        uart_channel_state[uart_id].txi = 0;
         if (conn.id != -1)
           uart_channel_state[uart_id].ack = 1;
-
         break;
       case UART_RX_DATA_READY:
         if (conn.id != -1) {

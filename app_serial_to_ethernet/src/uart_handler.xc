@@ -15,6 +15,7 @@ typedef enum uart_config_cmd_t {
 typedef struct uart_tx_info {
   int len;
   int i;
+  int notified;
   xc_ptr buffer;
 } uart_tx_info;
 
@@ -103,8 +104,7 @@ static void tx_notify_tcp_handler(chanend c_uart_data,
   if (st.len != 0 && st.i == st.len) {
     c_uart_data <: SENT_UART_TX_DATA;
     c_uart_data <: uart_id;
-    st.i = 0;
-    st.len = 0;
+    st.notified = 1;
   }
 }
 
@@ -188,6 +188,7 @@ void uart_handler(chanend c_uart_data,
     c_uart_data :> uart_tx_state[i].buffer;
     uart_tx_state[i].len = 0;
     uart_tx_state[i].i = 0;
+    uart_tx_state[i].notified = 0;
 
     c_uart_data :> uart_rx_state[i].buffer[0];
     c_uart_data :> uart_rx_state[i].buffer[1];
@@ -274,7 +275,15 @@ void uart_handler(chanend c_uart_data,
             switch (cmd)
               {
               case NEW_UART_TX_DATA:
-              c_uart_data :> uart_tx_state[uart_id].len;
+                { int txi;
+                  int len;
+                  c_uart_data :> txi;
+                  c_uart_data :> len;
+                  if (txi == 0)
+                    uart_tx_state[uart_id].i = 0;
+                  uart_tx_state[uart_id].len = txi+len;
+                  uart_tx_state[uart_id].notified = 0;
+                }
                 break;
               case GET_UART_RX_DATA_TO_SEND:
                 if (flush_rx_buffer(uart_rx_state[uart_id])) {
@@ -339,7 +348,8 @@ void uart_handler(chanend c_uart_data,
                      poll_index);
 
         if (tx_notifier == -1 &&
-            tx_sent_all_data(uart_tx_state[poll_index]))
+            tx_sent_all_data(uart_tx_state[poll_index]) &&
+            !uart_tx_state[poll_index].notified)
           {
             tx_notifier = poll_index;
             mutual_comm_notify(c_uart_data, mstate);

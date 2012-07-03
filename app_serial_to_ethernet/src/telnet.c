@@ -102,3 +102,12 @@ int parse_telnet_buffer(char *data,
 
   return j;
 }
+
+int parse_telnet_bufferi(char *data,
+                         int i,
+                        int len,
+                        int *parse_state,
+                        int *close_request)
+{
+  return parse_telnet_buffer(data+i,len,parse_state,close_request);
+}
