@@ -376,7 +376,6 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
                                 ipconf.netmask[2] = flash_data[7];
                                 ipconf.netmask[3] = flash_data[8];
 
-
                                 ipconf.gateway[0] = flash_data[9];
                                 ipconf.gateway[1] = flash_data[10];
                                 ipconf.gateway[2] = flash_data[11];

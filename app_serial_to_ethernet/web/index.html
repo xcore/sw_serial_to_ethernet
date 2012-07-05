@@ -10,7 +10,7 @@ function get_config()
     document.getElementById('config_get').click();
 }
 // -->
-</script><body>
+</script></head><body>
 <img src="images/xmos_logo.gif" alt='xmos_logo'/><br><br>
 <b>Serial To Ethernet Server Configuration</b><br>
 <p>Response: {% s2e_web_configure(buf, app_state, connection_state) %}</p>
@@ -68,7 +68,7 @@ function get_config()
 <option value='9' {% s2e_web_get_cl_selected(buf,app_state,connection_state,9) %}>9</option>
 </select></td></tr>
 <tr><td width='150'>Telnet Port</td>
-<td><input type='text' name='tp' id='tp' maxlength='5' size='5' value='{% s2e_web_get_port(buf, app_state, connection_state) %}'/></td>
+<td><input type='text' name='tp' id='tp' maxlength='5' size='5' value='{% s2e_web_get_port(buf, app_state, connection_state) %}'/></td></tr>
 </table><br>
 
 <table border='1'>

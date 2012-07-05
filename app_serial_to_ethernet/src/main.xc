@@ -17,7 +17,7 @@
 #include "s2e_flash.h"
 
 #define ETH_CORE 0
-#define UART_CORE 1
+#define UART_CORE 0
 
 // Ethernet Ports
 on stdcore[ETH_CORE]: struct otp_ports otp_ports =
