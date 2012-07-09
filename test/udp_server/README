@@ -1,0 +1,32 @@
+XMOS Serial To Ethernet UDP server test script
+==============================================
+
+Introduction
+-------------
+
+This script provides UDP server functionality in order to query S2E 
+available on the network or change ip address of S2E devices    
+
+Usage:
+
+python udp_server.py
+
+Required Python Modules
+-------------------------
+
+NA
+
+WINDOWS USERS:
+
+It is recommended that windows users use Cygwin (http://www.cygwin.com/). 
+Install setuptools as per the instructions on the site above and install 
+the required libraries as described above.
+
+Code structure
+---------------
+
+The code is designed to allow the easy implmentation of tests by extending
+some base objects. The files in the src directory are described as follows:
+
+* udp_server.py - Implements UDP server for sending broadcast request for 
+    identifying S2E on the network, changing ip address of an s2e
