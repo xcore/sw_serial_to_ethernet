@@ -15,14 +15,41 @@ char s2e_validation_bad_char_len_msg[] = "Invalid char length setting.";
 char s2e_validation_bad_telnet_port_msg[] = "Invalid telnet port setting.";
 char s2e_validation_bad_channel_id[] = "Invalid uart id.";
 
-
-
 char *s2e_validate_channel_id(int channel_id)
 {
-  if (channel_id < 0 || channel_id > NUM_UART_CHANNELS)
+  if (channel_id < 0 || channel_id >= NUM_UART_CHANNELS)
     return s2e_validation_bad_channel_id;
 
   return NULL;
+}
+
+/** =========================================================================
+ *  check_baud_rate
+ *
+ *  \param  baud_rate baud rate to check
+ *  \return 0         baud_rate ok
+ *  \return -1        invalid baud rate
+ **/
+#pragma unsafe arrays
+static int check_baud_rate(int baud_rate)
+{
+    int i;
+    int default_baud_rates[14] =
+    {
+     150, 300, 600, 1200, 2400, 4800, 7200, 9600, 14400, 19200, 28800, 38400,
+     57600, 115200
+    };
+
+    if((baud_rate < 150) || (baud_rate > UART_TX_MAX_BAUD_RATE)) { return -1; }
+
+    for(i = 0; i < 14; i++)
+    {
+        if(baud_rate == default_baud_rates[i])
+        {
+            return 0;
+        }
+    }
+    return -1;
 }
 
 char *s2e_validate_uart_config(uart_config_data_t *config)
@@ -41,7 +68,7 @@ char *s2e_validate_uart_config(uart_config_data_t *config)
   if (config->polarity<0 || config->polarity > 1)
     return s2e_validation_bad_polarity_msg;
 
-  if (config->baud < 150 || config->baud > UART_TX_MAX_BAUD_RATE)
+  if (check_baud_rate(config->baud) == -1)
     return s2e_validation_bad_baudrate_msg;
 
   if (config->char_len < 5 || config->char_len > 9)

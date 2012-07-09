@@ -30,7 +30,7 @@ static xtcp_ipaddr_t broadcast_addr = {255,255,255,255};
 xtcp_ipconfig_t g_ipconfig;
 unsigned char g_mac_addr[6];
 
-
+#define STATIC_IP {169,254,196,178}
 
 xtcp_ipconfig_t ipconfig =
 {

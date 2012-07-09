@@ -22,8 +22,8 @@ static app_state_t app_state;
 static char success_msg[] = "Ok";
 static char error_msg[] = "Error";
 
-static int pending_telnet_port_change_id = -1;
-static int pending_telnet_port_change_port = -1;
+static int pending_telnet_port_change_id[NUM_UART_CHANNELS] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int pending_telnet_port_change_port[NUM_UART_CHANNELS] = {-1, -1, -1, -1, -1, -1, -1, -1};
 
 static int output_msg(char buf[], const char msg[])
 {
@@ -135,8 +135,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
         // We have to delay the changing of the telnet port until after the
         // page is rendered so we can use the tcp channel
-        pending_telnet_port_change_id = data.channel_id;
-        pending_telnet_port_change_port = telnet_port;
+        pending_telnet_port_change_id[0] = data.channel_id;
+        pending_telnet_port_change_port[0] = telnet_port;
 
         return output_msg(buf, success_msg);
 
@@ -186,8 +186,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
                 // We have to delay the changing of the telnet port until after the
                 // page is rendered so we can use the tcp channel
-                pending_telnet_port_change_id = data1.channel_id;
-                pending_telnet_port_change_port = telnet_port1;
+                pending_telnet_port_change_id[i] = data1.channel_id;
+                pending_telnet_port_change_port[i] = telnet_port1;
             }
             return output_msg(buf, success_msg);
         }
@@ -208,13 +208,16 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
 void s2e_post_render(int app_state, int connection_state)
 {
-    chanend c_xtcp = (chanend) ((app_state_t *) app_state)->c_xtcp;
-    if (pending_telnet_port_change_id != -1)
+    for(int i = 0; i < NUM_UART_CHANNELS; i++)
     {
-        telnet_to_uart_set_port(c_xtcp,
-                                pending_telnet_port_change_id,
-                                pending_telnet_port_change_port);
-        pending_telnet_port_change_id = -1;
+        chanend c_xtcp = (chanend) ((app_state_t *) app_state)->c_xtcp;
+        if (pending_telnet_port_change_id[i] != -1)
+        {
+            telnet_to_uart_set_port(c_xtcp,
+                                    pending_telnet_port_change_id[i],
+                                    pending_telnet_port_change_port[i]);
+            pending_telnet_port_change_id[i] = -1;
+        }
     }
 }
 
