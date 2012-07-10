@@ -15,11 +15,6 @@ void s2e_post_render(int app_state, int connection_state);
 int s2e_web_get_port(char buf[], int app_state, int connection_state);
 int s2e_web_configure(char buf[], int app_state, int connection_state);
 
-int s2e_web_get_id_selected(char buf[],
-                            int app_state,
-                            int connection_state,
-                            int id);
-
 int s2e_web_get_cl_selected(char buf[],
                             int app_state,
                             int connection_state,

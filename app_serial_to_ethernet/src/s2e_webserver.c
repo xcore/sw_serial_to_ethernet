@@ -22,8 +22,8 @@ static app_state_t app_state;
 static char success_msg[] = "Ok";
 static char error_msg[] = "Error";
 
-static int pending_telnet_port_change_id[NUM_UART_CHANNELS] = {-1, -1, -1, -1, -1, -1, -1, -1};
-static int pending_telnet_port_change_port[NUM_UART_CHANNELS] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int pending_telnet_port_change_id = -1;
+static int pending_telnet_port_change_port = -1;
 
 static int output_msg(char buf[], const char msg[])
 {
@@ -54,7 +54,7 @@ static int get_id_param(int connection_state)
 
     int id = atoi(id_str);
 
-    if (id < 0 || id > NUM_UART_CHANNELS)
+    if (id < 0 || id >= NUM_UART_CHANNELS)
         return -1;
     return id;
 }
@@ -76,11 +76,7 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
     web_form_req = web_server_get_param("form_action", connection_state);
 
-    if (strcmp(web_form_req, "Get") == 0)
-    {
-        return output_msg(buf, success_msg);
-    }
-    else if (strcmp(web_form_req, "Set") == 0)
+    if (strcmp(web_form_req, "Set") == 0)
     {
         val = get_int_param("id", connection_state, &err);
         if (err)
@@ -135,8 +131,8 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
         // We have to delay the changing of the telnet port until after the
         // page is rendered so we can use the tcp channel
-        pending_telnet_port_change_id[0] = data.channel_id;
-        pending_telnet_port_change_port[0] = telnet_port;
+        pending_telnet_port_change_id = data.channel_id;
+        pending_telnet_port_change_port = telnet_port;
 
         return output_msg(buf, success_msg);
 
@@ -164,39 +160,6 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
         }
 
     } // Save
-    else if (strcmp(web_form_req, "Restore") == 0)
-    {
-        uart_config_data_t data1;
-        int telnet_port1;
-
-        // Received Restore request from web page
-        send_cmd_to_flash_thread(c_flash_data, UART_CONFIG, FLASH_CMD_RESTORE);
-
-        flash_result = get_flash_access_result(c_flash_data);
-
-        if (flash_result == S2E_FLASH_OK)
-        {
-            for (int i = 0; i < NUM_UART_CHANNELS; i++)
-            {
-                get_data_from_flash_thread(c_flash_data, &data1, &telnet_port1);
-
-                uart_config_data_t *config = uart_get_config(data1.channel_id);
-                *config = data1;
-                uart_set_config(c_uart_config, &data1);
-
-                // We have to delay the changing of the telnet port until after the
-                // page is rendered so we can use the tcp channel
-                pending_telnet_port_change_id[i] = data1.channel_id;
-                pending_telnet_port_change_port[i] = telnet_port1;
-            }
-            return output_msg(buf, success_msg);
-        }
-        else
-        {
-            return output_msg(buf, error_msg);
-        }
-
-    } // Restore
     else
     {
         // invalid request
@@ -208,23 +171,18 @@ int s2e_web_configure(char buf[], int app_state, int connection_state)
 
 void s2e_post_render(int app_state, int connection_state)
 {
-    for(int i = 0; i < NUM_UART_CHANNELS; i++)
+    chanend c_xtcp = (chanend) ((app_state_t *) app_state)->c_xtcp;
+    if (pending_telnet_port_change_id != -1)
     {
-        chanend c_xtcp = (chanend) ((app_state_t *) app_state)->c_xtcp;
-        if (pending_telnet_port_change_id[i] != -1)
-        {
-            telnet_to_uart_set_port(c_xtcp,
-                                    pending_telnet_port_change_id[i],
-                                    pending_telnet_port_change_port[i]);
-            pending_telnet_port_change_id[i] = -1;
-        }
+        telnet_to_uart_set_port(c_xtcp,
+                                pending_telnet_port_change_id,
+                                pending_telnet_port_change_port);
+        pending_telnet_port_change_id = -1;
     }
 }
 
 int s2e_web_get_port(char buf[], int app_state, int connection_state)
 {
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
     int id = get_id_param(connection_state);
     if (id == -1)
         return 0;
@@ -233,35 +191,11 @@ int s2e_web_get_port(char buf[], int app_state, int connection_state)
     return len;
 }
 
-int s2e_web_get_id_selected(char buf[],
-                            int app_state,
-                            int connection_state,
-                            int id)
-{
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
-    int id1 = get_id_param(connection_state);
-    if (id1 == -1)
-        return 0;
-
-    uart_config_data_t *data = uart_get_config(id1);
-    if (data->channel_id == id)
-    {
-        char selstr[] = "selected";
-        strcpy(buf, selstr);
-        return strlen(selstr);
-    }
-
-    return 0;
-}
-
 int s2e_web_get_cl_selected(char buf[],
                             int app_state,
                             int connection_state,
                             int cl)
 {
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
     int id = get_id_param(connection_state);
     if (id == -1)
         return 0;
@@ -273,7 +207,6 @@ int s2e_web_get_cl_selected(char buf[],
         strcpy(buf, selstr);
         return strlen(selstr);
     }
-
     return 0;
 }
 
@@ -282,10 +215,7 @@ int s2e_web_get_br_selected(char buf[],
                             int connection_state,
                             int br)
 {
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
     int id = get_id_param(connection_state);
-
     if (id == -1)
         return 0;
 
@@ -296,7 +226,6 @@ int s2e_web_get_br_selected(char buf[],
         strcpy(buf, selstr);
         return strlen(selstr);
     }
-
     return 0;
 }
 
@@ -305,8 +234,6 @@ int s2e_web_get_pc_selected(char buf[],
                             int connection_state,
                             int parity)
 {
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
     int id = get_id_param(connection_state);
     if (id == -1)
         return 0;
@@ -318,7 +245,6 @@ int s2e_web_get_pc_selected(char buf[],
         strcpy(buf, selstr);
         return strlen(selstr);
     }
-
     return 0;
 }
 
@@ -327,8 +253,6 @@ int s2e_web_get_sb_selected(char buf[],
                             int connection_state,
                             int stop_bits)
 {
-    chanend c_uart_config = (chanend) ((app_state_t *) app_state)->c_uart_config;
-
     int id = get_id_param(connection_state);
     if (id == -1)
         return 0;
@@ -340,7 +264,6 @@ int s2e_web_get_sb_selected(char buf[],
         strcpy(buf, selstr);
         return strlen(selstr);
     }
-
     return 0;
 }
 
