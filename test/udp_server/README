@@ -59,7 +59,8 @@ UDP Server Software Usage
      
      Option 2 - Change IP address of a S2E
        
-       Displays all availabe S2E and asks trhe user to select which S2E is he trying to change the IP for?
+       Displays all availabe S2Es on the network. User selects an appropriate S2E 
+       from the list and provides new IP address
      	
        Format:         XMOS S2E IPCHANGE aaa.bbb.ccc.ddd
        Message Type:   Unicast
@@ -70,13 +71,13 @@ UDP Server Software Usage
        IP change is ensured
      
      Option 3 - Change IP address of S2E in Broadcast mode
-       Format:         XMOS S2E IPCHANGE aaa.bbb.ccc.ddd
+       Format:         XMOS S2E IPCHANGE 0.0.0.0
        Message Type:   Broadcast
-       Usage:          IP address of a all S2E can be modified to the specified IP
-       Note:           Option 1 should be used prior to using this option
-                        It is important that only the S2E IP which is invalid should
-                        be available in the network; where as all other S2Es should
-                        be removed from the network
+       Usage:          IP address of a all S2E can be modified to DHCP assignment
+       Note:           Option 1 should be used prior to using this option.
+                        It is important that only the intended S2Es for which, the IP 
+                        address is invalid should be made available in the network; 
+                        all other S2Es should be removed from the network.
 
-       S2E IP is changed to the new IP address. Upon selecting option 1, 
-       IP change is ensured
+       S2E IP is changed to the DHCP assigned IP address. Upon selecting option 1, 
+       the new IP can be known
