@@ -102,8 +102,8 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
 
         s1.close()
         s.close()
-    elif (((action == '2') or (action == '3')) and (flag_set == 0)):
-        print '\n"Select Option 1 before Again Changing IP"\n'
+    elif ((action == '2')  and (flag_set == 0)):
+        print '\n"Select Option 1 before selecting any other options"\n'
 
 
     elif (((action == '2') ) and (Dest_IP == 0)):
@@ -123,7 +123,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
                 print '\n\t\t'+str(variable) +' : '+ip_addr_arr[variable]
                 variable+=1
         variable1=int(raw_input('\nEnter to which S2E you want to change the IP :'))
-        if(variable1 > 0 and variable1 < variable-1):
+        if(variable1 > 0 and variable1 < variable):
                 Dest_IP=ip_addr_arr[variable1]
                 print Dest_IP
                 ipaddress = raw_input('Input new IP adress : ' )
@@ -151,7 +151,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
         sock.bind( ( '', 0 ) )
         sock.setsockopt( socket.SOL_SOCKET, socket.SO_BROADCAST, 1 )
 
-        ipaddress = raw_input('\nInput new IP adress : ' )
+        ipaddress = '0.0.0.0'
         sock.sendto( "XMOS S2E IPCHANGE " + str( ipaddress ), ( '<broadcast>', send_port ) )
         print "\nIP change in process..please wait"
         time.sleep(2)

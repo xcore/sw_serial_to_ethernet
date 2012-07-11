@@ -1,5 +1,5 @@
-XMOS Serial To Ethernet UDP Server Script
-=========================================
+XMOS Serial To Ethernet UDP Server Test Script
+==============================================
 
 Introduction
 -------------
@@ -9,34 +9,21 @@ available on the network or change ip address of S2E devices
 
 Usage:
 
-python udp_server.py (if using in Linux or Mac)
-udp_server.exe (if using in WIndows)
+python udp_server.py
 
 Required Python Modules
------------------------
+-------------------------
 
-Requires socket library if using in Mac or Linux
+Requires socket library if using in MAC or Linux
 
 WINDOWS USERS:
 
 It is recommended that windows users use Cygwin (http://www.cygwin.com/). 
-Install setup tools as per the instructions on the site above.
-
-
-Folder structure
-----------------
-udp_server
-   | 
-   ---> Windows (udp_Server.exe file)
-   |
-   ---> Linux_Mac (udp_server.py file)
-   |
-   ---> README (this file)
+Install setuptools as per the instructions on the site above and install 
+the required libraries as described above.
 
 Code structure
 ---------------
-
-The files udp_Server.py is described as follows:
 
 * udp_server.py - Implements UDP server functionality in order to complement
      S2E device management in the deployed network. 
@@ -44,6 +31,7 @@ The files udp_Server.py is described as follows:
 
 UDP Server Software Usage
 -------------------------
+
 
 * UDP Server IP address selection
      Script displays IP address of your host system; this is the default ip
@@ -63,9 +51,9 @@ UDP Server Software Usage
 
        The received response is in the format: 
        XMOS S2E VER:XXXX;MAC:xx:xx:xx:xx:xx:xx;IP:xxx.xxx.xxx.xxx
-	VER --> Firmware Version
-	MAC --> MAC Address
-	IP  --> IP address of the S2E device
+        VER --> Firmware Version
+        MAC --> MAC Address
+        IP  --> IP address of the S2E device
      
      Displays all the availabe S2E in the network in the format specified above
      

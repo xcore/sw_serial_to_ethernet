@@ -30,7 +30,7 @@ static xtcp_ipaddr_t broadcast_addr = {255,255,255,255};
 xtcp_ipconfig_t g_ipconfig;
 unsigned char g_mac_addr[6];
 
-#define STATIC_IP {169,254,196,178}
+//#define STATIC_IP {169,254,196,178}
 
 xtcp_ipconfig_t ipconfig =
 {
@@ -154,7 +154,7 @@ void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p
 
 	send_cmd_to_flash_thread(c_flash_data, IPVER, FLASH_CMD_RESTORE);
 	flash_result = get_flash_access_result(c_flash_data);
-	if(flash_result == S2E_FLASH_OK)
+	if (flash_result == S2E_FLASH_OK)
 	{
 	    get_ipconfig_from_flash_thread(c_flash_data, p_ipconfig);
 	}
