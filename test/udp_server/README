@@ -1,5 +1,5 @@
-XMOS Serial To Ethernet UDP server test script
-==============================================
+XMOS Serial To Ethernet UDP Server Script
+=========================================
 
 Introduction
 -------------
@@ -9,24 +9,86 @@ available on the network or change ip address of S2E devices
 
 Usage:
 
-python udp_server.py
+python udp_server.py (if using in Linux or Mac)
+udp_server.exe (if using in WIndows)
 
 Required Python Modules
--------------------------
+-----------------------
 
-NA
+Requires socket library if using in Mac or Linux
 
 WINDOWS USERS:
 
 It is recommended that windows users use Cygwin (http://www.cygwin.com/). 
-Install setuptools as per the instructions on the site above and install 
-the required libraries as described above.
+Install setup tools as per the instructions on the site above.
+
+
+Folder structure
+----------------
+udp_server
+   | 
+   ---> Windows (udp_Server.exe file)
+   |
+   ---> Linux_Mac (udp_server.py file)
+   |
+   ---> README (this file)
 
 Code structure
 ---------------
 
-The code is designed to allow the easy implmentation of tests by extending
-some base objects. The files in the src directory are described as follows:
+The files udp_Server.py is described as follows:
 
-* udp_server.py - Implements UDP server for sending broadcast request for 
-    identifying S2E on the network, changing ip address of an s2e
+* udp_server.py - Implements UDP server functionality in order to complement
+     S2E device management in the deployed network. 
+
+
+UDP Server Software Usage
+-------------------------
+
+* UDP Server IP address selection
+     Script displays IP address of your host system; this is the default ip
+       used for UDP communication
+     If user intends to modify ip address, option 'n' may be selected and 
+       new ip address for the host is provided
+
+* UDP Server S2E options selection
+     A couple of user options are provided in order to perform the 
+     following functions:
+     
+     Option 1 - Query S2E presence
+       Format:         XMOS S2E REPLY
+       Message Type:   Broadcast
+       Usage:          Identifies S2Es available on the network
+       Note:           None
+
+       The received response is in the format: 
+       XMOS S2E VER:XXXX;MAC:xx:xx:xx:xx:xx:xx;IP:xxx.xxx.xxx.xxx
+	VER --> Firmware Version
+	MAC --> MAC Address
+	IP  --> IP address of the S2E device
+     
+     Displays all the availabe S2E in the network in the format specified above
+     
+     Option 2 - Change IP address of a S2E
+       
+       Displays all availabe S2E and asks trhe user to select which S2E is he trying to change the IP for?
+     	
+       Format:         XMOS S2E IPCHANGE aaa.bbb.ccc.ddd
+       Message Type:   Unicast
+       Usage:          IP address of a specific S2E can be modified
+       Note:           Option 1 should be used prior to using this option
+     
+       S2E IP is changed to the new IP address. Upon selecting option 1, 
+       IP change is ensured
+     
+     Option 3 - Change IP address of S2E in Broadcast mode
+       Format:         XMOS S2E IPCHANGE aaa.bbb.ccc.ddd
+       Message Type:   Broadcast
+       Usage:          IP address of a all S2E can be modified to the specified IP
+       Note:           Option 1 should be used prior to using this option
+                        It is important that only the S2E IP which is invalid should
+                        be available in the network; where as all other S2Es should
+                        be removed from the network
+
+       S2E IP is changed to the new IP address. Upon selecting option 1, 
+       IP change is ensured
