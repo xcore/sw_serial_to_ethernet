@@ -39,6 +39,11 @@ To build from the command line, change to `app_serial_to_ethernet` directory and
 ::
        xmake all
 
+#. Inorder to build the firmware with user required static IP, execute the following command:
+
+       xmake all STATIC_IP=169.254.196.178
+
+
 Makefiles
 ~~~~~~~~~
 
