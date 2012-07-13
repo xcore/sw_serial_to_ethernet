@@ -130,7 +130,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
                 try:
                     s.sendto( "XMOS S2E IPCHANGE " + str( ipaddress ), ( Dest_IP, send_port ) )
                     print '"IP change in process..please wait..."'
-                    time.sleep(2)
+                    time.sleep(6)
 
                 except :
                     print '\nError in sending IP change request. Ip may be locked up. Try IP change in broadcast mode...\n'
@@ -154,7 +154,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
         ipaddress = '0.0.0.0'
         sock.sendto( "XMOS S2E IPCHANGE " + str( ipaddress ), ( '<broadcast>', send_port ) )
         print "\nIP change in process..please wait"
-        time.sleep(2)
+        time.sleep(6)
 
         s1.close()
         s.close()
