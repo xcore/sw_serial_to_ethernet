@@ -92,3 +92,70 @@ IP config related flash functions
 
 .. doxygenfunction:: get_ipconfig_from_flash_thread
 
+
+.. _sec_conf_defines:
+
+Configuration Defines
+---------------------
+
+The files multi_uart_tx_conf.h and multi_uart_rx_conf.h must be copied from
+app_multi_uart_demo\\src folder to app_serial_to_ethernet_demo\\src folder
+
+The file udp_discovery.h defines ports used for UDP discovery.
+This file can set the following defines:
+
+**UDP_RECV_BUF_SIZE**
+
+    Define length of UDP message buffer which holds the incoming UDP test server request
+    or corresponding S2E response
+
+**INCOMING_UDP_PORT**
+
+    Define incoming UDP port to listen to device discovery requests from UDP test server
+
+**OUTGOING_UDP_PORT**
+
+    Define outgoing UDP port in order to send device response to UDP test server
+
+**S2E_FIRMWARE_VER**
+
+    Define to specify S2E firmware version. This shall be updated for every release
+
+**UART_RX_FLUSH_DELAY**
+
+    If UART data received is lesser than minimum configured packet size, this defines a 
+    minimum wait time to send this data to telnet handler
+
+
+.. _sec_data_struct:
+
+Data Structures
+---------------
+
+.. doxygenstruct:: uart_channel_state_t
+
+.. doxygenstruct:: uart_tx_info
+
+.. doxygenstruct:: uart_rx_info
+
+
+.. _sec_conf_func:
+
+Configuration Functions
+------------------------
+
+.. doxygenfunction:: telnet_to_uart_init
+
+.. doxygenfunction:: udp_discovery_init
+
+
+.. _sec_xface_func:
+
+Interface functions
+-------------------
+
+.. doxygenfunction:: uart_handler
+
+.. doxygenfunction:: udp_discovery_event_handler
+
+.. doxygenfunction:: telnet_to_uart_event_handler

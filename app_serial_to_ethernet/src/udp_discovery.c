@@ -7,12 +7,16 @@
 #include "s2e_flash.h"
 #include "util.h"
 
+/**
+ * Structure to hold UDP connection state
+ * this should only be interacted with via the API and not accessed directly.
+ */
 typedef struct connection_state_t {
-  xtcp_connection_t udp_disc_bdcast_conn;
+  xtcp_connection_t udp_disc_bdcast_conn; /**< UDP connection details */
   //int conn_id;
-  int active;
-  int send_resp;
-  char *err;
+  int active; /**< Flag to indicate broadcast connection is established */
+  int send_resp; /**< Device has to send S2E details in response */
+  char *err; /**< Error message if UDP server request is invalid */
 } connection_state_t;
 
 static connection_state_t udp_disc_state;

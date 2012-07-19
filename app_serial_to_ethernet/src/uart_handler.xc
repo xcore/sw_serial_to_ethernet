@@ -12,21 +12,34 @@ typedef enum uart_config_cmd_t {
   UART_HANDLER_SET_UART_CONFIG,
 } uart_config_cmd_t;
 
+/**
+ * Structure to hold buffer parameters of UART transmit side buffers.
+ * UART transmit side buffers contain data collected from Telnet sockets
+ * configured for respective UARTs
+ */
 typedef struct uart_tx_info {
-  int len;
-  int i;
-  int notified;
-  xc_ptr buffer;
+  int len; /**< Depth (bytes) of buffer */
+  int i; /**< Number of bytes consumed from the buffer */
+  int notified; /**< Flag to notify all UART TX data is transferred to MUART component*/
+  xc_ptr buffer; /**< Reference to UART TX buffer */
 } uart_tx_info;
 
+/**
+ * Structure to hold buffer parameters of UART receive side buffers.
+ * UART receive side buffers contain data collected from UARTs
+ */
 typedef struct uart_rx_info {
-  xc_ptr buffer[2];
-  int current_buffer;
-  int current_buffer_len;
-  int notified;
-  int timestamp;
+  xc_ptr buffer[2]; /**< Reference to UART RX buffer */
+  int current_buffer; /**< Refers to active buffer being used from UART RX double buffers */
+  int current_buffer_len; /**< Number of bytes (of received UART X data) contained in active buffer */
+  int notified; /**< Flag to initiate UART RX data transfer transaction for a UART*/
+  int timestamp; /**< Time when UART receive buffer is last updated */
 } uart_rx_info;
 
+/**
+ * Define time (in clock ticks) to wait before sending the received UART data,
+ * when data received is lesser than minimum configured packet size
+ */
 #define UART_RX_FLUSH_DELAY 20000000
 
 void uart_set_config(chanend c_uart_config,
