@@ -10,6 +10,10 @@
 #include "s2e_validation.h"
 #include "s2e_flash.h"
 
+/**
+ *  app_state_t
+ *  Stores channels
+ **/
 typedef struct app_state_t
 {
     chanend c_uart_config;

@@ -3,11 +3,33 @@
 #include "xccompat.h"
 #include "xtcp_client.h"
 
+/**
+ *  s2e_webserver_init
+ *  The S2E webserver initialization routine. Registers all channels used by it.
+ *
+ *  \param chanend c_xtcp           channel connecting to the xtcp module
+ *  \param chanend c_flash          channel for web page data
+ *  \param chanend c_uart_config    channel for UART configuration
+ *  \param chanend c_flash_data     channel for s2e flash data
+ *  \return none
+ *
+ **/
 void s2e_webserver_init(chanend c_xtcp,
                         NULLABLE_RESOURCE(chanend, c_flash),
                         chanend c_uart_config,
                         NULLABLE_RESOURCE(chanend, c_flash_data));
 
+/**
+ *  s2e_webserver_event_handler
+ *  Handles webserver event.
+ *
+ *  \param chanend c_xtcp           channel connecting to the xtcp module
+ *  \param chanend c_flash          channel for web page data
+ *  \param chanend c_uart_config    channel for UART configuration
+ *  \param chanend c_flash_data     channel for s2e flash data
+ *  \return none
+ *
+ **/
 void s2e_webserver_event_handler(chanend c_xtcp,
                                  NULLABLE_RESOURCE(chanend, c_flash),
                                  chanend c_uart_config,

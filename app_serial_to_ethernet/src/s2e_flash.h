@@ -22,28 +22,103 @@
 #define FLASH_DATA_PRESENT  '$'
 
 
-
 #ifdef __XC__
+/**
+ *  s2e_flash
+ *  The S2E flash thread will keep looking for data (or commands) on the 
+ *  c_flash_data channel.
+ *
+ *  \param chanend c_flash_web      channel for webpage data
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param fl_SPIPorts &flash_ports reference to flash ports used by the device
+ *  \return none
+ *
+ **/
 void s2e_flash(chanend c_flash_web,
                chanend c_flash_data,
                fl_SPIPorts &flash_ports);
 #endif
 
+/**
+ *  send_cmd_to_flash_thread
+ *  Send command to flash thread.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param int data_type            UART_CONFIG (or) IPVER
+ *  \param int command              FLASH_CMD_SAVE (or) FLASH_CMD_RESTORE
+ *  \return none
+ *
+ **/
+void send_cmd_to_flash_thread(chanend c_flash_data, 
+                              int data_type, 
+                              int command);
+
+/**
+ *  get_flash_access_result
+ *  Get the flash access result after performing certain command.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \return int                     S2E_FLASH_ERROR (or) S2E_FLASH_OK
+ *
+ **/
 int get_flash_access_result(chanend c_flash_data);
 
-void send_cmd_to_flash_thread(chanend c_flash_data, int data_type, int command);
-
-void get_ipconfig_from_flash_thread(chanend c_flash_data,
-                                    REFERENCE_PARAM(xtcp_ipconfig_t, ip));
-
-void send_ipconfig_to_flash_thread(chanend c_flash_data,
-                                   REFERENCE_PARAM(xtcp_ipconfig_t, ip));
-
+/**
+ *  send_data_to_flash_thread
+ *  Send UART configuration data to flash. Send one configuration at a 
+ *  time. In order to send configuration for all the channels, this routine 
+ *  must be called in a loop; each time sending the current channels config.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param uart_config_data_t data  reference to the current channel's config
+ *  \return none
+ *
+ **/
 void send_data_to_flash_thread(chanend c_flash_data,
                                REFERENCE_PARAM(uart_config_data_t, data));
 
+/**
+ *  get_data_from_flash_thread
+ *  Get UART configuration data from flash. Get one configuration at a 
+ *  time. In order to get configuration for all the channels, this routine must 
+ *  be called in a loop; each time updating the current channels config. Telnet
+ *  ports for each channel are also updated.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param uart_config_data_t data  reference to the current channel's config
+ *                                  to update
+ *  \param int telnet_port          reference to current channel's telnet port
+ *                                  to update
+ *  \return none
+ *
+ **/
 void get_data_from_flash_thread(chanend c_flash_data,
                                 REFERENCE_PARAM(uart_config_data_t, data),
                                 REFERENCE_PARAM(int, telnet_port));
+
+/**
+ *  send_ipconfig_to_flash_thread
+ *  Send IP configuration data to flash.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param xtcp_ipconfig_t ip       reference to the current IP config
+ *  \return none
+ *
+ **/
+void send_ipconfig_to_flash_thread(chanend c_flash_data,
+                                   REFERENCE_PARAM(xtcp_ipconfig_t, ip));
+
+/**
+ *  get_ipconfig_from_flash_thread
+ *  Get IP configuration data from flash.
+ *
+ *  \param chanend c_flash_data     channel for s2e data
+ *  \param xtcp_ipconfig_t ip       reference to the current IP config
+ *  \return none
+ *
+ **/
+void get_ipconfig_from_flash_thread(chanend c_flash_data,
+                                    REFERENCE_PARAM(xtcp_ipconfig_t, ip));
+
 
 #endif // __s2e_flash_h__
