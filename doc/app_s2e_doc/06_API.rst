@@ -6,6 +6,17 @@ API
 S2E Webserver
 -------------
 
+Data Structures
++++++++++++++++
+
+.. doxygenstruct:: app_state_t
+
+Webserver prototypes
+++++++++++++++++++++
+
+.. doxygenfunction:: s2e_webserver_init
+
+.. doxygenfunction:: s2e_webserver_event_handler
 
 
 S2E Flash access

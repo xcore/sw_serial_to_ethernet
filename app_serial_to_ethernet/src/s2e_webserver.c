@@ -16,9 +16,9 @@
  **/
 typedef struct app_state_t
 {
-    chanend c_uart_config;
-    chanend c_xtcp;
-    chanend c_flash;
+    chanend c_uart_config;  /**< Channel for UART config */
+    chanend c_xtcp;         /**< Channel connecting to the XTCP module */
+    chanend c_flash;        /**< Channel for flash data */
 } app_state_t;
 
 static app_state_t app_state;

@@ -7,11 +7,11 @@
  *  s2e_webserver_init
  *  The S2E webserver initialization routine. Registers all channels used by it.
  *
- *  \param chanend c_xtcp           channel connecting to the xtcp module
- *  \param chanend c_flash          channel for web page data
- *  \param chanend c_uart_config    channel for UART configuration
- *  \param chanend c_flash_data     channel for s2e flash data
- *  \return none
+ *  @param c_xtcp           channel connecting to the xtcp module
+ *  @param c_flash          channel for web page data
+ *  @param c_uart_config    channel for UART configuration
+ *  @param c_flash_data     channel for s2e flash data
+ *  @return none
  *
  **/
 void s2e_webserver_init(chanend c_xtcp,
@@ -23,11 +23,11 @@ void s2e_webserver_init(chanend c_xtcp,
  *  s2e_webserver_event_handler
  *  Handles webserver event.
  *
- *  \param chanend c_xtcp           channel connecting to the xtcp module
- *  \param chanend c_flash          channel for web page data
- *  \param chanend c_uart_config    channel for UART configuration
- *  \param chanend c_flash_data     channel for s2e flash data
- *  \return none
+ *  @param c_xtcp           channel connecting to the xtcp module
+ *  @param c_flash          channel for web page data
+ *  @param c_uart_config    channel for UART configuration
+ *  @param c_flash_data     channel for s2e flash data
+ *  @return none
  *
  **/
 void s2e_webserver_event_handler(chanend c_xtcp,
