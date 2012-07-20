@@ -18,10 +18,10 @@
  *  configuration and reconfigures UART for received configuration
  * (iv) sends a data byte from telnet UART buffers in a round robin basis,
  *  and notifies current transmit and receive transactions
- * @param     c_uart_data  Channel to communicate UART data between
- *             XTCP and TCP handler thread
- * @param     c_uart_config Channel to communicate UART configuration
- *             details between XTCP and TCP handler thread
+ * @param     c_uart_data   Channel-end to communicate UART data between
+ *             TCP handler and UART handler thread
+ * @param     c_uart_config Channel-end to communicate UART configuration
+ *             details between TCP handler and UART handler thread
  * @param     c_uart_rx  Channel primarily to send UART data from
  *             application to MultiUART RX server thread
  * @param     c_uart_tx  Channel primarily to collect UART data from

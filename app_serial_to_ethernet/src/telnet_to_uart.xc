@@ -21,7 +21,7 @@ typedef struct uart_channel_state_t {
   int sending_data; /**< Flag to indicate all pending UART data is sent to XTCP */
   int parse_state; /**< Holds current parsing state of Telnet buffer parser */
   int ack; /**< Flag to receive XTCP acks when all UART data recieved from XTCP is consumed by UART handler */
-  int init_send; /**< Flag to request XTCP in order to send data from UART handler */
+  int init_send; /**< Flag to notify that UART data is ready to be sent to XTCP */
   int txi; /**< Buffer depth of uart_tx_buffer */
 } uart_channel_state_t;
 

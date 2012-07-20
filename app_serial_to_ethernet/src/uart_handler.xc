@@ -18,7 +18,7 @@ typedef enum uart_config_cmd_t {
  * configured for respective UARTs
  */
 typedef struct uart_tx_info {
-  int len; /**< Depth (bytes) of buffer */
+  int len; /**< Depth of buffer (bytes remaining to be transferred to UART) */
   int i; /**< Number of bytes consumed from the buffer */
   int notified; /**< Flag to notify all UART TX data is transferred to MUART component*/
   xc_ptr buffer; /**< Reference to UART TX buffer */

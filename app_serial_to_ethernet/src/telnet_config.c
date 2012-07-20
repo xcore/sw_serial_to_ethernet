@@ -258,6 +258,28 @@ static void execute_command(chanend c_xtcp,
   xtcp_init_send(c_xtcp, conn);
 }
 
+/**
+ * This function parses received UART configuration requests from telnet
+ * client, validates the requests and executes respective commands.
+ * Various configuration commands supported are:
+ * (a) UART configuration fetch (GET) - for a specified UART
+ * (b) UART configuration apply (SET) -   for a specified UART
+ * (c) UART configuration save (SAVE) - apply working UART configurations
+ * for all UARTs repectively
+ * (d) UART configuration retrieve (FETCH) - fetch UART configuration stored
+ * in flash, for all UARTs
+ * @param    c_xtcp       Channel-end between XTCP and TCP handler thread
+ * @param    c_uart_configChannel-end to communicate UART configuration data
+ *            TCP handler and UART handler thread
+ * @param    c_flash_data Channel-end to communicate UART configuration data
+ *            stored in flash to TCP handler thread
+ * @param   conn          Reference to structure holding IP configuration info
+ * @param   buf           Buffer containing received UART command
+ * @param   len           length of buffer
+ * @param   st            Reference to structure holding Telnet configuration
+ *            state information
+ * @return              None
+ */
 static void parse_config(chanend c_xtcp,
                          chanend c_uart_config,
                          chanend c_flash_data,
