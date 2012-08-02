@@ -30,6 +30,7 @@ print '\tPress any other key for exit \n'
 action=raw_input('Enter Your Selection :')
 action=str(action)
 Dest_IP=0
+flag_set=0
 ip_addr_arr =['0']
 while  ((action == '1') or (action == '2') or (action == '3')) :
 
@@ -46,7 +47,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
 
         print 'Brodcasted command: XMOS S2E REPLY '
         try:
-            s1.bind( ( Host_IP, recv_port ) )
+            s1.bind( ( '', recv_port ) )
             variable=0
             STOP_RECEIVE =0
             while (STOP_RECEIVE == 0):
@@ -122,7 +123,11 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
         while(ip_addr_arr[variable] != 'END'):
                 print '\n\t\t'+str(variable) +' : '+ip_addr_arr[variable]
                 variable+=1
-        variable1=int(raw_input('\nEnter to which S2E you want to change the IP :'))
+	try:
+        	variable1=int(raw_input('\nEnter to which S2E you want to change the IP :'))
+	except:
+		print 'select valid option to change the IP'
+		variable1=-1
         if(variable1 > 0 and variable1 < variable):
                 Dest_IP=ip_addr_arr[variable1]
                 print Dest_IP
