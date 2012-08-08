@@ -148,15 +148,7 @@ The file src\s2e_flash.h has some constants defined which may be used by other f
 Data Structures
 ---------------
 
-.. doxygenstruct:: app_state_t
-
 .. doxygenstruct:: uart_config_data_t
-
-.. doxygenstruct:: uart_channel_state_t
-
-.. doxygenstruct:: uart_tx_info
-
-.. doxygenstruct:: uart_rx_info
 
 
 .. _sec_conf_func:
@@ -212,5 +204,4 @@ Module functions
 
 .. doxygenfunction:: parse_telnet_buffer
 
-.. doxygenfunction:: parse_config
 
