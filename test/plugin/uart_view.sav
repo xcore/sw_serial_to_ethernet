@@ -1,0 +1,75 @@
+[timestart] 103700
+[size] 1600 1152
+[pos] -1 -1
+*-17.144766 276100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+@c00025
+stdcore[0]_CYCLES[31:0]
+@28
+(0)stdcore[0]_CYCLES[31:0]
+(1)stdcore[0]_CYCLES[31:0]
+(2)stdcore[0]_CYCLES[31:0]
+(3)stdcore[0]_CYCLES[31:0]
+(4)stdcore[0]_CYCLES[31:0]
+(5)stdcore[0]_CYCLES[31:0]
+(6)stdcore[0]_CYCLES[31:0]
+(7)stdcore[0]_CYCLES[31:0]
+(8)stdcore[0]_CYCLES[31:0]
+(9)stdcore[0]_CYCLES[31:0]
+(10)stdcore[0]_CYCLES[31:0]
+(11)stdcore[0]_CYCLES[31:0]
+(12)stdcore[0]_CYCLES[31:0]
+(13)stdcore[0]_CYCLES[31:0]
+(14)stdcore[0]_CYCLES[31:0]
+(15)stdcore[0]_CYCLES[31:0]
+(16)stdcore[0]_CYCLES[31:0]
+(17)stdcore[0]_CYCLES[31:0]
+(18)stdcore[0]_CYCLES[31:0]
+(19)stdcore[0]_CYCLES[31:0]
+(20)stdcore[0]_CYCLES[31:0]
+(21)stdcore[0]_CYCLES[31:0]
+(22)stdcore[0]_CYCLES[31:0]
+(23)stdcore[0]_CYCLES[31:0]
+(24)stdcore[0]_CYCLES[31:0]
+(25)stdcore[0]_CYCLES[31:0]
+(26)stdcore[0]_CYCLES[31:0]
+(27)stdcore[0]_CYCLES[31:0]
+(28)stdcore[0]_CYCLES[31:0]
+(29)stdcore[0]_CYCLES[31:0]
+(30)stdcore[0]_CYCLES[31:0]
+(31)stdcore[0]_CYCLES[31:0]
+@1401205
+-group_end
+@800022
+stdcore[0]_XS1_PORT_8A[7:0]
+@28
+(0)stdcore[0]_XS1_PORT_8A[7:0]
+(1)stdcore[0]_XS1_PORT_8A[7:0]
+(2)stdcore[0]_XS1_PORT_8A[7:0]
+(3)stdcore[0]_XS1_PORT_8A[7:0]
+(4)stdcore[0]_XS1_PORT_8A[7:0]
+(5)stdcore[0]_XS1_PORT_8A[7:0]
+(6)stdcore[0]_XS1_PORT_8A[7:0]
+(7)stdcore[0]_XS1_PORT_8A[7:0]
+@1001200
+-group_end
+@28
+stdcore[0]_XS1_PORT_8A_tWaiting
+@800022
+stdcore[0]_XS1_PORT_8B[7:0]
+@28
+(0)stdcore[0]_XS1_PORT_8B[7:0]
+(1)stdcore[0]_XS1_PORT_8B[7:0]
+(2)stdcore[0]_XS1_PORT_8B[7:0]
+(3)stdcore[0]_XS1_PORT_8B[7:0]
+(4)stdcore[0]_XS1_PORT_8B[7:0]
+(5)stdcore[0]_XS1_PORT_8B[7:0]
+(6)stdcore[0]_XS1_PORT_8B[7:0]
+(7)stdcore[0]_XS1_PORT_8B[7:0]
+@1001200
+-group_end
+@28
+stdcore[0]_XS1_PORT_8B_tWaiting
+@22
++{transReg 8B} stdcore[0]_XS1_PORT_8B_transferReg[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
