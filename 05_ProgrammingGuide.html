@@ -1,0 +1,139 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Programming Guide &mdash; Application to demonstrate Serial to Ethernet bridging v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://mathjax.connectmv.com/MathJax.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Application to demonstrate Serial to Ethernet bridging v0.1 documentation" href="index.html" />
+    <link rel="next" title="API" href="06_API.html" />
+    <link rel="prev" title="Getting started" href="04_GettingStarted.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="04_GettingStarted.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="06_API.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="programming-guide">
+<h1>Programming Guide<a class="headerlink" href="#programming-guide" title="Permalink to this headline">¶</a></h1>
+<p>This section provides information on application interfaces.</p>
+<div class="section" id="thread-diagram">
+<h2>Thread Diagram<a class="headerlink" href="#thread-diagram" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="_images/threads.png" src="_images/threads.png" />
+</div>
+</div>
+<div class="section" id="flash-interface">
+<h2>Flash Interface<a class="headerlink" href="#flash-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>The s2e_flash thread handles data to/from flash fitted on board. The UART configuration web pages (html), UART settings and IP configuration are stored in flash. Web pages are retrieved upon request from the client to the web server. UART settings can be &#8216;saved&#8217; and &#8216;restored&#8217; from flash. They are usually done via:</dt>
+<dd><ul class="first last simple">
+<li>Request from web page (HTTP request)</li>
+<li>From Telnet configuration server</li>
+<li>Upon startup (to restore restore last saved settings)</li>
+</ul>
+</dd>
+</dl>
+<p>IP configuration is saved via UDP server request and is requested from flash upon start-up.</p>
+<div class="section" id="webserver">
+<h3>Webserver<a class="headerlink" href="#webserver" title="Permalink to this headline">¶</a></h3>
+<p>The webserver handles all HTTP requests. The web client may request to change UART settings, save current settings, etc... Webserver identifies these requests, validates them and services those requests. It calls appropriate UART handler api&#8217;s to retrieve and set channel settings. For example, a &#8216;Set&#8217; request from web page is validated (the form data from web page containing UART parameters) and the requested channel&#8217;s configuration is appropriately changed with the new one.</p>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Application to demonstrate Serial to Ethernet bridging (0.1)</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_Overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_HardwarePlatform.html">HW platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_SystemOverview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_GettingStarted.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Programming Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#thread-diagram">Thread Diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flash-interface">Flash Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#webserver">Webserver</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_UserInterface.html">User Interface Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_References.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+

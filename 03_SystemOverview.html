@@ -1,0 +1,162 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>System Overview &mdash; Application to demonstrate Serial to Ethernet bridging v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://mathjax.connectmv.com/MathJax.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Application to demonstrate Serial to Ethernet bridging v0.1 documentation" href="index.html" />
+    <link rel="next" title="Getting started" href="04_GettingStarted.html" />
+    <link rel="prev" title="HW platforms" href="02_HardwarePlatform.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="02_HardwarePlatform.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="04_GettingStarted.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="system-overview">
+<h1>System Overview<a class="headerlink" href="#system-overview" title="Permalink to this headline">¶</a></h1>
+<p>This section briefly describes the software components used, thread diagram and resource usage details.</p>
+<div class="section" id="thread-diagram-of-s2e-app">
+<h2>Thread diagram of s2e app<a class="headerlink" href="#thread-diagram-of-s2e-app" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="_images/s2e_BlockDiagram.png" src="_images/s2e_BlockDiagram.png" />
+</div>
+</div>
+<div class="section" id="software-components-used">
+<h2>Software components used<a class="headerlink" href="#software-components-used" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>sc_ethernet</li>
+</ul>
+<p>Two thread version of the ethernet component implementing 10/100 Mii ethernet mac and filters</p>
+<ul class="simple">
+<li>sc_xtcp</li>
+</ul>
+<p>Micro TCP/IP stack for use with sc_ethernet component</p>
+<ul class="simple">
+<li>sc_multi_uart</li>
+</ul>
+<p>Component for implementing multiple serial device communication</p>
+<ul class="simple">
+<li>sc_util</li>
+</ul>
+<p>General utility modules for developing for XMOS devices</p>
+<ul class="simple">
+<li>sc_website</li>
+</ul>
+<p>Component framework for Embedded web site development</p>
+<ul class="simple">
+<li>xcommon</li>
+</ul>
+<p>Common application framework for XMOS software</p>
+</div></blockquote>
+<div class="section" id="description-of-operation">
+<h3>Description of Operation<a class="headerlink" href="#description-of-operation" title="Permalink to this headline">¶</a></h3>
+<p>To be updated</p>
+</div>
+<div class="section" id="resource-usage">
+<h3>Resource Usage<a class="headerlink" href="#resource-usage" title="Permalink to this headline">¶</a></h3>
+<div class="figure">
+<img alt="_images/ResourceUsage.jpg" src="_images/ResourceUsage.jpg" />
+</div>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Application to demonstrate Serial to Ethernet bridging (0.1)</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_Overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_HardwarePlatform.html">HW platforms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#thread-diagram-of-s2e-app">Thread diagram of s2e app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-components-used">Software components used</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description-of-operation">Description of Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resource-usage">Resource Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_GettingStarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_ProgrammingGuide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_UserInterface.html">User Interface Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_References.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+

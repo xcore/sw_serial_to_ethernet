@@ -1,0 +1,168 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Serial to Ethernet Bridging Application Manual &mdash; Application to demonstrate Serial to Ethernet bridging v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://mathjax.connectmv.com/MathJax.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Application to demonstrate Serial to Ethernet bridging v0.1 documentation" href="#" />
+    <link rel="next" title="Application Overview" href="01_Overview.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="01_Overview.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="serial-to-ethernet-bridging-application-manual">
+<h1>Serial to Ethernet Bridging Application Manual<a class="headerlink" href="#serial-to-ethernet-bridging-application-manual" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_Overview.html">Application Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_Overview.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_HardwarePlatform.html">HW platforms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02_HardwarePlatform.html#hardware-requirements">Hardware Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_HardwarePlatform.html#hardware-setup">Hardware SetUp</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_SystemOverview.html">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_SystemOverview.html#thread-diagram-of-s2e-app">Thread diagram of s2e app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_SystemOverview.html#software-components-used">Software components used</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_SystemOverview.html#description-of-operation">Description of Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_SystemOverview.html#resource-usage">Resource Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_GettingStarted.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_GettingStarted.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="04_GettingStarted.html#building-with-the-xde">Building with the XDE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_GettingStarted.html#building-from-the-command-line">Building from the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_GettingStarted.html#makefiles">Makefiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="04_GettingStarted.html#installing-the-application-onto-flash">Installing the application onto flash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="04_GettingStarted.html#using-command-line-tools">Using Command Line Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_ProgrammingGuide.html">Programming Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_ProgrammingGuide.html#thread-diagram">Thread Diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_ProgrammingGuide.html#flash-interface">Flash Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="05_ProgrammingGuide.html#webserver">Webserver</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_API.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#configuration-defines">Configuration Defines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#data-structures">Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#configuration-functions">Configuration Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#interface-functions">Interface functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_API.html#module-functions">Module functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_UserInterface.html">User Interface Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="07_UserInterface.html#web-interface">Web Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_UserInterface.html#telnet-interface">Telnet interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="07_UserInterface.html#uart-configuration">Uart Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_UserInterface.html#sample-usage">Sample Usage:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_UserInterface.html#uart-data-communication">Uart Data Communication</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08_References.html">References</a></li>
+</ul>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="#">Application to demonstrate Serial to Ethernet bridging (0.1)</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_Overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_HardwarePlatform.html">HW platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_SystemOverview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_GettingStarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_ProgrammingGuide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_UserInterface.html">User Interface Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_References.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+
