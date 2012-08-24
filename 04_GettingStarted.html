@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting started &mdash; Application to demonstrate Serial to Ethernet bridging v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://mathjax.connectmv.com/MathJax.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Application to demonstrate Serial to Ethernet bridging v0.1 documentation" href="index.html" />
+    <link rel="next" title="Programming Guide" href="05_ProgrammingGuide.html" />
+    <link rel="prev" title="System Overview" href="03_SystemOverview.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="03_SystemOverview.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="05_ProgrammingGuide.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>The following components are required to build the Serial to Ethernet application:</dt>
+<dd><ul class="first last simple">
+<li>sc_multi_uart: git://github.com/xcore/sc_multi_uart.git</li>
+<li>sc_xtcp: git://github.com/xcore/sc_xtcp.git</li>
+<li>sc_ethernet: git://github.com/xcore/sc_ethernet.git</li>
+<li>sc_util: git://github.com/xcore/sc_util.git</li>
+<li>sc_website: git://github.com/xcore/sc_website.git</li>
+<li>xcommon: git://github.com/xcore/xcommon.git</li>
+</ul>
+</dd>
+</dl>
+<p>Once the zipfiles are downloaded you can install, build and use the software.</p>
+<div class="section" id="building-with-the-xde">
+<h3>Building with the XDE<a class="headerlink" href="#building-with-the-xde" title="Permalink to this headline">¶</a></h3>
+<p>To install the software, open the XDE (XMOS Development Tools - latest version as of this writing is 11.11.0) and follow these steps:</p>
+<ol class="arabic simple">
+<li>Choose <cite>File</cite> <strong>&gt;</strong> <cite>Import</cite>.</li>
+<li>Choose <cite>General</cite> <strong>&gt;</strong> <cite>Existing Projects into Workspace</cite> and click <strong>Next</strong>.</li>
+<li>Click <strong>Browse</strong> next to <cite>Select archive file</cite> and select the file firmware ZIP file.</li>
+<li>Make sure the projects you want to import are ticked in the <cite>Projects</cite> list. Import all the components and whichever applications you are interested in.</li>
+<li>Click <strong>Finish</strong>.</li>
+</ol>
+<p>To build, select <cite>app_serial_to_ethernet</cite> in Project Explorer pane and click the <strong>Build</strong> icon.</p>
+</div>
+<div class="section" id="building-from-the-command-line">
+<h3>Building from the command line<a class="headerlink" href="#building-from-the-command-line" title="Permalink to this headline">¶</a></h3>
+<p>To build from the command line, change to <cite>app_serial_to_ethernet</cite> directory and execute the command:</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>xmake all</dd>
+</dl>
+<ol class="arabic">
+<li><p class="first">Inorder to build the firmware with user required static IP, execute the following command:</p>
+<blockquote>
+<div><p>xmake all STATIC_IP=169.254.196.178</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="makefiles">
+<h3>Makefiles<a class="headerlink" href="#makefiles" title="Permalink to this headline">¶</a></h3>
+<p>The main Makefile for the project is in the application directory. This file specifies build options and used modules. The Makefile uses the common build infrastructure in <tt class="docutils literal"><span class="pre">xcommon</span></tt>. This system includes the source files from the relevant modules and is documented within <tt class="docutils literal"><span class="pre">xcommon</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="installing-the-application-onto-flash">
+<h2>Installing the application onto flash<a class="headerlink" href="#installing-the-application-onto-flash" title="Permalink to this headline">¶</a></h2>
+<p>To upgrade (or flash) the firmware you must, firstly:</p>
+<ol class="arabic simple">
+<li>Connect the XTAG Adapter to the Slicekit and XTAG-2 to the adapter. This XTAG-2 can now be connected to your PC or Mac.</li>
+<li>Switch on the power supply to the hardware board (Slicekit).</li>
+</ol>
+<div class="section" id="using-command-line-tools">
+<h3>Using Command Line Tools<a class="headerlink" href="#using-command-line-tools" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Open the XMOS command line tools (Desktop Tools Prompt), change to &#8216;app_serial_to_ethernet&#8217; directory and execute the command:</li>
+</ol>
+<dl class="docutils">
+<dt>::</dt>
+<dd>xmake flash</dd>
+</dl>
+<p>The serial to ethernet application and associated web pages is now flashed in the XMOS device.</p>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Application to demonstrate Serial to Ethernet bridging (0.1)</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_Overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_HardwarePlatform.html">HW platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_SystemOverview.html">System Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-with-the-xde">Building with the XDE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-from-the-command-line">Building from the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#makefiles">Makefiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-application-onto-flash">Installing the application onto flash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-command-line-tools">Using Command Line Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_ProgrammingGuide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_UserInterface.html">User Interface Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_References.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+
