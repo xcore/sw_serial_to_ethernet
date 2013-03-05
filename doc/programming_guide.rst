@@ -1,5 +1,8 @@
+Programming Guide
+=================
+
 Getting started
-===============
++++++++++++++++
 
 Installation
 ------------
@@ -67,3 +70,36 @@ Using Command Line Tools
     xmake flash
 
 The serial to ethernet application and associated web pages is now flashed in the XMOS device.
+
+Application Interfaces
++++++++++++++++++++++++
+
+This section provides information on application interfaces.
+
+UART Configuration
+------------------
+
+The initialisation and configuration process for both the RX and TX operations is the same. For configuration, the functions :c:func:`uart_config_init` or :c:func:`uart_set_config` are utilised. The flow is visualised in :ref:`fig_uart_init_flow`.
+
+.. _fig_uart_init_flow:
+
+.. figure:: images/MUART_Config_Flow.png
+    :align: center
+    :width: 50%
+    
+    UART Configuration Flow
+
+Flash Interface
+---------------
+
+The s2e_flash core handles data to/from flash fitted on board. The UART configuration web (html) pages, UART settings and IP configuration are typically stored into flash. Web pages are retrieved upon request from the client to the web server. UART settings can be 'saved' and 'restored' from flash. They are usually done via:
+    * Request from web page (HTTP request)
+    * From Telnet configuration server
+    * Upon startup (to restore restore last saved settings)
+    
+IP configuration is saved via UDP server request and is requested from flash upon start-up.
+
+Webserver
+---------
+
+The webserver handles all HTTP requests. The web client may request to change UART settings, save current settings, etc... Webserver identifies these requests, validates them and services those requests. It calls appropriate UART handler api's to retrieve and set channel settings. For example, a 'Set' request from web page is validated (the form data from web page containing UART parameters) and the requested channel's configuration is appropriately changed with the new one.
