@@ -1,0 +1,352 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Programming Guide &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="System Description" href="system_description.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="system_description.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="api.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="programming-guide">
+<h1>Programming Guide<a class="headerlink" href="#programming-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>The following components are required to build the Serial to Ethernet application:</dt>
+<dd><ul class="first last simple">
+<li>sc_multi_uart: git://github.com/xcore/sc_multi_uart.git</li>
+<li>sc_xtcp: git://github.com/xcore/sc_xtcp.git</li>
+<li>sc_ethernet: git://github.com/xcore/sc_ethernet.git</li>
+<li>sc_util: git://github.com/xcore/sc_util.git</li>
+<li>sc_website: git://github.com/xcore/sc_website.git</li>
+<li>xcommon: git://github.com/xcore/xcommon.git</li>
+</ul>
+</dd>
+</dl>
+<p>All these components are packaged in the software distribution folder. Once these files are extracted, you can install, build and use the software.</p>
+<div class="section" id="building-with-the-xde">
+<h4>Building with the XDE<a class="headerlink" href="#building-with-the-xde" title="Permalink to this headline">¶</a></h4>
+<p>To install the software, open the XDE (XMOS Development Tools - latest version as of this writing is 11.11.0) and follow these steps:</p>
+<ol class="arabic simple">
+<li>Choose <cite>File</cite> <strong>&gt;</strong> <cite>Import</cite>.</li>
+<li>Choose <cite>General</cite> <strong>&gt;</strong> <cite>Existing Projects into Workspace</cite> and click <strong>Next</strong>.</li>
+<li>Click <strong>Browse</strong> next to <cite>Select archive file</cite> and select the file firmware ZIP file.</li>
+<li>Make sure the projects you want to import are ticked in the <cite>Projects</cite> list. Import all the components and whichever applications you are interested in.</li>
+<li>Click <strong>Finish</strong>.</li>
+</ol>
+<p>To build, select <cite>app_serial_to_ethernet</cite> in Project Explorer pane and click the <strong>Build</strong> icon.</p>
+</div>
+<div class="section" id="building-from-the-command-line">
+<h4>Building from the command line<a class="headerlink" href="#building-from-the-command-line" title="Permalink to this headline">¶</a></h4>
+<p>To build from the command line, change to <cite>app_serial_to_ethernet</cite> directory and execute the command:</p>
+<blockquote>
+<div>xmake all</div></blockquote>
+<ol class="arabic">
+<li><p class="first">Inorder to build the firmware with user required static IP, execute the following command:</p>
+<blockquote>
+<div><p>xmake all STATIC_IP=169.254.196.178</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="makefiles">
+<h4>Makefiles<a class="headerlink" href="#makefiles" title="Permalink to this headline">¶</a></h4>
+<p>The main Makefile for the project is in the <tt class="docutils literal"><span class="pre">app_serial_to_ethernet</span></tt> application directory.
+This file specifies build options and used modules. The Makefile uses the common build infrastructure in <tt class="docutils literal"><span class="pre">xcommon</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="installing-the-application-onto-flash">
+<h3>Installing the application onto flash<a class="headerlink" href="#installing-the-application-onto-flash" title="Permalink to this headline">¶</a></h3>
+<p>To upgrade (or flash) the firmware you must, firstly:</p>
+<ol class="arabic simple">
+<li>Connect the XTAG Adapter to the SliceKit and XTAG-2 to the adapter. This XTAG-2 can now be connected to your PC or Mac.</li>
+<li>Switch on the power supply to the hardware board (Slicekit).</li>
+</ol>
+<div class="section" id="using-command-line-tools">
+<h4>Using Command Line Tools<a class="headerlink" href="#using-command-line-tools" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic">
+<li><p class="first">Open the XMOS command line tools (Desktop Tools Prompt), change to &#8216;app_serial_to_ethernet&#8217; directory and execute the command:</p>
+<blockquote>
+<div><p>xmake flash</p>
+</div></blockquote>
+</li>
+</ol>
+<p>The serial to ethernet application and associated web pages is now flashed into the XMOS device.</p>
+</div>
+</div>
+</div>
+<div class="section" id="source-code-structure">
+<h2>Source Code Structure<a class="headerlink" href="#source-code-structure" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="directory-structure">
+<h3>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">¶</a></h3>
+<p>The source code is split into application source code and web pages.
+The application builds into a single executable using the source code from the modules.
+The modules used by an application are specified using the <tt class="docutils literal"><span class="pre">USED_MODULES</span></tt> variable in
+the application Makefile. For more details on this module structure
+please see the documentation in the <tt class="docutils literal"><span class="pre">module_xmos_common</span></tt> directory.</p>
+<p>The source package contains:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Directory</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>src</td>
+<td>Source files that implement application functionality</td>
+</tr>
+<tr><td>web</td>
+<td>Web (html) pages used by the web server module</td>
+</tr>
+<tr><td>images</td>
+<td>Images that are displayed on the web (html) pages</td>
+</tr>
+</tbody>
+</table>
+<p>Supported modules originate from other repositories:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Directory</th>
+<th class="head">Description</th>
+<th class="head">Repository</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>module_mii_singlethread</td>
+<td>Lite version of low level ethernet interface over MII</td>
+<td>sc_ethernet</td>
+</tr>
+<tr><td>module_ethernet_smi</td>
+<td>A library code to communicate with ethernet phy using the SMI protocol</td>
+<td>sc_ethernet</td>
+</tr>
+<tr><td>module_xtcp</td>
+<td>XTCP TCP/IP stack</td>
+<td>sc_xtcp</td>
+</tr>
+<tr><td>module_multi_uart</td>
+<td>Multiple UART TX server and RX server</td>
+<td>sc_multi_uart</td>
+</tr>
+<tr><td>module_xc_ptr</td>
+<td>A library to allow XC code to access pointers via inline assembly calls.</td>
+<td>sc_util</td>
+</tr>
+<tr><td>module_website</td>
+<td>Embedded website component</td>
+<td>sc_website</td>
+</tr>
+<tr><td>module_mutual_thread_comm</td>
+<td>A protocol that allows two cores to communicate</td>
+<td>sc_util</td>
+</tr>
+<tr><td>module_xmos_common</td>
+<td>Common build infrastructure.</td>
+<td>xcommon</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="key-files">
+<h3>Key Files<a class="headerlink" href="#key-files" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">File</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">xtcp_client_conf.h</span></tt></td>
+<td>Header file for clients of the TCP/IP stack.</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">udp_discovery.h</span></tt></td>
+<td>Header file for declaring UDP port, firmware version and s2e device discovery functions</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">uart_config.h</span></tt></td>
+<td>Header file containing delclarations UART data strcuture and interfacing with multi-uart server component</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">web_server_conf.h</span></tt></td>
+<td>Header file declaring all the functions called from the web pages</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">telnet_config.h</span></tt></td>
+<td>Header file for configuring UARTs via telnet socket</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">multi_uart_rx_conf.h</span></tt></td>
+<td>Header file for multiUART RX server configuration</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">multi_uart_tx_conf.h</span></tt></td>
+<td>Header file for multiUART TX server configuration</td>
+</tr>
+<tr><td><a href="#id1"><span class="problematic" id="id2">``</span></a>s2e_conf.h`</td>
+<td>Header file to enable debug options for s2e application</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="notes-on-application-interfaces">
+<h2>Notes on Application Interfaces<a class="headerlink" href="#notes-on-application-interfaces" title="Permalink to this headline">¶</a></h2>
+<p>This section provides a brief description on main application interfaces.</p>
+<div class="section" id="uart-configuration">
+<h3>UART Configuration<a class="headerlink" href="#uart-configuration" title="Permalink to this headline">¶</a></h3>
+<p>The initialisation and configuration process for both the RX and TX operations is the same. The files <tt class="docutils literal"><span class="pre">multi_uart_tx_conf.h</span></tt> and <tt class="docutils literal"><span class="pre">multi_uart_rx_conf.h</span></tt> are used to configure multiUART TX and RX servers for the default values. For application configuration, the function <tt class="xref c c-func docutils literal"><span class="pre">uart_config_init()</span></tt> is used to apply configuration stored from flash or to use default application defined static configuration. The function <tt class="xref c c-func docutils literal"><span class="pre">uart_set_config()</span></tt> is utilised whenever there is a dynamic configuration change request (ie., a particular UART reconfiguration request). The flow is visualised in <a class="reference internal" href="#fig-uart-init-flow"><span>UART Configuration Flow</span></a>.</p>
+<div class="figure align-center" id="fig-uart-init-flow">
+<img alt="_images/muart_config_flow.png" src="_images/muart_config_flow.png" style="width: 50%;" />
+<p class="caption">UART Configuration Flow</p>
+</div>
+</div>
+<div class="section" id="webserver">
+<h3>Webserver<a class="headerlink" href="#webserver" title="Permalink to this headline">¶</a></h3>
+<p>The webserver handles all HTTP requests from the web clients. A web client may request to change UART settings, save current settings, or apply the previously saved UART seetings etc. Webserver identifies these requests, validates them and services those requests. It calls appropriate UART handler api&#8217;s to retrieve and set channel settings. For example, for a &#8216;Set&#8217; request from the web page, the webserver handler utilizes website component in order to parse the form data from web page, the required UART parameters are extracted and the UART_Handler&#8217;s uart_set_config api is called to set the new UART configuration.</p>
+<p>The Webserver interface utilises sc_website component to implement web server functionality. Refer to the Programming Guide section within the <tt class="docutils literal"><span class="pre">SliceKit</span> <span class="pre">GPIO</span> <span class="pre">Example</span> <span class="pre">Applications</span></tt> documentation linked from the front page documentation of <tt class="docutils literal"><span class="pre">sw_gpio_examples</span></tt> repository (git://github.com/xcore/sw_gpio_examples.git). This documentation contains more information on how to utilize the <tt class="docutils literal"><span class="pre">Embedded</span> <span class="pre">Webserver</span> <span class="pre">Function</span> <span class="pre">Library</span></tt> component in customizing web server applications.</p>
+</div>
+<div class="section" id="flash-interface">
+<h3>Flash Interface<a class="headerlink" href="#flash-interface" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>The s2e_flash core handles data to/from flash fitted on board. The UART configuration web (html) pages, UART settings and IP configuration are typically stored into flash. Web pages are retrieved upon request from the client to the web server. UART settings can be &#8216;saved&#8217; and &#8216;restored&#8217; from flash. They are usually done via:</dt>
+<dd><ul class="first last simple">
+<li>Request from web page (HTTP request)</li>
+<li>From Telnet configuration server</li>
+<li>Upon startup (to restore restore last saved settings)</li>
+</ul>
+</dd>
+</dl>
+<p>IP configuration is saved via UDP server request and is requested from flash upon start-up.</p>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">HW platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_description.html">System Description</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Programming Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#building-with-the-xde">Building with the XDE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-from-the-command-line">Building from the command line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#makefiles">Makefiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-application-onto-flash">Installing the application onto flash</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#using-command-line-tools">Using Command Line Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-code-structure">Source Code Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-files">Key Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#notes-on-application-interfaces">Notes on Application Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uart-configuration">UART Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#webserver">Webserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flash-interface">Flash Interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+

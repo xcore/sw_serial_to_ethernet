@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
+    <link rel="next" title="Using the application" href="using_the_application.html" />
+    <link rel="prev" title="Programming Guide" href="programming_guide.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="programming_guide.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="using_the_application.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="api">
+<span id="sec-api"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configuration-defines">
+<span id="sec-conf-defines"></span><h2>Configuration Defines<a class="headerlink" href="#configuration-defines" title="Permalink to this headline">¶</a></h2>
+<p>The files multi_uart_tx_conf.h and multi_uart_rx_conf.h must be copied from
+app_multi_uart_demo\src folder to app_serial_to_ethernet_demo\src folder</p>
+<p><strong>UART_RX_CHAN_COUNT</strong></p>
+<blockquote>
+<div><p>Default value = 8</p>
+<p>Define the number of channels that are to be supported, must fit in the port. Also, must be a power of 2 (i.e. 1,2,4,8) - not all channels have to be utilised</p>
+</div></blockquote>
+<p><strong>UART_TX_CHAN_COUNT</strong></p>
+<blockquote>
+<div><p>Default value = 8</p>
+<p>Define the number of channels that are to be supported, must fit in the port. Also, must be a power of 2 (i.e. 1,2,4,8) - not all channels have to be utilised</p>
+</div></blockquote>
+<p><strong>UART_RX_MAX_BAUD</strong></p>
+<blockquote>
+<div><p>Default value = 115200</p>
+<p>Define maximum baud rate to be supprted for any of the UART channel</p>
+</div></blockquote>
+<p><strong>UART_TX_BUF_SIZE</strong></p>
+<blockquote>
+<div><p>Default value = 8</p>
+<p>Define the buffer size in UART word entries - needs to be a power of 2 (i.e. 1,2,4,8,16,32 etc)</p>
+</div></blockquote>
+<p>The file xtcp_client_conf.h defines configuration fexibility required for XTCP clients in order to use XTCP server functions</p>
+<p><strong>UIP_CONF_RECEIVE_WINDOW</strong></p>
+<blockquote>
+<div><p>Default value = 128</p>
+<p>Define window length of TCP packets that the application will receive and process for each TCP packets received from XTCP clients.
+Note this value will be set as default length of application buffers that will be used to hold UART data collected from XTCP clients.</p>
+</div></blockquote>
+<p><strong>XTCP_CLIENT_BUF_SIZE</strong></p>
+<blockquote>
+<div><p>Default value = 650</p>
+<p>Define MTU size used for XTCP device packet transmissions</p>
+</div></blockquote>
+<p>The file udp_discovery.h defines ports used for UDP discovery.
+This file can set the following defines:</p>
+<p><strong>UDP_RECV_BUF_SIZE</strong></p>
+<blockquote>
+<div><p>Default value = 80</p>
+<p>Define length of UDP message buffer which holds the incoming UDP test server request
+or its corresponding S2E response</p>
+</div></blockquote>
+<p><strong>INCOMING_UDP_PORT</strong></p>
+<blockquote>
+<div><p>Default value = 15534</p>
+<p>Define incoming UDP port to listen to device discovery requests from UDP test server</p>
+</div></blockquote>
+<p><strong>OUTGOING_UDP_PORT</strong></p>
+<blockquote>
+<div><p>Default value = 15533</p>
+<p>Define outgoing UDP port in order to send device response to UDP test server</p>
+</div></blockquote>
+<p><strong>S2E_FIRMWARE_VER</strong></p>
+<blockquote>
+<div><p>Current value = 1.1.2</p>
+<p>Define to specify S2E firmware version. This shall be updated for every release</p>
+</div></blockquote>
+<p><strong>UART_RX_FLUSH_DELAY</strong></p>
+<blockquote>
+<div><p>Default value = 20000000</p>
+<p>If UART data received is lesser than minimum configured packet size, this defines a
+minimum wait time to send this data to telnet handler</p>
+</div></blockquote>
+<p>The file telnet_config.h defines ports used for Telnet socket used for UART configuration.</p>
+<p><strong>S2E_TELNET_CONFIG_PORT</strong></p>
+<blockquote>
+<div><p>Default value = 23</p>
+<p>Define to specify telnet port to use for UART configuration</p>
+</div></blockquote>
+</div>
+<div class="section" id="constants">
+<span id="sec-const"></span><h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<p>The file srcs2e_flash.h has some constants defined which may be used by other files while accessing flash.</p>
+<p><strong>S2E_FLASH_ERROR</strong></p>
+<blockquote>
+<div><p>Default value = -1</p>
+<p>Any errors (like flash not present, wrong flash, unable to write, etc...) while accessing the flash fitted on the board, are represented using this constant.</p>
+</div></blockquote>
+<p><strong>S2E_FLASH_OK</strong></p>
+<blockquote>
+<div><p>Default value = 0</p>
+<p>All successfull flash operations are represented using this constant.</p>
+</div></blockquote>
+<p><strong>UART_CONFIG</strong></p>
+<blockquote>
+<div><p>Default value = 0</p>
+<p>To be used as a data type parameter while calling flash routines. This also represents the sector index (relative to webpage image) in the flash where UART configuration must be stored.</p>
+</div></blockquote>
+<p><strong>IPVER</strong></p>
+<blockquote>
+<div><p>Default value = 1</p>
+<p>To be used as a data type parameter while calling flash routines. This also represents the sector index (relative to webpage image) in the flash where IP configuration must be stored.</p>
+</div></blockquote>
+<p><strong>FLASH_CMD_SAVE</strong></p>
+<blockquote>
+<div><p>Default value = 1</p>
+<p>Flash command to &#8216;save&#8217; configuration to flash.</p>
+</div></blockquote>
+<p><strong>FLASH_CMD_RESTORE</strong></p>
+<blockquote>
+<div><p>Default value = 2</p>
+<p>Flash command to &#8216;restore&#8217; configuration from flash.</p>
+</div></blockquote>
+<p><strong>FLASH_DATA_PRESENT</strong></p>
+<blockquote>
+<div><p>Default value = $</p>
+<p>While &#8216;saving&#8217; settings to flash, this value is written as the first byte. So, on a &#8216;restore&#8217; command, by reading for this sybol, we would know that some data is present in that sector of flash.</p>
+</div></blockquote>
+</div>
+<div class="section" id="data-structures">
+<span id="sec-data-struct"></span><h2>Data Structures<a class="headerlink" href="#data-structures" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenstruct: Cannot find struct &#8220;uart_config_data_t&#8221; in doxygen xml output</p>
+</div>
+</div>
+<div class="section" id="configuration-functions">
+<span id="sec-conf-func"></span><h2>Configuration Functions<a class="headerlink" href="#configuration-functions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;uart_config_init&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;s2e_webserver_init&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;telnet_to_uart_init&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;udp_discovery_init&#8221; in doxygen xml output</p>
+</div>
+</div>
+<div class="section" id="interface-functions">
+<span id="sec-xface-func"></span><h2>Interface functions<a class="headerlink" href="#interface-functions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;uart_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;tcp_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;telnet_config_event_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;s2e_webserver_event_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;telnet_to_uart_event_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;udp_discovery_event_handler&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;s2e_flash&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;send_data_to_flash_thread&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;get_data_from_flash_thread&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;send_ipconfig_to_flash_thread&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;get_ipconfig_from_flash_thread&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;send_cmd_to_flash_thread&#8221; in doxygen xml output</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;get_flash_access_result&#8221; in doxygen xml output</p>
+</div>
+</div>
+<div class="section" id="module-functions">
+<span id="sec-module-func"></span><h2>Module functions<a class="headerlink" href="#module-functions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">doxygenfunction: Cannot find function &#8220;parse_telnet_buffer&#8221; in doxygen xml output</p>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">HW platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_description.html">System Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-defines">Configuration Defines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-structures">Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-functions">Configuration Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-functions">Interface functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-functions">Module functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+

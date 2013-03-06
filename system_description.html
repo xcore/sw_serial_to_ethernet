@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>System Description &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/xcomment.js"></script>
+    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
+    <link rel="next" title="Programming Guide" href="programming_guide.html" />
+    <link rel="prev" title="HW platforms" href="hardware_platform.html" /> 
+
+<script>
+function setheight() {
+h1 = document.getElementById('d1').style.height;
+h2 = document.getElementById('d2').style.height;
+
+if (parseInt(h1) > parseInt(h2)) {
+document.getElementById('d2').style.height=h1 + "px";
+}
+else {
+document.getElementById('d1').style.height=h2 + "px";
+}
+
+}
+</script>
+</head>
+
+<body onload="setheight();">
+
+  
+
+    <div class="document" id='d1'>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+<div style="float: right">
+<a href="hardware_platform.html"
+                        title="previous chapter"> &lt&lt </a>
+<a href="programming_guide.html"
+                        title="next chapter"> &gt&gt </a></p>
+</div>
+
+            
+  <div class="section" id="system-description">
+<h1>System Description<a class="headerlink" href="#system-description" title="Permalink to this headline">¶</a></h1>
+<p>This section briefly describes the software components used, thread diagram and resource usage details.</p>
+<div class="section" id="software-architecture">
+<h2>Software Architecture<a class="headerlink" href="#software-architecture" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="_images/s2e_threads.png" src="_images/s2e_threads.png" />
+<p class="caption">Core Usage</p>
+</div>
+<p>In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is a UART data available, the application fills the appropriate UART buffer and notifies TCP client thread to consume this data. Similarly whenever there is data from Ethernet packets, XTCP server notfies TCP client about data availability and the client stores this data into respective application buffers. This data is then consumed by UART (client) handler.</p>
+<div class="section" id="cores">
+<h3>Cores<a class="headerlink" href="#cores" title="Permalink to this headline">¶</a></h3>
+<p>The design uses seven logical cores as described below.</p>
+<p>The multi-UART component comprises two logical cores, one acting as a transmit (TX) server for up to 8 uarts, and the other acting as a receive (RX) server for up to 8 uarts.</p>
+<p>UART_Handler is an application core that interfaces with the UART RX and TX servers. It handles UART configuration requests, facilitates to store the UART data received from UART RX server into respective application buffers and transfers the data received from TCP clients to UART TX server.</p>
+<p>TCP_Handler is another application core that initializes and manages the application. It interfaces with the flash module for UART configuration storage and recovery, and handles all the xtcp application events (application data and UI configuration requests) received from the xtcp server module. UDP discovery management, web server handling, telnet data extraction are all implemented in this logical core.</p>
+<p>The XTCP server runs on a single logical core and connects to the Ethernet MAC component which uses a single logical core. It uses XC channel to communicate to clients (TCP_Handler in this case) using XTCP events.</p>
+<p>The Flash core handles flash data sotrage and retrieval requests from TCP_Handler core based on the application dynamics such as start-up or UI driven requests.</p>
+</div>
+<div class="section" id="buffering">
+<h3>Buffering<a class="headerlink" href="#buffering" title="Permalink to this headline">¶</a></h3>
+<p>Buffering for the TX server is managed by the UART_Handler Core. Data is transferred to the UART TX logical core via a shared memory interface.</p>
+<p>There is no buffering provided by the UART RX server. The UART_Handler core is able to respond to the received data in real time and store them in buffer(s) available in the  TCP_Handler core via token notifcations.</p>
+</div>
+<div class="section" id="communication-model">
+<h3>Communication Model<a class="headerlink" href="#communication-model" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">sc_multi_uart</span></tt> module utilises a combination of shared memory and channel communication. Channel communication is used on both the RX and TX servers to pause the logical core and subsequently release the logical core when required for reconfiguration. The primary means of data transfer for both the RX and TX logical cores is shared memory. The RX logical core utilises a channel to notify any client (UART_Handler in this case) of available data - this means that events can be utilised within an application to avoid the requirement for polling for received data.</p>
+<p>XTCP module and flash core connects to TCP_handler client using their repective XC channels.</p>
+</div>
+</div>
+<div class="section" id="software-components-used">
+<h2>Software components used<a class="headerlink" href="#software-components-used" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Component</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>sc_ethernet</td>
+<td>Two thread version of the ethernet component implementing 10/100 Mii ethernet mac and filters</td>
+</tr>
+<tr><td>sc_xtcp</td>
+<td>Micro TCP/IP stack for use with sc_ethernet component</td>
+</tr>
+<tr><td>sc_multi_uart</td>
+<td>Component for implementing multiple serial device communication</td>
+</tr>
+<tr><td>sc_util</td>
+<td>General utility modules for developing for XMOS devices</td>
+</tr>
+<tr><td>sc_website</td>
+<td>Component framework for Embedded web site development</td>
+</tr>
+<tr><td>xcommon</td>
+<td>Common application framework for XMOS software</td>
+</tr>
+</tbody>
+</table>
+<div class="figure">
+<img alt="_images/resource_usage.jpg" src="_images/resource_usage.jpg" />
+<p class="caption">Resource Usage</p>
+</div>
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" id='d2'>
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Application Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">HW platforms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">System Description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#software-architecture">Software Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cores">Cores</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#buffering">Buffering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#communication-model">Communication Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-components-used">Software components used</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+<div id="searchbox" style="display: none;margin-bottom: 10px;">
+  <h3>Search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    <div class="footer">
+    </div>
+  </body>
+</html>
+
+
+
