@@ -39,7 +39,6 @@ Building from the command line
 
 To build from the command line, change to `app_serial_to_ethernet` directory and execute the command:
 
-::
        xmake all
 
 #. Inorder to build the firmware with user required static IP, execute the following command:
@@ -67,7 +66,6 @@ Using Command Line Tools
 
 #. Open the XMOS command line tools (Desktop Tools Prompt), change to 'app_serial_to_ethernet' directory and execute the command:
 
-::
     xmake flash
 
 The serial to ethernet application and associated web pages is now flashed into the XMOS device.
@@ -157,7 +155,7 @@ Key Files
    - Header file to enable debug options for s2e application
 
 Notes on Application Interfaces
-++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++
 
 This section provides a brief description on main application interfaces.
 

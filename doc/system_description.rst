@@ -7,7 +7,9 @@ Software Architecture
 ---------------------
 
 .. figure:: images/s2e_threads.png
-
+    
+    Core Usage
+    
 In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is a UART data available, the application fills the appropriate UART buffer and notifies TCP client thread to consume this data. Similarly whenever there is data from Ethernet packets, XTCP server notfies TCP client about data availability and the client stores this data into respective application buffers. This data is then consumed by UART (client) handler.
 
 Cores
@@ -43,25 +45,28 @@ XTCP module and flash core connects to TCP_handler client using their repective 
 Software components used
 ------------------------
 
-   * sc_ethernet
-   Two thread version of the ethernet component implementing 10/100 Mii ethernet mac and filters
+.. list-table::
+ :header-rows: 1
 
-   * sc_xtcp
-   Micro TCP/IP stack for use with sc_ethernet component
-
-   * sc_multi_uart
-   Component for implementing multiple serial device communication
-
-   * sc_util
-   General utility modules for developing for XMOS devices
-
-   * sc_website
-   Component framework for Embedded web site development
-
-   * xcommon
-   Common application framework for XMOS software
+ * - Component
+   - Description
+ * - sc_ethernet
+   - Two thread version of the ethernet component implementing 10/100 Mii ethernet mac and filters
+ * - sc_xtcp
+   - Micro TCP/IP stack for use with sc_ethernet component
+ * - sc_multi_uart
+   - Component for implementing multiple serial device communication
+ * - sc_util
+   - General utility modules for developing for XMOS devices
+ * - sc_website
+   - Component framework for Embedded web site development
+ * - xcommon
+   - Common application framework for XMOS software
 
 Resource Usage
 ++++++++++++++
 
 .. figure:: images/resource_usage.jpg
+    
+    Resource Usage
+    

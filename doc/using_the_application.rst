@@ -67,31 +67,30 @@ The following example uses Hercules 3.2.5
 UART serial port setup
 ++++++++++++++++++++++
 
-#. Open the client application and change to ‘Serial’ tab
+#. Open the client application and change to ``Serial`` tab
 
-#. Select appropriate options in the ‘Serial’ pane.
+#. Select appropriate options in the ``Serial`` pane.
    Apply the default settings (Data size = 8, Parity = Even, Handshake = Off, Mode = Free)
    Cross check these settings with the UART settings in the webpage.
 
-#. Click **Open**
-
+#. Click **Open``
 
 Telnet client setup
 +++++++++++++++++++
 
 #. Open the client application
 
-#. Switch to **TCP Client** tab
+#. Switch to ``TCP Client`` tab
 
 #. Key in the ip address (for e.g. 169.254.196.178) of the s2e device
 
 #. Key in the port number configured for a particular UART (default configured values for each uart channel starts with 46)
 
-#. Click **Connect**
+#. Click ``Connect``
 
 
 Telnet client connection to the s2e server is now opened; now key in the data to be sent to a particular UART. 
-Files can also be uploaded using this client by right-clicking (and selecting appropriate option) in the ‘data’ pane of either sessions.
+Files can also be uploaded using this client by right-clicking (and selecting appropriate option) in the ``data`` pane of either sessions.
 
 Software is tested for the following telnet clients
 
@@ -104,23 +103,23 @@ Device Configuration using Web Interface
 
 #. Open the browser window
 
-#. Key in the ip address (for e.g. http://169.254.196.178/) and press **Enter**.
+#. Key in the ip address (for e.g. http://169.254.196.178/) and press ``Enter``.
 
 Home page of the application appears
 
-#. Click on a **Uart Channel** to configure.
+#. Click on a ``Uart Channel`` to configure.
 
 A new page for the selected channel appears with its settings. In order to change the Uart parameters
 
 #. Select uart parameters to change (Parity, Stop bits, Baud rate, Char Len or Telnet port)
 
-#. Click **Set**.
+#. Click ``Set``.
 
-#. If configuration is set successfully, the **Response** text will say 'Ok'
+#. If configuration is set successfully, the ``Response`` text will say 'Ok'
 
-#. Click on **Back to main config page** to select a different Uart channel or save the current settings to flash.
+#. Click on ``Back to main config page`` to select a different Uart channel or save the current settings to flash.
 
-#. When clicked on **Save** in the main config page, current set configuration will be saved to flash. On successfull save, the **Response** text will say 'Ok'
+#. When clicked on ``Save`` in the main config page, current set configuration will be saved to flash. On successfull save, the ``Response`` text will say 'Ok'
 
 Software is tested for the following web browsers
 
@@ -141,13 +140,13 @@ A separate telnet socket (default configured to port 23) is used for configuring
 
 #. Open the telnet client (following example uses Hercules 3.2.5)
 
-#. Switch to **TCP Client** tab
+#. Switch to ``TCP Client`` tab
 
 #. Key in the ip address (for e.g. 169.254.196.178)
 
 #. Key in the port number (for uart config, it is 23)
 
-#. Click **Connect**
+#. Click ``Connect``
 
 Uart configuration server's welcome message appears in the data pane of Telnet client
 
@@ -203,10 +202,10 @@ where
 
 * P7 : Telnet port (typical values are 10 to 65536)
 
-#. Click **Enter** to apply the configuration for the channel.
+#. Click ``Enter`` to apply the configuration for the channel.
 
-Sample Usage:
-+++++++++++++
+Sample Usage
+++++++++++++
 
 * Get: ~1~~0~@
         Gets channel '0' configuration.
