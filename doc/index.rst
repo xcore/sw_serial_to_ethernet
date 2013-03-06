@@ -8,5 +8,5 @@ Serial to Ethernet Bridging Application Manual
    system_description
    programming_guide
    api
-   user_interface
+   using_the_application
    references
