@@ -24,7 +24,7 @@ Ethernet              Triangle                 J5
 MUART                 Star                     J4
 ===================== ======================== =======================
 
-.. figure:: images/hardware_setup.png
+.. figure:: images/hardware_setup.jpg
     :align: center
     :width: 50%
     
