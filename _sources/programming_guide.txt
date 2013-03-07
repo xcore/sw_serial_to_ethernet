@@ -41,7 +41,7 @@ To build from the command line, change to `app_serial_to_ethernet` directory and
 
        xmake all
 
-#. Inorder to build the firmware with user required static IP, execute the following command:
+Note: Inorder to build the firmware with user required static IP, execute the following command:
 
        xmake all STATIC_IP=169.254.196.178
 
@@ -64,7 +64,7 @@ To upgrade (or flash) the firmware you must, firstly:
 Using Command Line Tools
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Open the XMOS command line tools (Desktop Tools Prompt), change to 'app_serial_to_ethernet' directory and execute the command:
+Open the XMOS command line tools (Desktop Tools Prompt), change to 'app_serial_to_ethernet' directory and execute the command:
 
     xmake flash
 
@@ -140,9 +140,9 @@ Key Files
  * - ``xtcp_client_conf.h``
    - Header file for clients of the TCP/IP stack.
  * - ``udp_discovery.h``
-   - Header file for declaring UDP port, firmware version and s2e device discovery functions
+   - Header file for declaring UDP port, firmware version and function declarations required for s2e device discovery
  * - ``uart_config.h``
-   - Header file containing delclarations UART data strcuture and interfacing with multi-uart server component
+   - Header file containing delclarations for UART data strcutures and interfacing with multi-uart server component
  * - ``web_server_conf.h``
    - Header file declaring all the functions called from the web pages
  * - ``telnet_config.h``
@@ -151,7 +151,7 @@ Key Files
    - Header file for multiUART RX server configuration
  * - ``multi_uart_tx_conf.h``
    - Header file for multiUART TX server configuration
- * - ``s2e_conf.h`
+ * - ``s2e_conf.h``
    - Header file to enable debug options for s2e application
 
 Notes on Application Interfaces

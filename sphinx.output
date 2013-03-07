@@ -4,6 +4,25 @@ loading pickled environment... not yet created
 building [html]: targets for 8 source files that are out of date
 updating environment: 8 added, 0 changed, 0 removed
 reading sources... [ 12%] api
+Rendering Doxygen struct uart_config_data_t
+Rendering Doxygen function void uart_config_init
+Rendering Doxygen function void s2e_webserver_init
+Rendering Doxygen function void telnet_to_uart_init
+Rendering Doxygen function void udp_discovery_init
+Rendering Doxygen function void uart_handler
+Rendering Doxygen function void tcp_handler
+Rendering Doxygen function void telnet_config_event_handler
+Rendering Doxygen function void s2e_webserver_event_handler
+Rendering Doxygen function void telnet_to_uart_event_handler
+Rendering Doxygen function void udp_discovery_event_handler
+Rendering Doxygen function void s2e_flash
+Rendering Doxygen function void send_data_to_flash_thread
+Rendering Doxygen function void get_data_from_flash_thread
+Rendering Doxygen function void send_ipconfig_to_flash_thread
+Rendering Doxygen function void get_ipconfig_from_flash_thread
+Rendering Doxygen function void send_cmd_to_flash_thread
+Rendering Doxygen function int get_flash_access_result
+Rendering Doxygen function int parse_telnet_buffer
 reading sources... [ 25%] hardware_platform
 reading sources... [ 37%] index
 reading sources... [ 50%] overview
@@ -12,52 +31,14 @@ reading sources... [ 75%] references
 reading sources... [ 87%] system_description
 reading sources... [100%] using_the_application
 
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:155: (WARNING/2) doxygenstruct: Cannot find struct "uart_config_data_t" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:163: (WARNING/2) doxygenfunction: Cannot find function "uart_config_init" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:165: (WARNING/2) doxygenfunction: Cannot find function "s2e_webserver_init" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:167: (WARNING/2) doxygenfunction: Cannot find function "telnet_to_uart_init" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:169: (WARNING/2) doxygenfunction: Cannot find function "udp_discovery_init" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:177: (WARNING/2) doxygenfunction: Cannot find function "uart_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:179: (WARNING/2) doxygenfunction: Cannot find function "tcp_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:181: (WARNING/2) doxygenfunction: Cannot find function "telnet_config_event_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:183: (WARNING/2) doxygenfunction: Cannot find function "s2e_webserver_event_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:185: (WARNING/2) doxygenfunction: Cannot find function "telnet_to_uart_event_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:187: (WARNING/2) doxygenfunction: Cannot find function "udp_discovery_event_handler" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:189: (WARNING/2) doxygenfunction: Cannot find function "s2e_flash" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:191: (WARNING/2) doxygenfunction: Cannot find function "send_data_to_flash_thread" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:193: (WARNING/2) doxygenfunction: Cannot find function "get_data_from_flash_thread" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:195: (WARNING/2) doxygenfunction: Cannot find function "send_ipconfig_to_flash_thread" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:197: (WARNING/2) doxygenfunction: Cannot find function "get_ipconfig_from_flash_thread" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:199: (WARNING/2) doxygenfunction: Cannot find function "send_cmd_to_flash_thread" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:201: (WARNING/2) doxygenfunction: Cannot find function "get_flash_access_result" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/api.rst:209: (WARNING/2) doxygenfunction: Cannot find function "parse_telnet_buffer" in doxygen xml output
-
-/home/srinivas/sw_serial_to_ethernet/doc/programming_guide.rst:158: (WARNING/2) Inline literal start-string without end-string.
-
 /home/srinivas/sw_serial_to_ethernet/doc/system_description.rst:70: (SEVERE/4) Title level inconsistent:
 
 Resource Usage
 ++++++++++++++
 
-/home/srinivas/sw_serial_to_ethernet/doc/using_the_application.rst:80: (WARNING/2) Inline strong start-string without end-string.
+/home/srinivas/sw_serial_to_ethernet/doc/using_the_application.rst:41: (ERROR/3) Unexpected indentation.
+
+/home/srinivas/sw_serial_to_ethernet/doc/using_the_application.rst:91: (WARNING/2) Inline strong start-string without end-string.
 
 looking for now-outdated files... none found
 pickling environment... done
@@ -74,11 +55,11 @@ writing output... [100%] using_the_application
 
 writing additional files... genindex search
 copying images... [ 25%] images/s2e_threads.png
-copying images... [ 50%] images/hardware_setup.png
+copying images... [ 50%] images/muart_config_flow.png
 copying images... [ 75%] images/resource_usage.jpg
-copying images... [100%] images/muart_config_flow.png
+copying images... [100%] images/hardware_setup.jpg
 
 copying static files... done
 dumping search index... done
 dumping object inventory... done
-build succeeded, 22 warnings.
+build succeeded, 3 warnings.

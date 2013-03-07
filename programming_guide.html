@@ -94,13 +94,9 @@ document.getElementById('d1').style.height=h2 + "px";
 <p>To build from the command line, change to <cite>app_serial_to_ethernet</cite> directory and execute the command:</p>
 <blockquote>
 <div>xmake all</div></blockquote>
-<ol class="arabic">
-<li><p class="first">Inorder to build the firmware with user required static IP, execute the following command:</p>
+<p>Note: Inorder to build the firmware with user required static IP, execute the following command:</p>
 <blockquote>
-<div><p>xmake all STATIC_IP=169.254.196.178</p>
-</div></blockquote>
-</li>
-</ol>
+<div>xmake all STATIC_IP=169.254.196.178</div></blockquote>
 </div>
 <div class="section" id="makefiles">
 <h4>Makefiles<a class="headerlink" href="#makefiles" title="Permalink to this headline">¶</a></h4>
@@ -117,13 +113,9 @@ This file specifies build options and used modules. The Makefile uses the common
 </ol>
 <div class="section" id="using-command-line-tools">
 <h4>Using Command Line Tools<a class="headerlink" href="#using-command-line-tools" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic">
-<li><p class="first">Open the XMOS command line tools (Desktop Tools Prompt), change to &#8216;app_serial_to_ethernet&#8217; directory and execute the command:</p>
+<p>Open the XMOS command line tools (Desktop Tools Prompt), change to &#8216;app_serial_to_ethernet&#8217; directory and execute the command:</p>
 <blockquote>
-<div><p>xmake flash</p>
-</div></blockquote>
-</li>
-</ol>
+<div>xmake flash</div></blockquote>
 <p>The serial to ethernet application and associated web pages is now flashed into the XMOS device.</p>
 </div>
 </div>
@@ -226,10 +218,10 @@ please see the documentation in the <tt class="docutils literal"><span class="pr
 <td>Header file for clients of the TCP/IP stack.</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">udp_discovery.h</span></tt></td>
-<td>Header file for declaring UDP port, firmware version and s2e device discovery functions</td>
+<td>Header file for declaring UDP port, firmware version and function declarations required for s2e device discovery</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">uart_config.h</span></tt></td>
-<td>Header file containing delclarations UART data strcuture and interfacing with multi-uart server component</td>
+<td>Header file containing delclarations for UART data strcutures and interfacing with multi-uart server component</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">web_server_conf.h</span></tt></td>
 <td>Header file declaring all the functions called from the web pages</td>
@@ -243,7 +235,7 @@ please see the documentation in the <tt class="docutils literal"><span class="pr
 <tr><td><tt class="docutils literal"><span class="pre">multi_uart_tx_conf.h</span></tt></td>
 <td>Header file for multiUART TX server configuration</td>
 </tr>
-<tr><td><a href="#id1"><span class="problematic" id="id2">``</span></a>s2e_conf.h`</td>
+<tr><td><tt class="docutils literal"><span class="pre">s2e_conf.h</span></tt></td>
 <td>Header file to enable debug options for s2e application</td>
 </tr>
 </tbody>
@@ -255,7 +247,7 @@ please see the documentation in the <tt class="docutils literal"><span class="pr
 <p>This section provides a brief description on main application interfaces.</p>
 <div class="section" id="uart-configuration">
 <h3>UART Configuration<a class="headerlink" href="#uart-configuration" title="Permalink to this headline">¶</a></h3>
-<p>The initialisation and configuration process for both the RX and TX operations is the same. The files <tt class="docutils literal"><span class="pre">multi_uart_tx_conf.h</span></tt> and <tt class="docutils literal"><span class="pre">multi_uart_rx_conf.h</span></tt> are used to configure multiUART TX and RX servers for the default values. For application configuration, the function <tt class="xref c c-func docutils literal"><span class="pre">uart_config_init()</span></tt> is used to apply configuration stored from flash or to use default application defined static configuration. The function <tt class="xref c c-func docutils literal"><span class="pre">uart_set_config()</span></tt> is utilised whenever there is a dynamic configuration change request (ie., a particular UART reconfiguration request). The flow is visualised in <a class="reference internal" href="#fig-uart-init-flow"><span>UART Configuration Flow</span></a>.</p>
+<p>The initialisation and configuration process for both the RX and TX operations is the same. The files <tt class="docutils literal"><span class="pre">multi_uart_tx_conf.h</span></tt> and <tt class="docutils literal"><span class="pre">multi_uart_rx_conf.h</span></tt> are used to configure multiUART TX and RX servers for the default values. For application configuration, the function <a class="reference internal" href="api.html#uart_config_init" title="uart_config_init"><span>uart_config_init()</span></a> is used to apply configuration stored from flash or to use default application defined static configuration. The function <tt class="xref c c-func docutils literal"><span class="pre">uart_set_config()</span></tt> is utilised whenever there is a dynamic configuration change request (ie., a particular UART reconfiguration request). The flow is visualised in <a class="reference internal" href="#fig-uart-init-flow"><span>UART Configuration Flow</span></a>.</p>
 <div class="figure align-center" id="fig-uart-init-flow">
 <img alt="_images/muart_config_flow.png" src="_images/muart_config_flow.png" style="width: 50%;" />
 <p class="caption">UART Configuration Flow</p>

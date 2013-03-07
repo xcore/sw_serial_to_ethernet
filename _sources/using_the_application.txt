@@ -6,7 +6,8 @@ This section details on how to use the application and its user interfaces.
 S2E Device Discovery
 --------------------
 
-S2E devices discovery on the network is performed by a UDP test server program (available at /test/UDP_TestServer folder) to be executed on a host machine connected to the network.
+S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder). 
+This script needs to be executed on a host machine connected to the network.
 
 * For Windows 7 users, navigate to test\UDP_TestServer\windows and double click on udp_Server.exe file
 
@@ -15,9 +16,10 @@ S2E devices discovery on the network is performed by a UDP test server program (
 Running the UDP test server
 +++++++++++++++++++++++++++
 
-#. Select appropriate udp_Server package as described above
+#. Select appropriate jost specific udp_Server package as described above
 
-#. Script displays IP address of your host system; this is the default IP address used for UDP communication. If you intend to modify this IP address, select option 'n' and provide the new IP address for the host
+#. Script displays IP address of your host system; this is the default IP address used for UDP communication. 
+   If you intend to modify this IP address, select option 'n' and provide the new IP address for the host
 
 #. Script displays different options to choose as explained in the following sections: 
 
@@ -25,34 +27,43 @@ Discover the S2E devices on the network
 +++++++++++++++++++++++++++++++++++++++
 
 #. Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.
+   The message format is "XMOS S2E REPLY" broadcasted to 255.255.255.255
 
-#. The response received from S2E devices available in the network is in the format:
-     	VER --> Firmware Version
-      	MAC --> MAC Address
-	IP --> IP address of the S2E device
+#. XMO S2E devices monitor this broadcast message and responds to the test server using the following format:
+     "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:abc.def.uvw.xyz"
 
-#. The above format of information is repeated for all the S2E devices available in the network
+#. The test server parses this response received from S2E devices available in the network and displays 
+   the following information on the console:
+        VER --> Firmware Version
+        MAC --> MAC Address
+        IP --> IP address of the S2E device
+
+#. The above information is displayed for all the S2E devices available in the network
 
 Modify IP address of a particular S2E device
 ++++++++++++++++++++++++++++++++++++++++++++
 
 #. The device discovery option should be used prior to using this option
 
-#. Upon selecting this option, all available S2Es on the network are displayed
+#. Upon selecting the above option, ensure all available S2Es on the network are displayed
 
-#. You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device
+#. You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device.
+   The server sends a unicast message using the format: "XMOS S2E IPCHANGE aaa.bbb.ccc.ddd"
+   
+#. Appropriate S2E device will receive this message, flash the new ip address, resets and starts with the new ip address
 
-#. You can see S2E IP is changed to the new IP address. Select the device discovery option again in order ensure the IP change is done.
+#. At the test server, you can now see S2E IP is changed to the new IP address by selecting the device discovery option again
 
 Modify IP address of all S2E devices to use DHCP server
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#. IP address of all S2E devices can be set to 0.0.0.0 This is a broadcast request and enables the device DHCP mode and a DHCP server can assign IP address to all S2E devices.
+#. This is a request and enables the s2e devices to DHCP mode. A DHCP server can be used to assign IP address to all S2E devices.
+   The test server sends a broadcast message using the format: "XMOS S2E IPCHANGE 0.0.0.0"
 
-#. It is important that only the intended S2Es for which the IP address is invalid should be made available in the network. 
+#. It is important that only the intended S2Es for which the IP address is invalid should be made available in the network
    All other S2Es should be removed from the network.
    
-#. Once the S2E devices IP is changed to the DHCP assigned IP addresses, select option 1 after some time in order to know the the new IP addresses for the device(s)
+#. Once the S2E devices IP is changed to the DHCP assigned IP addresses, select discovery option after some time in order to know the the new IP addresses for the device(s)
 
 Data Communication using S2E Device
 -----------------------------------

@@ -173,91 +173,468 @@ minimum wait time to send this data to telnet handler</p>
 </div>
 <div class="section" id="data-structures">
 <span id="sec-data-struct"></span><h2>Data Structures<a class="headerlink" href="#data-structures" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenstruct: Cannot find struct &#8220;uart_config_data_t&#8221; in doxygen xml output</p>
-</div>
+<dl class="type">
+<dt id="uart_config_data_t">
+<tt class="descname">uart_config_data_t</tt><a class="headerlink" href="#uart_config_data_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure to hold UART configuration details.</p>
+<p><strong>Structure Members:</strong></p>
+<dl class="member">
+<dt id="uart_config_data_t.channel_id">
+int <tt class="descname">channel_id</tt><a class="headerlink" href="#uart_config_data_t.channel_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>UART Id.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="uart_config_data_t.parity">
+e_uart_config_parity <tt class="descname">parity</tt><a class="headerlink" href="#uart_config_data_t.parity" title="Permalink to this definition">¶</a></dt>
+<dd><p>One of valid parity: Odd, Even, Mark, Space, None.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="uart_config_data_t.stop_bits">
+e_uart_config_stop_bits <tt class="descname">stop_bits</tt><a class="headerlink" href="#uart_config_data_t.stop_bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop bits configuration: Single or Two.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="uart_config_data_t.polarity">
+e_uart_config_polarity <tt class="descname">polarity</tt><a class="headerlink" href="#uart_config_data_t.polarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Polarity setting: Start bit as 1 or 0.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="uart_config_data_t.baud">
+int <tt class="descname">baud</tt><a class="headerlink" href="#uart_config_data_t.baud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Baud rate of UART channel.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="uart_config_data_t.char_len">
+int <tt class="descname">char_len</tt><a class="headerlink" href="#uart_config_data_t.char_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of bits each UART character contain.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="configuration-functions">
 <span id="sec-conf-func"></span><h2>Configuration Functions<a class="headerlink" href="#configuration-functions" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;uart_config_init&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;s2e_webserver_init&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;telnet_to_uart_init&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;udp_discovery_init&#8221; in doxygen xml output</p>
-</div>
+<dl class="function">
+<dt id="uart_config_init">
+void <tt class="descname">uart_config_init</tt><big>(</big>chanend<em>&nbsp;c_uart_config</em>, chanend<em>&nbsp;?c_flash_data</em>, chanend<em>&nbsp;?c_xtcp</em>, int<em>&nbsp;&amp;telnet_port_address</em><big>)</big><a class="headerlink" href="#uart_config_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function retrieves configuration of each UARTs from flash, and applies it to the base configuration structure of type uart_config_data_t.</p>
+<p>Telnet port applicable for corresponding UART is also fetched from flash and applied to repective UART configuration structure. If there is no valid flash configuration, default in-program configuration with following values EvenParity-1StopBit-115200Baud-Start0Polarity-8UARTCharLen is used</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_uart_config</strong> &#8211; Channel-end to communicate UART configuration details between TCP handler and UART handler thread</li>
+<li><strong>c_flash_data</strong> &#8211; Channel-end to communicate UART configuration data stored in flash to TCP handler thread</li>
+<li><strong>c_xtcp</strong> &#8211; Channel-end between XTCP and TCP handler thread</li>
+<li><strong>telnet_port_address</strong> &#8211; Reference to structure holding Telnet port addresses mapped for UARTs</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="s2e_webserver_init">
+void <tt class="descname">s2e_webserver_init</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;?c_flash</em>, chanend<em>&nbsp;c_uart_config</em>, chanend<em>&nbsp;?c_flash_data</em><big>)</big><a class="headerlink" href="#s2e_webserver_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>s2e_webserver_init The S2E webserver initialization routine.</p>
+<p>Registers all channels used by it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; channel connecting to the xtcp module</li>
+<li><strong>c_flash</strong> &#8211; channel for web page data</li>
+<li><strong>c_uart_config</strong> &#8211; channel for UART configuration</li>
+<li><strong>c_flash_data</strong> &#8211; channel for s2e flash data</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="telnet_to_uart_init">
+void <tt class="descname">telnet_to_uart_init</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_uart_data</em>, int<em>&nbsp;telnet_port_address[]</em><big>)</big><a class="headerlink" href="#telnet_to_uart_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function initializes UART state structure, assigns configured/default telnet ports and listens on these ports, shares UART buffer references to UART handler thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel-end between XTCP and TCP handler thread</li>
+<li><strong>c_uart_data</strong> &#8211; Channel-end to communicate UART data between TCP handler and UART handler thread</li>
+<li><strong>telnet_port_address</strong> &#8211; Array contining telnet ports mapped for configured UARTs</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="udp_discovery_init">
+void <tt class="descname">udp_discovery_init</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_flash_data</em>, xtcp_ipconfig_t<em>&nbsp;&amp;ipconfig</em><big>)</big><a class="headerlink" href="#udp_discovery_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function initializes UDP discovery state, fetches S2E IP address stored in flash and references to ETH thread in order to configure device IP.</p>
+<p>If valid IP is not present in flash, default configured IP defined from ipconfig is used</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel between XTCP and TCP handler thread</li>
+<li><strong>c_flash_data</strong> &#8211; Channel between Flash and TCP handler thread</li>
+<li><strong>ipconfig</strong> &#8211; Reference to structure holding IP configuration info</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="interface-functions">
 <span id="sec-xface-func"></span><h2>Interface functions<a class="headerlink" href="#interface-functions" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;uart_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;tcp_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;telnet_config_event_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;s2e_webserver_event_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;telnet_to_uart_event_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;udp_discovery_event_handler&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;s2e_flash&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;send_data_to_flash_thread&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;get_data_from_flash_thread&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;send_ipconfig_to_flash_thread&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;get_ipconfig_from_flash_thread&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;send_cmd_to_flash_thread&#8221; in doxygen xml output</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;get_flash_access_result&#8221; in doxygen xml output</p>
-</div>
+<dl class="function">
+<dt id="uart_handler">
+void <tt class="descname">uart_handler</tt><big>(</big>chanend<em>&nbsp;c_uart_data</em>, chanend<em>&nbsp;c_uart_config</em>, streaming chanend<em>&nbsp;c_uart_rx</em>, streaming chanend<em>&nbsp;c_uart_tx</em><big>)</big><a class="headerlink" href="#uart_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function configures UARTs, initializes application buffers states.</p>
+<p>As a part of event handling, this function does the following: (i) handles incoming data from UARTs and stores into appropirate buffers (ii) in case of data transfer transaction, either notifies or acknowledges TCP handler about UART data; otherwise, listens from TCP handler to (a) collect telnet received data to UART (b) share appropriate UART buffer holding UART recived data (iii) in case of UART configuration requests, collects appropriate UART configuration and reconfigures UART for received configuration (iv) sends a data byte from telnet UART buffers in a round robin basis, and notifies current transmit and receive transactions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_uart_data</strong> &#8211; Channel-end to communicate UART data between TCP handler and UART handler thread</li>
+<li><strong>c_uart_config</strong> &#8211; Channel-end to communicate UART configuration details between TCP handler and UART handler thread</li>
+<li><strong>c_uart_rx</strong> &#8211; Channel primarily to send UART data from application to MultiUART RX server thread</li>
+<li><strong>c_uart_tx</strong> &#8211; Channel primarily to collect UART data from MultiUART TX server thread into UART handler thread</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tcp_handler">
+void <tt class="descname">tcp_handler</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_uart_data</em>, chanend<em>&nbsp;c_uart_config</em>, chanend<em>&nbsp;?c_flash_web</em>, chanend<em>&nbsp;?c_flash_data</em><big>)</big><a class="headerlink" href="#tcp_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles TCP handler thread.</p>
+<p>During initialization, IP configuration details stored in flash are retrieved from UDP discovery function and passed on to ETH thread This thread mainly handles (a) all XTCP events and invokes respective sub-function handlers (b) notification messages from UART handler thread for UART data transactions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel-end between XTCP and TCP handler thread</li>
+<li><strong>c_uart_data</strong> &#8211; Channel-end to communicate UART data between TCP handler and UART handler thread</li>
+<li><strong>c_uart_config</strong> &#8211; Channel-end to communicate UART configuration data TCP handler and UART handler thread</li>
+<li><strong>c_flash_web</strong> &#8211; Channel-end to communicate Web page data stored in flash to TCP handler thread</li>
+<li><strong>c_flash_data</strong> &#8211; Channel-end to communicate UART configuration data stored in flash to TCP handler thread</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="telnet_config_event_handler">
+void <tt class="descname">telnet_config_event_handler</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_uart_config</em>, chanend<em>&nbsp;c_flash_data</em>, xtcp_connection_t<em>&nbsp;&amp;conn</em><big>)</big><a class="headerlink" href="#telnet_config_event_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles UART configuration requests from telnet configuration client.</p>
+<p>It initializes cofnig parse state machine, receives configuration request events, sends response back to the client</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel-end between XTCP and TCP handler thread</li>
+<li><strong>c_uart_configChannel-end</strong> &#8211; to communicate UART configuration data TCP handler and UART handler thread</li>
+<li><strong>c_flash_data</strong> &#8211; Channel-end to communicate UART configuration data stored in flash to TCP handler thread</li>
+<li><strong>conn</strong> &#8211; Reference to structure holding IP configuration info</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="s2e_webserver_event_handler">
+void <tt class="descname">s2e_webserver_event_handler</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;?c_flash</em>, chanend<em>&nbsp;c_uart_config</em>, xtcp_connection_t<em>&nbsp;&amp;conn</em><big>)</big><a class="headerlink" href="#s2e_webserver_event_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>s2e_webserver_event_handler Handles webserver event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; channel connecting to the xtcp module</li>
+<li><strong>c_flash</strong> &#8211; channel for web page data</li>
+<li><strong>c_uart_config</strong> &#8211; channel for UART configuration</li>
+<li><strong>c_flash_data</strong> &#8211; channel for s2e flash data</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="telnet_to_uart_event_handler">
+void <tt class="descname">telnet_to_uart_event_handler</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_uart_data</em>, xtcp_connection_t<em>&nbsp;&amp;conn</em><big>)</big><a class="headerlink" href="#telnet_to_uart_event_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles XTCP events related to Telnet data communication.</p>
+<p>For any event, a correponding UART is mapped from XTCP connection As a part of event handling, this function does the following: (i) for new connections, TCP connection details are stored and telnet parse state machine and TCP ack mode is initialized (ii) for recieve events, data from TCP stack is collected into appropriate UART buffers. Received data is sent to telnet parser server in order to separate application data from telnet protocol. Initiates UART data transaction on c_uart_data channel in order to send data to UART (iii) for send requests initiated by telnet handler, this handler performs either of the following functionality (a) welcome messages are sent to respective telnet clients at the start of each session (b) collect outstanding data from appropriate UART RX active buffer and sends on XTCP connection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel-end between XTCP and TCP handler thread</li>
+<li><strong>c_uart_data</strong> &#8211; Channel-end to communicate UART data between TCP handler and UART handler thread</li>
+<li><strong>conn</strong> &#8211; Reference to structure holding IP configuration info</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="udp_discovery_event_handler">
+void <tt class="descname">udp_discovery_event_handler</tt><big>(</big>chanend<em>&nbsp;c_xtcp</em>, chanend<em>&nbsp;c_flash_data</em>, xtcp_connection_t<em>&nbsp;&amp;conn</em><big>)</big><a class="headerlink" href="#udp_discovery_event_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles events related to UDP discovery functionality.</p>
+<p>Receives S2E identification and IP configuration requests from UDP test server, frames and sends S2E response messages</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_xtcp</strong> &#8211; Channel between XTCP and TCP handler thread</li>
+<li><strong>c_flash_data</strong> &#8211; Channel between Flash and TCP handler thread</li>
+<li><strong>conn</strong> &#8211; Reference to UDP connection state</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="s2e_flash">
+void <tt class="descname">s2e_flash</tt><big>(</big>chanend<em>&nbsp;c_flash_web</em>, chanend<em>&nbsp;c_flash_data</em>, fl_SPIPorts<em>&nbsp;&amp;flash_ports</em><big>)</big><a class="headerlink" href="#s2e_flash" title="Permalink to this definition">¶</a></dt>
+<dd><p>s2e_flash The S2E flash thread will keep looking for data (or commands) on the c_flash_data channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_web</strong> &#8211; channel for webpage data</li>
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>flash_ports</strong> &#8211; reference to flash ports used by the device</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="send_data_to_flash_thread">
+void <tt class="descname">send_data_to_flash_thread</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em>, <a class="reference internal" href="#uart_config_data_t" title="uart_config_data_t"><span>uart_config_data_t</span></a><em>&nbsp;&amp;data</em><big>)</big><a class="headerlink" href="#send_data_to_flash_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>send_data_to_flash_thread Send UART configuration data to flash.</p>
+<p>Send one configuration at a time. In order to send configuration for all the channels, this routine must be called in a loop; each time sending the current channels config.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>data</strong> &#8211; reference to the current channel&#8217;s config</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="get_data_from_flash_thread">
+void <tt class="descname">get_data_from_flash_thread</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em>, <a class="reference internal" href="#uart_config_data_t" title="uart_config_data_t"><span>uart_config_data_t</span></a><em>&nbsp;&amp;data</em>, int<em>&nbsp;&amp;telnet_port</em><big>)</big><a class="headerlink" href="#get_data_from_flash_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>get_data_from_flash_thread Get UART configuration data from flash.</p>
+<p>Get one configuration at a time. In order to get configuration for all the channels, this routine must be called in a loop; each time updating the current channels config. Telnet ports for each channel are also updated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>data</strong> &#8211; reference to the current channel&#8217;s config to update</li>
+<li><strong>telnet_port</strong> &#8211; reference to current channel&#8217;s telnet port to update</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="send_ipconfig_to_flash_thread">
+void <tt class="descname">send_ipconfig_to_flash_thread</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em>, xtcp_ipconfig_t<em>&nbsp;&amp;ip</em><big>)</big><a class="headerlink" href="#send_ipconfig_to_flash_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>send_ipconfig_to_flash_thread Send IP configuration data to flash.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>ip</strong> &#8211; reference to the current IP config</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="get_ipconfig_from_flash_thread">
+void <tt class="descname">get_ipconfig_from_flash_thread</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em>, xtcp_ipconfig_t<em>&nbsp;&amp;ip</em><big>)</big><a class="headerlink" href="#get_ipconfig_from_flash_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>get_ipconfig_from_flash_thread Get IP configuration data from flash.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>ip</strong> &#8211; reference to the current IP config</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="send_cmd_to_flash_thread">
+void <tt class="descname">send_cmd_to_flash_thread</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em>, int<em>&nbsp;data_type</em>, int<em>&nbsp;command</em><big>)</big><a class="headerlink" href="#send_cmd_to_flash_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>send_cmd_to_flash_thread Send command to flash thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+<li><strong>data_type</strong> &#8211; UART_CONFIG (or) IPVER</li>
+<li><strong>command</strong> &#8211; FLASH_CMD_SAVE (or) FLASH_CMD_RESTORE</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">none</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="get_flash_access_result">
+int <tt class="descname">get_flash_access_result</tt><big>(</big>chanend<em>&nbsp;c_flash_data</em><big>)</big><a class="headerlink" href="#get_flash_access_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>get_flash_access_result Get the flash access result after performing certain command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_flash_data</strong> &#8211; channel for s2e data</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int S2E_FLASH_ERROR (or) S2E_FLASH_OK</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-functions">
 <span id="sec-module-func"></span><h2>Module functions<a class="headerlink" href="#module-functions" title="Permalink to this headline">¶</a></h2>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">doxygenfunction: Cannot find function &#8220;parse_telnet_buffer&#8221; in doxygen xml output</p>
-</div>
+<dl class="function">
+<dt id="parse_telnet_buffer">
+int <tt class="descname">parse_telnet_buffer</tt><big>(</big>char<em>&nbsp;data[]</em>, int<em>&nbsp;len</em>, int<em>&nbsp;&amp;parse_state</em>, int<em>&nbsp;&amp;close_request</em><big>)</big><a class="headerlink" href="#parse_telnet_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function implements Telnet server functionality.</p>
+<p>Mainly extracts application data from XTCP data packets in telnet protocol format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> &#8211; Buffer to store application data filtered from telnet server</li>
+<li><strong>len</strong> &#8211; Number of bytes of received data</li>
+<li><strong>parse_state</strong> &#8211; Current state of telnet parser state machine</li>
+<li><strong>close_request</strong> &#8211; Flag to set when telnet client is suspended</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Length of application buffer</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 

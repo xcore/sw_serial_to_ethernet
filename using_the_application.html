@@ -63,7 +63,8 @@ document.getElementById('d1').style.height=h2 + "px";
 <p>This section details on how to use the application and its user interfaces.</p>
 <div class="section" id="s2e-device-discovery">
 <h2>S2E Device Discovery<a class="headerlink" href="#s2e-device-discovery" title="Permalink to this headline">¶</a></h2>
-<p>S2E devices discovery on the network is performed by a UDP test server program (available at /test/UDP_TestServer folder) to be executed on a host machine connected to the network.</p>
+<p>S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder).
+This script needs to be executed on a host machine connected to the network.</p>
 <ul class="simple">
 <li>For Windows 7 users, navigate to testUDP_TestServerwindows and double click on udp_Server.exe file</li>
 <li>For MAC or Linux users, it is recommended to install socket package for python, and double click on udp_Server.py file available in  testUDP_TestServerLiunux_MAC folder</li>
@@ -71,25 +72,33 @@ document.getElementById('d1').style.height=h2 + "px";
 <div class="section" id="running-the-udp-test-server">
 <h3>Running the UDP test server<a class="headerlink" href="#running-the-udp-test-server" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Select appropriate udp_Server package as described above</li>
-<li>Script displays IP address of your host system; this is the default IP address used for UDP communication. If you intend to modify this IP address, select option &#8216;n&#8217; and provide the new IP address for the host</li>
+<li>Select appropriate jost specific udp_Server package as described above</li>
+<li>Script displays IP address of your host system; this is the default IP address used for UDP communication.
+If you intend to modify this IP address, select option &#8216;n&#8217; and provide the new IP address for the host</li>
 <li>Script displays different options to choose as explained in the following sections:</li>
 </ol>
 </div>
 <div class="section" id="discover-the-s2e-devices-on-the-network">
 <h3>Discover the S2E devices on the network<a class="headerlink" href="#discover-the-s2e-devices-on-the-network" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic">
-<li><p class="first">Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.</p>
+<li><p class="first">Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.
+The message format is &#8220;XMOS S2E REPLY&#8221; broadcasted to 255.255.255.255</p>
 </li>
 <li><dl class="first docutils">
-<dt>The response received from S2E devices available in the network is in the format:</dt>
-<dd><p class="first last">VER &#8211;&gt; Firmware Version
-MAC &#8211;&gt; MAC Address
-IP &#8211;&gt; IP address of the S2E device</p>
+<dt>XMO S2E devices monitor this broadcast message and responds to the test server using the following format:</dt>
+<dd><p class="first last">&#8220;XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:abc.def.uvw.xyz&#8221;</p>
 </dd>
 </dl>
 </li>
-<li><p class="first">The above format of information is repeated for all the S2E devices available in the network</p>
+<li><p class="first">The test server parses this response received from S2E devices available in the network and displays
+the following information on the console:</p>
+<blockquote>
+<div><p>VER &#8211;&gt; Firmware Version
+MAC &#8211;&gt; MAC Address
+IP &#8211;&gt; IP address of the S2E device</p>
+</div></blockquote>
+</li>
+<li><p class="first">The above information is displayed for all the S2E devices available in the network</p>
 </li>
 </ol>
 </div>
@@ -97,18 +106,21 @@ IP &#8211;&gt; IP address of the S2E device</p>
 <h3>Modify IP address of a particular S2E device<a class="headerlink" href="#modify-ip-address-of-a-particular-s2e-device" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li>The device discovery option should be used prior to using this option</li>
-<li>Upon selecting this option, all available S2Es on the network are displayed</li>
-<li>You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device</li>
-<li>You can see S2E IP is changed to the new IP address. Select the device discovery option again in order ensure the IP change is done.</li>
+<li>Upon selecting the above option, ensure all available S2Es on the network are displayed</li>
+<li>You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device.
+The server sends a unicast message using the format: &#8220;XMOS S2E IPCHANGE aaa.bbb.ccc.ddd&#8221;</li>
+<li>Appropriate S2E device will receive this message, flash the new ip address, resets and starts with the new ip address</li>
+<li>At the test server, you can now see S2E IP is changed to the new IP address by selecting the device discovery option again</li>
 </ol>
 </div>
 <div class="section" id="modify-ip-address-of-all-s2e-devices-to-use-dhcp-server">
 <h3>Modify IP address of all S2E devices to use DHCP server<a class="headerlink" href="#modify-ip-address-of-all-s2e-devices-to-use-dhcp-server" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>IP address of all S2E devices can be set to 0.0.0.0 This is a broadcast request and enables the device DHCP mode and a DHCP server can assign IP address to all S2E devices.</li>
-<li>It is important that only the intended S2Es for which the IP address is invalid should be made available in the network.
+<li>This is a request and enables the s2e devices to DHCP mode. A DHCP server can be used to assign IP address to all S2E devices.
+The test server sends a broadcast message using the format: &#8220;XMOS S2E IPCHANGE 0.0.0.0&#8221;</li>
+<li>It is important that only the intended S2Es for which the IP address is invalid should be made available in the network
 All other S2Es should be removed from the network.</li>
-<li>Once the S2E devices IP is changed to the DHCP assigned IP addresses, select option 1 after some time in order to know the the new IP addresses for the device(s)</li>
+<li>Once the S2E devices IP is changed to the DHCP assigned IP addresses, select discovery option after some time in order to know the the new IP addresses for the device(s)</li>
 </ol>
 </div>
 </div>
