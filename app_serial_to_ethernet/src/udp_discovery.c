@@ -23,16 +23,16 @@ static connection_state_t udp_disc_state;
 xtcp_connection_t udp_disc_incoming_conn;
 static char buf[UDP_RECV_BUF_SIZE];
 //UDP Response Format :: "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:xxx.xxx.xxx.xxx";
-static char *g_FirmwareVer = S2E_FIRMWARE_VER;
+static char *g_firmware_ver = S2E_FIRMWARE_VER;
 
-static char *g_RespString = "XMOS S2E VER:";
+static char *g_reponse_str = "XMOS S2E VER:";
 static char invalid_udp_request[] = "Invalid UDP Server request\n";
 
 static xtcp_ipaddr_t broadcast_addr = {255,255,255,255};
 xtcp_ipconfig_t g_ipconfig;
 unsigned char g_mac_addr[6];
 
-//#define STATIC_IP {169,254,196,178}
+#define STATIC_IP {169,254,196,178}
 
 xtcp_ipconfig_t ipconfig =
 {
@@ -93,12 +93,12 @@ static void construct_udp_response(char *buf)
 {
 	int len = 0;
 
-	len = strlen(g_RespString);
-	memcpy(buf, g_RespString, len);
+	len = strlen(g_reponse_str);
+	memcpy(buf, g_reponse_str, len);
 	buf += len;
 
-	len = strlen(g_FirmwareVer);
-	memcpy(buf, g_FirmwareVer, len);
+	len = strlen(g_firmware_ver);
+	memcpy(buf, g_firmware_ver, len);
 	buf += len;
 	*buf = ';';
 	buf++;
