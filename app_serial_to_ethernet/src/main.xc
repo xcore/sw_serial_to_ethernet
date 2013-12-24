@@ -5,12 +5,11 @@
 
 #include <platform.h>
 #include <xs1.h>
-#include "uip_server.h"
-#include "getmac.h"
+#include "xtcp.h"
+#include "ethernet_board_support.h"
 #include <print.h>
 #include <xscope.h>
 #include <flash.h>
-#include "uip_single_server.h"
 #include "multi_uart_rxtx.h"
 #include "tcp_handler.h"
 #include "uart_handler.h"
@@ -19,37 +18,11 @@
 #define ETH_CORE 0
 #define UART_CORE 0
 
-// Ethernet Ports
-on stdcore[ETH_CORE]: struct otp_ports otp_ports =
-{
-  XS1_PORT_32B,
-  XS1_PORT_16C,
-  XS1_PORT_16D
-};
-
-
-#define PORT_ETH_FAKE on stdcore[ETH_CORE]: XS1_PORT_8C
-
-on stdcore[ETH_CORE]: mii_interface_t mii =
-{
-	XS1_CLKBLK_2,
-	XS1_CLKBLK_3,
-
-	PORT_ETH_RXCLK_1,
-	PORT_ETH_ERR_1,
-	PORT_ETH_RXD_1,
-	PORT_ETH_RXDV_1,
-
-	PORT_ETH_TXCLK_1,
-	PORT_ETH_TXEN_1,
-	PORT_ETH_TXD_1,
-    PORT_ETH_FAKE
-};
-
-#define PORT_ETH_RST_N XS1_PORT_8D
-
-on stdcore[ETH_CORE]: out port p_mii_resetn = PORT_ETH_RST_N;
-on stdcore[ETH_CORE]: smi_interface_t smi = {0, PORT_ETH_MDIO_1, PORT_ETH_MDC_1};
+ethernet_xtcp_ports_t xtcp_ports =
+  {    on stdcore[ETH_CORE]:  OTP_PORTS_INITIALIZER,
+       ETHERNET_DEFAULT_SMI_INIT,
+       ETHERNET_DEFAULT_MII_INIT_lite,
+       ETHERNET_DEFAULT_RESET_INTERFACE_INIT};
 
 #define PORT_TX on stdcore[UART_CORE]: XS1_PORT_8B
 #define PORT_RX on stdcore[UART_CORE]: XS1_PORT_8A
@@ -66,7 +39,7 @@ on stdcore[0] : fl_SPIPorts flash_ports =
   PORT_SPI_SS,
   PORT_SPI_CLK,
   PORT_SPI_MOSI,
-  XS1_CLKBLK_1
+  XS1_CLKBLK_3
 };
 
 fl_DeviceSpec flash_devices[] =
@@ -93,14 +66,10 @@ int main(void) {
 
         on stdcore[ETH_CORE]:
         {
-            char mac_address[6];
             xtcp_ipconfig_t ipconfig;
             c_xtcp[0] :> ipconfig;
-
-            ethernet_getmac_otp(otp_ports, mac_address);
             // Start server
-            uip_single_server(null, smi, mii, c_xtcp, 1,
-                              ipconfig, mac_address);
+            ethernet_xtcp_server(xtcp_ports, ipconfig, c_xtcp, 1);
         }
 
         on stdcore[0]: s2e_flash(c_flash_web, c_flash_data, flash_ports);

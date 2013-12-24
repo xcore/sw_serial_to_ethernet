@@ -1,1 +1,2 @@
 #define PHY_ADDRESS 0x0
+#define ETHERNET_USE_TRIANGLE_SLOT  1

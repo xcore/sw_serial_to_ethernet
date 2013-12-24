@@ -242,10 +242,11 @@ void s2e_flash(chanend c_flash, chanend c_flash_data, fl_SPIPorts &flash_ports)
     {
         select
         {
-            case web_server_flash(c_flash, flash_ports);
+            case web_server_flash(c_flash, flash_ports): //TODO: chk this
             {
 
             } // case web_server_flash(c_flash, flash_ports);
+            break;
 
             case c_flash_data :> int cmd:
             {

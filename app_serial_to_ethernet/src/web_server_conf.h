@@ -1,4 +1,4 @@
-#define WEB_SERVER_USE_FLASH
+#define WEB_SERVER_USE_FLASH    1
 
 #define WEB_SERVER_FLASH_DEVICES flash_devices
 
@@ -6,7 +6,7 @@
 
 #define WEB_SERVER_POST_RENDER_FUNCTION s2e_post_render
 
-#define WEB_SERVER_FLASH_THREAD 1
+#define WEB_SERVER_SEPARATE_FLASH_TASK 1
 
 #define WEB_SERVER_NUM_CONNECTIONS 2
 

@@ -291,6 +291,6 @@ void s2e_webserver_event_handler(chanend c_xtcp,
                                  chanend c_uart_config,
                                  REFERENCE_PARAM(xtcp_connection_t, conn))
 {
-    web_server_handle_event(c_xtcp, c_flash, conn);
+    //web_server_handle_event(c_xtcp, c_flash, conn); //TODO: to remove
 }
 

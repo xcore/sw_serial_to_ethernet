@@ -2,9 +2,7 @@
 # compiled for. It either refers to an XN file in the source directories
 # or a valid argument for the --target option when compiling.
 
-#TARGET = XR-AVB-LC-BRD
-#TARGET = XR-AVB-LC-BRD
-TARGET ?= xp-skc-l2-single
+TARGET = SLICEKIT-L16
 
 # The APP_NAME variable determines the name of the final .xe file. It should
 # not include the .xe postfix. If left blank the name will default to
@@ -25,12 +23,14 @@ ifneq ($(STATIC_IP),)
 STATIC_IP_FLAGS = -DSTATIC_IP={$(subst .,$(COMMA),$(STATIC_IP))}
 endif
 
-XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lxscope -lflash $(STATIC_IP_FLAGS)
+XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -fxscope -lflash $(STATIC_IP_FLAGS)
 
 XCC_C_FLAGS = $(XCC_FLAGS) -Os
 
 # The USED_MODULES variable lists other module used by the application.
-USED_MODULES = module_xtcp module_mii_singlethread module_ethernet_smi module_multi_uart module_xc_ptr module_website module_mutual_thread_comm
+USED_MODULES = module_xtcp module_multi_uart module_slicekit_support module_webserver
+USED_MODULES += module_xc_ptr module_mutual_thread_comm
+USED_MODULES += module_ethernet_board_support module_otp_board_info
 
 # This uses the tcp mac filtering in module_xtcpxc
 USE_XTCP_MAC_CUSTOM_FILTER=1

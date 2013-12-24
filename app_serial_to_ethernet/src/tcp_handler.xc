@@ -42,7 +42,8 @@ void tcp_handler(chanend c_xtcp,
         s2e_webserver_event_handler(c_xtcp, c_flash_web, c_uart_config, conn);
         break;
       case telnet_to_uart_notification_handler(c_xtcp, c_uart_data);
-#ifdef WEB_SERVER_USE_FLASH
+#if 0 //TODO: to remove
+//#ifdef WEB_SERVER_USE_FLASH
       case web_server_cache_request(c_flash_web):
         web_server_cache_handler(c_flash_web, c_xtcp);
         break;
