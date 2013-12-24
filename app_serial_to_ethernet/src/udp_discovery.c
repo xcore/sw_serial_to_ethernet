@@ -24,8 +24,6 @@ xtcp_connection_t udp_disc_incoming_conn;
 static char buf[UDP_RECV_BUF_SIZE];
 //UDP Response Format :: "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:xxx.xxx.xxx.xxx";
 static char *g_FirmwareVer = S2E_FIRMWARE_VER;
-static char *g_UdpQueryString = UDP_QUERY_S2E_IP;
-static char *g_UdpCmdIpChange = UDP_CMD_IP_CHANGE;
 
 static char *g_RespString = "XMOS S2E VER:";
 static char invalid_udp_request[] = "Invalid UDP Server request\n";
@@ -49,7 +47,6 @@ xtcp_ipconfig_t ipconfig =
 #endif
 };
 
-#pragma unsafe arrays
 static void parse_udp_buffer(chanend c_xtcp,
 		                 chanend c_flash_data,
                          xtcp_connection_t *conn,
@@ -92,7 +89,6 @@ static void parse_udp_buffer(chanend c_xtcp,
 	}
 }
 
-#pragma unsafe arrays
 static void construct_udp_response(char *buf)
 {
 	int len = 0;
@@ -166,7 +162,6 @@ void udp_discovery_init(chanend c_xtcp, chanend c_flash_data, xtcp_ipconfig_t *p
 	  memcpy((char *)p_ipconfig, (char *)&ipconfig, sizeof(xtcp_ipconfig_t));
 }
 
-#pragma unsafe arrays
 void udp_discovery_event_handler(chanend c_xtcp,
                               chanend c_flash_data,
                               xtcp_connection_t *conn)

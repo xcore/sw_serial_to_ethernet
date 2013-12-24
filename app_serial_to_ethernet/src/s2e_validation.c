@@ -30,7 +30,6 @@ char *s2e_validate_channel_id(int channel_id)
  *  \return 0         baud_rate ok
  *  \return -1        invalid baud rate
  **/
-#pragma unsafe arrays
 static int check_baud_rate(int baud_rate)
 {
     int i;

@@ -68,7 +68,7 @@ int main(void) {
         {
             xtcp_ipconfig_t ipconfig;
             c_xtcp[0] :> ipconfig;
-            // Start server
+            // Start ethernet server
             ethernet_xtcp_server(xtcp_ports, ipconfig, c_xtcp, 1);
         }
 
