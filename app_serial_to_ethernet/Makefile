@@ -28,7 +28,7 @@ XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -fxscope 
 XCC_C_FLAGS = $(XCC_FLAGS) -Os
 
 # The USED_MODULES variable lists other module used by the application.
-USED_MODULES = module_xtcp module_multi_uart module_slicekit_support module_webserver
+USED_MODULES = module_multi_uart module_webserver module_xtcp module_slicekit_support
 USED_MODULES += module_xc_ptr module_mutual_thread_comm
 USED_MODULES += module_ethernet_board_support module_otp_board_info
 
