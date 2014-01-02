@@ -150,6 +150,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
             c_uart_data <: uart_channel_state[uart_id].txi;
             c_uart_data <: len;
           }
+          mutual_comm_complete(c_uart_data);
         }
         else {
           // no data to send over uart
@@ -181,6 +182,7 @@ void telnet_to_uart_event_handler(chanend c_xtcp,
             c_uart_data :> new_buf;
             c_uart_data :> new_len;
           }
+          mutual_comm_complete(c_uart_data);
           if (new_buf == -1) {
             if (conn.outstanding == 0) {
               xtcp_complete_send(c_xtcp);
@@ -298,6 +300,7 @@ static void handle_notification(chanend c_xtcp,
         break;
       }
   }
+  mutual_comm_complete(c_uart_data);
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
     conn.id = get_conn_id_from_uart_id(i);
