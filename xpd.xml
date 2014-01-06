@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<xpd>
+    <components></components>
+    <dependency repo = "sc_xtcp">
+        <githash>1382ce64c874bec0ef85acd4c46afde5d1d144f8</githash>
+        <uri>https://github.com/xcore/sc_xtcp.git</uri>
+        <version>3.1.5rc1</version>
+    </dependency>
+    <dependency repo = "sc_multi_uart">
+        <githash>d88d839efdc1b214f6535333da9455dac6ed4d4e</githash>
+        <uri>https://github.com/xcore/sc_multi_uart.git</uri>
+        <version>1.0.4rc0</version>
+    </dependency>
+    <dependency repo = "sc_website">
+        <githash>ccb8d2462b14ead129514410e37853703c351084</githash>
+        <uri>https://github.com/xcore/sc_website.git</uri>
+    </dependency>
+    <dependency repo = "sc_ethernet">
+        <githash>925237ffbec3572135545b11bc873a1e1b3b6dc0</githash>
+        <uri>https://github.com/xcore/sc_ethernet.git</uri>
+    </dependency>
+    <dependency repo = "sc_slicekit_support">
+        <githash>1fe91159be22d2e358e4dd457c5ed0cd8d17fc18</githash>
+        <uri>https://github.com/xcore/sc_slicekit_support.git</uri>
+    </dependency>
+    <dependency repo = "sc_otp">
+        <githash>062aa923a78bc603b254b2a99b78593ab3a816ec</githash>
+        <uri>https://github.com/xcore/sc_otp.git</uri>
+        <version>1.0.0rc0</version>
+    </dependency>
+    <dependency repo = "sc_util">
+        <githash>eb2fab197d49d35b878dd7bd0cc0196f6bbeff3f</githash>
+        <uri>https://github.com/xcore/sc_util.git</uri>
+    </dependency>
+    <description>Reference design to demonstrate serial device to ethernet bridging applications</description>
+    <location>https://github.com/xcore/sw_serial_to_ethernet.git</location>
+    <name>sw_serial_to_ethernet</name>
+    <maintainer>xmos</maintainer>
+    <vendor>XMOS</vendor>
+    <version_defines></version_defines>
+    <xcore_repo>git://github.com/xcore/sw_serial_to_ethernet.git</xcore_repo>
+    <xpd_version>1.0</xpd_version>
+</xpd>
