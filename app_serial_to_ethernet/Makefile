@@ -23,7 +23,7 @@ ifneq ($(STATIC_IP),)
 STATIC_IP_FLAGS = -DSTATIC_IP={$(subst .,$(COMMA),$(STATIC_IP))}
 endif
 
-XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -fxscope -lflash $(STATIC_IP_FLAGS)
+XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
 
 XCC_C_FLAGS = $(XCC_FLAGS) -Os
 

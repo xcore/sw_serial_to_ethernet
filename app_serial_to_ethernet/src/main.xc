@@ -8,7 +8,6 @@
 #include "xtcp.h"
 #include "ethernet_board_support.h"
 #include <print.h>
-#include <xscope.h>
 #include <flash.h>
 #include "multi_uart_rxtx.h"
 #include "tcp_handler.h"
@@ -46,13 +45,6 @@ fl_DeviceSpec flash_devices[] =
 {
  FL_DEVICE_NUMONYX_M25P16,
 };
-
-
-void xscope_user_init(void) {
-  xscope_register(0);
-  xscope_config_io(XSCOPE_IO_BASIC);
-}
-
 
 // Program entry point
 int main(void) {
