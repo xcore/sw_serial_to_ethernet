@@ -6,7 +6,7 @@ Introduction
 
 The Serial to Ethernet application (referred to as S2E) firmware serves as a reference design to add Ethernet connectivity to any serial device. The solution offers flexibility in configuring multiple UART devices (upto 8 UARTs) to bridge them to ethernet networks. Design utilizes some of the existing XMOS SOFTip components for Ethernet, XTCP and MultiUART components.  
 
-The Firmware mainly functions as bridge between serial and ethernet data communication end points providing buffers to hold data. This application includes telnet server in order to facilitate data communication from host applications via separate telnet sockets for each of the configured UARTs. It also provides an embedded web server and a dedicated telnet socket for UART configuration management. UDP mode device discovery feature is provided in order to determine the S2E devices presence in the network.
+The Firmware mainly functions as bridge between serial and ethernet data communication end points. This application includes telnet server in order to facilitate data communication from host applications via separate telnet sockets for each of the configured UARTs. It also provides an embedded web server and a dedicated telnet socket for UART configuration management. UDP mode device discovery feature is provided in order to discover and configure the S2E devices available in the network.
 
 Feature List
 ------------
