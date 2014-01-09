@@ -7,7 +7,9 @@ S2E Device Discovery
 --------------------
 
 S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder). 
-This script needs to be executed on a host machine connected to the network.
+This script needs to be executed on a host machine connected to a network router.
+
+* Make sure the device is flashed with the firmware and web pages
 
 * For Windows 7 users, navigate to test\UDP_TestServer\windows and double click on udp_Server.exe file
 
@@ -16,10 +18,10 @@ This script needs to be executed on a host machine connected to the network.
 Running the UDP test server
 +++++++++++++++++++++++++++
 
-#. Select appropriate jost specific udp_Server package as described above
+#. Select an appropriate host specific udp_Server package as described above
 
 #. Script displays IP address of your host system; this is the default IP address used for UDP communication. 
-   If you intend to modify this IP address, select option 'n' and provide the new IP address for the host
+   If the displayed ip address is different from your network adapter connected to the router, modify the IP address (choose option 'n' and provide the new IP address for the host)
 
 #. Script displays different options to choose as explained in the following sections: 
 
