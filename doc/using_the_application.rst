@@ -3,7 +3,7 @@ Using the application
 
 This section details on how to use the application and its user interfaces.
 
-S2E Device Discovery
+S2E device discovery
 --------------------
 
 S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder). 
@@ -20,13 +20,20 @@ Running the UDP test server
 
 #. Select an appropriate host specific udp_Server package as described above
 
-#. Script displays IP address of your host system; this is the default IP address used for UDP communication. 
-   If the displayed ip address is different from your network adapter connected to the router, modify the IP address (choose option 'n' and provide the new IP address for the host)
+#. Script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router
 
 #. Script displays different options to choose as explained in the following sections: 
 
+.. figure:: images/udp_test_server.png
+    :align: center
+    :width: 50%
+    
+    S2E device discovery using udp_test_server
+
 Discover the S2E devices on the network
 +++++++++++++++++++++++++++++++++++++++
+
+#. Key in option *1* from the choices.
 
 #. Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.
    The message format is "XMOS S2E REPLY" broadcasted to 255.255.255.255
@@ -45,7 +52,9 @@ Discover the S2E devices on the network
 Modify IP address of a particular S2E device
 ++++++++++++++++++++++++++++++++++++++++++++
 
-#. The device discovery option should be used prior to using this option
+#. Key in option *2* from the choices.
+
+#. The device discovery (option 1) should be used prior to using this option
 
 #. Upon selecting the above option, ensure all available S2Es on the network are displayed
 
@@ -59,6 +68,8 @@ Modify IP address of a particular S2E device
 Modify IP address of all S2E devices to use DHCP server
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+#. Key in option *3* from the choices.
+
 #. This is a request and enables the s2e devices to DHCP mode. A DHCP server can be used to assign IP address to all S2E devices.
    The test server sends a broadcast message using the format: "XMOS S2E IPCHANGE 0.0.0.0"
 
@@ -67,7 +78,7 @@ Modify IP address of all S2E devices to use DHCP server
    
 #. Once the S2E devices IP is changed to the DHCP assigned IP addresses, select discovery option after some time in order to know the the new IP addresses for the device(s)
 
-Data Communication using S2E Device
+Data communication using S2E device
 -----------------------------------
 
 Apart from the standard UART and Telnet clients available on the host, following tools may be installed on the host system in order to use the S2E application. 
@@ -111,12 +122,12 @@ Software is tested for the following telnet clients
 
 #. Hercules
 
-Device Configuration using Web Interface
+Device configuration using web interface
 ----------------------------------------
 
 #. Open the browser window
 
-#. Key in the ip address (for e.g. http://169.254.196.178/) and press ``Enter``.
+#. Key in the ip address (for e.g. http://169.254.196.178/) of the S2E device and press ``Enter``.
 
 Home page of the application appears
 
@@ -141,12 +152,12 @@ Software is tested for the following web browsers
 #. Mozilla Firefox
 
 
-Device Configuration using Telnet interface
+Device configuration using telnet interface
 -------------------------------------------
 
 Telnet client can also be used for uart configuration or passing client data to uart channels (and vice versa). These are described as follows:
 
-Uart Configuration
+Uart configuration
 ++++++++++++++++++
 
 A separate telnet socket (default configured to port 23) is used for configuring uart channels via telnet client.
@@ -217,7 +228,7 @@ where
 
 #. Click ``Enter`` to apply the configuration for the channel.
 
-Sample Usage
+Sample usage
 ++++++++++++
 
 * Get: ~1~~0~@

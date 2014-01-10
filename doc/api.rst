@@ -5,7 +5,7 @@ API
 
 .. _sec_conf_defines:
 
-Configuration Defines
+Configuration defines
 ---------------------
 
 The files multi_uart_tx_conf.h and multi_uart_rx_conf.h must be copied from
@@ -145,7 +145,7 @@ The file src\s2e_flash.h has some constants defined which may be used by other f
     
 .. _sec_data_struct:
 
-Data Structures
+Data structures
 ---------------
 
 .. doxygenstruct:: uart_config_data_t
@@ -153,7 +153,7 @@ Data Structures
 
 .. _sec_conf_func:
 
-Configuration Functions
+Configuration functions
 ------------------------
 
 .. doxygenfunction:: uart_config_init
@@ -203,5 +203,4 @@ Module functions
 -------------------
 
 .. doxygenfunction:: parse_telnet_buffer
-
 
