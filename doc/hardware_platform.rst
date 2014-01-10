@@ -17,10 +17,10 @@ Hardware setup
 MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the *Serial to Ethernet* application runs on U8 (single tile). The sliceCARDs should be connected to the sliceKIT core board in the following manner:
 
 ===================== ======================== =======================
-**sliceCARD**         **SliceKit Connector**   **SliceKit - Jumper**
+**sliceCARD**         **sliceKIT Connector**   **sliceKIT - Jumper**
 ===================== ======================== =======================
 Ethernet              Triangle                 J5
-Multi                 Star                     J4
+MultiUART             Star                     J4
 ===================== ======================== =======================
 
 .. figure:: images/hardware_setup.jpg

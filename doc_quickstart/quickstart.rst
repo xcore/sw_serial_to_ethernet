@@ -4,7 +4,7 @@ This application serves as a reference design to demonstrate bridging between Et
 Some features of this application are:
 
 * 10/100 Mbit Ethernet port
-* Supports up to 8 serial ports with baud rates up to 115200 at standard configuration settings
+* Supports up to 8 serial ports with baud rates up to 115200 at standard UART configuration settings
 * Webserver to facilitate dynamic UART configuration
 * Telnet server to support data transfer via a telnet socket associated with each UART
 * Device discovery and IP configuration management of the S2E devices in the network
@@ -15,8 +15,8 @@ Host computer setup
 -------------------
 A computer with:
 
+* With a spare Ethernet port.
 * Internet browser (Internet Explorer, Chrome, Firefox, etc...)
-* With spare Ethernet port.
 * Download and install the xTIMEcomposer studio (v13.0.0 or later) from XMOS xTIMEcomposer downloads webpage.
 
 For serial-telnet data communication demo, the following are required in addition to the above:
@@ -124,7 +124,7 @@ Demo:
 
 Serial-Telnet data communication demo:
 
-In addition to the above hardware set-up
+In addition to the above hardware setup
 
 * Connect a null serial cable to DB-9 connector on ``XA-SK-UART-8`` sliceCARD.
 * Connect other end of cable to DB-9 connector slot on the host or USB-UART adapter.
