@@ -36,8 +36,9 @@ Required sliceKIT units:
 
 Setup:
 
-* Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board
-* Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter
+* Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board. Ensure the *XMOS Link* switch is off on the ``XSYS`` adapter to ensure correct operation of the sliceCARD in the
+Star slot.
+* Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
 * Connect the ``XTAG2`` to your computer using a USB cable
 * Connect the ``XA-SK-UART-8`` OctoUART sliceCARD to the ``XP-SKC-L2`` core board's ``STAR`` (indicated by a white colour star) slot.
 * Connect the ``XA-SK-E100`` Ethernet sliceCARD to the ``XP-SKC-L2`` core board's ``TRIANGLE`` (indicated by a white colour triangle) slot.
