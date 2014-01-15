@@ -4,7 +4,7 @@ This application serves as a reference design to demonstrate bridging between Et
 Some features of this application are:
 
 * 10/100 Mbit Ethernet port
-* Supports up to 8 serial ports with baud rates up to 115200 at standard UART configuration settings
+* Supports up to 8 serial ports (UARTs) with baud rates up to 115200 at standard UART configuration settings
 * Webserver to facilitate dynamic UART configuration
 * Telnet server to support data transfer via a telnet socket associated with each UART
 * Device discovery and IP configuration management of the S2E devices in the network
@@ -23,7 +23,7 @@ For serial-telnet data communication demo, the following are required in additio
 
 * A null serial cable to DB-9 connector. The cable will need a cross over between the UART RX and TX pins at each end.
 * If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use the BF-810 USB to UART adapter (``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
-* A suitable terminal client software. For MAC users, try SecureCRT (``http://www.vandyke.com/download/securecrt/``) and cutecom (``http://cutecom.sourceforge.net/``) for Linux users. We use hercules client (``http://www.hw-group.com/products/hercules/index_en.html``) on a Windows platform for the demo.
+* A suitable terminal client software. For MAC users, try SecureCRT (``http://www.vandyke.com/download/securecrt/``) and for Linux users, try cutecom (``http://cutecom.sourceforge.net/``). We use hercules client (``http://www.hw-group.com/products/hercules/index_en.html``) on a Windows platform for the demo.
 
 Hardware setup
 --------------
@@ -39,7 +39,7 @@ Setup:
 * Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board. Ensure the *XMOS Link* switch is off on the ``XSYS`` adapter to ensure correct operation of the sliceCARD in the
 Star slot.
 * Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
-* Connect the ``XTAG2`` to your computer using a USB cable
+* Connect the ``XTAG2`` to your computer using a USB cable.
 * Connect the ``XA-SK-UART-8`` OctoUART sliceCARD to the ``XP-SKC-L2`` core board's ``STAR`` (indicated by a white colour star) slot.
 * Connect the ``XA-SK-E100`` Ethernet sliceCARD to the ``XP-SKC-L2`` core board's ``TRIANGLE`` (indicated by a white colour triangle) slot.
 * Using an Ethernet cable, connect the other side of ``XA-SK-E100`` Ethernet sliceCARD to your computer's Ethernet port.
@@ -125,34 +125,38 @@ Demo:
 
 Serial-Telnet data communication demo:
 
+This demo showcases the data bridging between Ethernet and serial devices. Data from the Serial console (UART) is sent to the corresponding telnet socket associated with the UART and vice versa. In order to run this demo, follow the below instructions.
+
 In addition to the above hardware setup
 
 * Connect a null serial cable to DB-9 connector on ``XA-SK-UART-8`` sliceCARD.
 * Connect other end of cable to DB-9 connector slot on the host or USB-UART adapter.
-* Identify the serial (COM) port number provided by the Host or the USB to UART adapter and open a suitable terminal software for the selected serial port (refer to the Hercules or SecureCRT documentation above).
+* Identify the serial (COM) port number provided by the Host or *USB to UART* adapter and open a suitable terminal client software for the selected COM port (refer to the documentation of the selected application).
 
-* Configure the host terminal console program as follows: 115200 baud, 8 bit character length, even parity, 1 stop bit, no hardware flow control. The Transmit End-of-Line character should be set to `CR` (other options presented will probably be `LF` and `CR\LF`).
-* Open the serial device on the host console program
+* Configure the host COM port console settings as: 115200 baud, 8 bit character length, even parity, 1 stop bit, no hardware flow control. The Transmit End-of-Line character should be set to `CR` (other options presented will probably be `LF` and `CR\LF`).
+* Click on *Open* to open the COM port.
+
+* Now, in order to establisih a telnet connection to the above serial connection, open a telnet client application (On Windows, open another instance of the Hercules application, select *TCP Client* tab)
 * Configure the telnet client application with ip address as XMOS device address. Key in the port number as *46* in order to connect to the UART0.
-* Click *Connect* to the telnet server running on the device. A welcome message appears on the client console.
+* Click *Connect* so that the telnet client connects to the telnet server running on the S2E device. Onserve a welcome message *Welcome to serial to ethernet telnet server demo! This server is connected to uart channel 0* appears on the client console.
 
-.. figure:: images/terminal_config.*
+.. figure:: images/terminal_clients.*
 
-   Screenshot of Hercules application for serial console and telnet client
+   Screenshot of two Hercules application instances for a serial console and a telnet client
 
-* Key in some data from serial console and observe the data is displayed on the telnet console.
+* Key in some data from the serial console and observe the data is displayed on the telnet console.
 * Now send some data from the telnet console and verify the same data on the serial console.
 * Explore the terminal client options to transfer a file in both directions and observe the duplex data transfer in action.
  
 .. figure:: images/data_communication.*
 
-   Data communication between telnet and serial console
+   Data communication between a telnet socket and a serial console (UART)
 
 Next steps
 ----------
 
-* Connect two or more USB-UART adapters to the host and ``XA-SK-UART-8`` sliceCARD. Configure the terminal clients for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
+* Connect two or more USB-UART adapters to the host and ``XA-SK-UART-8`` sliceCARD. Open the terminal client applications for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
 
-* Detach the ``xTAG-2`` and ``XA-SK-XTAG2`` adapter from the ``XP-SKC-L2`` sliceKIT core board. Connect ``XA-SK-E100`` Ethernet sliceCARD to a spare Ethernet port of the router. Navigate to udp_test_server folder available in the release package. If your platform is a MAC or a linux host, execute the udp_server.py script. If you are using a Windows host, navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Select other choices to change ip configration settings of the S2E device(s).
+* Detach the ``xTAG-2`` and ``XA-SK-XTAG2`` adapter from the ``XP-SKC-L2`` sliceKIT core board. Connect ``XA-SK-E100`` Ethernet sliceCARD to a spare Ethernet port of the router. Navigate to udp_test_server folder available in the release package. If your platform is a MAC or a linux host, execute the udp_server.py script. If you are using a Windows host, navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Select other choices to change ip configration settings of the S2E device(s). Open a web page or test  Telnet-UART data communiocation using the ip provided by the S2E device.
 
 * Take a look at the ``http://xcore.github.io/sw_serial_to_ethernet`` for a more detailed documentation on using various features, design and programming guide for the application.

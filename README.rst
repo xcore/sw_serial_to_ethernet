@@ -1,14 +1,14 @@
-Serial To Ethernet Bridging Software
+Serial to Ethernet bridging software
 .....................................
 
 :Version: 1.1.2rc0
 :Vendor: XMOS
-:Description: Reference design to bridge serial (UART) devices to ethernet
+:Description: Reference design to bridge serial (UART) devices to Ethernet
 
 Key Features
 ============
 
- * Design fits in a single-core device
+ * Design fits in a single-tile device
  * Supports up to 8 UARTs at the following baud rates: 115200, 57600, 38400, 
    28800, 19200, 14400, 9600, 7200, 4800, 2400, 1200, 600, 300, 150
  * Web page for UART configuration
@@ -17,16 +17,16 @@ Key Features
  * Telnet mode UART configuration support
  * Device discovery and IP configuration management using UDP
 
-Required Tools
+Required tools
 ==============
 
-11.11.0 and above
+xTIMEcomposer studio version 13.0.0 and later
 
 
 Support
 =======
 
-SUPPORTED FEATURES: XMOS Devices
+SUPPORTED FEATURES: XMOS devices
 
 This release of the firmware is supported on the following XMOS devices:
  * XS1-L01A-TQ48-C5
@@ -36,59 +36,51 @@ This release of the firmware is supported on the following XMOS devices:
  * XS1-L01A-TQ128-C5
  * XS1-L01A-TQ128-I5
 
-SUPPORTED FEATURES: Reference Hardware
+SUPPORTED FEATURES: Reference hardware
 
- * XMOS SliceKit Reference Board
- * XMOS Ethernet Slice 
- * XMOS Multi-UART Slice
+ * XP-SKC-L2 sliceKIT L2 core board
+ * XA-SK-E100 Ethernet sliceCARD
+ * XA-SK-UART-8 OctoUART sliceCARD
 
 
-Firmware Detail
+Firmware detail
 ===============
 
 Overview
 --------
-The Serial to Ethernet application (referred to as S2E) firmware features 
-ethernet connectivity with a supporting TCP/IP interface and a UART 
-component supporting multiple UART devices. The Firmware mainly 
-functions as an application bridge between serial and ethernet data 
-communication end points providing buffers to hold data. Firmware includes
-telnet server in order to facilitate data communication from 
-ethernet host via separate telnet sockets for each of the configured UARTs.
-Firmware also provides an embedded web server and a dedicated telnet socket 
-for UART configuration management.
+The Serial to Ethernet application (referred to as S2E) firmware features Ethernet connectivity with a supporting TCP/IP interface and a UART component supporting multiple UART devices. This application serves as a reference design to demonstrate bridging between Ethernet and serial communication devices. Firmware includes telnet server in order to facilitate data communication from Ethernet host via separate telnet sockets for each of the configured UARTs. Firmware also provides an embedded web server and a dedicated telnet socket for UART configuration management.
 
 Documentation
 =============
 
-https://github.com/xcore/sc_multi_uart/tree/master/doc/app_s2e_doc
+http://xcore.github.io/sw_serial_to_ethernet/
 
 
 Known Issues
 ============
 
- * On IE9 web browser, UART selection from Index page may require multiple 
-   clicks to render the selected UART configuration page
- * On Safari web browser, UART configuration change (SET button) causes 
-   S2E device unstable
- * With 5 or more uarts enabled for simultaneous full duplex transfer of 
+ * On IE9 web browsers, UART selection from *Index* page may require multiple 
+   clicks to render the selected UART configuration page.
+ * On Safari web browsers, UART configuration change (SET button) causes 
+   S2E device unstable.
+ * With 5 or more UARTs enabled for simultaneous full duplex transfer of 
    large files at 115Kbaud, data loss may occur depending on the host 
    configuration. The root cause of this behaviour is under investigation. 
-   Setups with 4 or less 115Kbaud uarts, or any number of uarts at 
-   56KBaud never exhibit data loss   
+   Setups with 4 or less 115Kbaud UARTs, or any number of UARTs at 
+   56KBaud does not exhibit data loss.
  * Data communication on an old unused telnet port (after changing 
-   the telnet port to new one) will render the system unstable; it is 
-   recommended to halt UART data communication before changing telnet port
- * All S2E devices have same MAC address. This might result in assigning
-   same IP address to different S2Es when DHCP is used. 
- * Currently MAC address is fixed and same for all boards. This will be 
-   fixed by programming unique MAC address to each xcore on the slicekit 
-   in subsequent release. This might result in asssigning same IP addresses
+   the telnet port to a new one) will render the system unstable; it is 
+   recommended to halt UART data communication before changing telnet port.
+ * All S2E devices have same MAC addresses. This might result in assigning
+   same IP address to different S2Es when DHCP configuration is used.
+ * Currently MAC address is same for all boards. This will be 
+   fixed by programming unique MAC address to each xCORE on the sliceKIT 
+   in subsequent releases. This might result in asssigning same IP addresses
    to multiple S2Es, when used in DHCP configuration mode.
-   It is recommended to use UDP test server to set different IP address for 
-   such a case.
+   It is recommended to use the provided UDP test server to set different IP address 
+   for such scenarios.
  * DHCP assignment may not work when S2E is connected to local network adapter
-   of the host system. Static IP address setting may be used for such a case
+   of the host system. Static IP address setting may be used for such configurations.
    
 
 Support
