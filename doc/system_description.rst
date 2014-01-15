@@ -66,7 +66,7 @@ Software components used
    - Library for reading MAC from sliceKIT core board's OTP memory
 
 Resource usage
-++++++++++++++
+--------------
 
 .. figure:: images/resource_usage.jpg
     

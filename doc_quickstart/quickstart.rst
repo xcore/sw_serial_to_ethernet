@@ -1,5 +1,5 @@
 Serial to Ethernet (S2E) bridging application quickstart guide
-=============================================================
+==============================================================
 This application serves as a reference design to demonstrate bridging between Ethernet and serial communication devices.
 Some features of this application are:
 
@@ -22,7 +22,7 @@ A computer with:
 For serial-telnet data communication demo, the following are required in addition to the above:
 
 * A null serial cable to DB-9 connector. The cable will need a cross over between the UART RX and TX pins at each end.
-* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use the BF-810 USB to UART adapter (``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
+* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use BF-810 USB-UART adapter (``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
 * A suitable terminal client software. For MAC users, try SecureCRT (``http://www.vandyke.com/download/securecrt/``) and for Linux users, try cutecom (``http://cutecom.sourceforge.net/``). We use hercules client (``http://www.hw-group.com/products/hercules/index_en.html``) on a Windows platform for the demo.
 
 Hardware setup
@@ -36,8 +36,8 @@ Required sliceKIT units:
 
 Setup:
 
-* Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board. Ensure the *XMOS Link* switch is off on the ``XSYS`` adapter to ensure correct operation of the sliceCARD in the
-Star slot.
+* Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board. 
+* Ensure the *XMOS Link* switch is off on the ``XA-SK-XTAG2`` adapter to ensure correct operation of the sliceCARD in the Star slot.
 * Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
 * Connect the ``XTAG2`` to your computer using a USB cable.
 * Connect the ``XA-SK-UART-8`` OctoUART sliceCARD to the ``XP-SKC-L2`` core board's ``STAR`` (indicated by a white colour star) slot.
@@ -48,7 +48,7 @@ Star slot.
 .. figure:: images/hardware_setup.*
 
    Hardware setup
-   
+
 Import and build the application
 --------------------------------
 Importing the ``serial to ethernet`` reference application:
@@ -78,7 +78,7 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 
    * Check *Boot partition size (bytes):* and its value as 0x10000
    * *Other XFlash Options:* as --data bin/web_data.bin
-   
+
 * Click on *Apply* and then *Flash* to the XMOS device.
 * Check the *Console* window to verify flashing progress.
 
@@ -105,7 +105,7 @@ Demo:
 * At this point, the XMOS device is trying to acquire an IP address in the network. Wait for some time (approximately 20 seconds) for the following message to appear in the *Console* window. Note, the IP address may be different based on your network::
 
    ipv4ll: 169.254.161.178
-   
+
 * Open a web browser (Firefox, etc...) in your host computer and enter the above IP address in the address bar of the browser. It opens a web page as hosted by the webserver running on the XMOS device.
 
 .. figure:: images/webpage.*

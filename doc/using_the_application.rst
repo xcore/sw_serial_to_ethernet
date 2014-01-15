@@ -27,7 +27,7 @@ Running the UDP test server
 .. figure:: images/udp_test_server.png
     :align: center
     :width: 50%
-    
+
     S2E device discovery using udp_test_server
 
 Discover the S2E devices on the network
@@ -38,14 +38,14 @@ Discover the S2E devices on the network
 #. Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.
    The message format is "XMOS S2E REPLY" broadcasted to 255.255.255.255
 
-#. XMO S2E devices monitor this broadcast message and responds to the test server using the following format:
-     "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:abc.def.uvw.xyz"
+#. XMOS S2E devices monitor this broadcast message and responds to the test server using the following format:
+   "XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:abc.def.uvw.xyz"
 
 #. The test server parses this response received from S2E devices available in the network and displays 
    the following information on the console:
-        VER --> Firmware Version
-        MAC --> MAC Address
-        IP --> IP address of the S2E device
+   VER --> Firmware Version
+   MAC --> MAC Address
+   IP --> IP address of the S2E device
 
 #. The above information is displayed for all the S2E devices available in the network
 
@@ -60,7 +60,7 @@ Modify IP address of a particular S2E device
 
 #. You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device.
    The server sends a unicast message using the format: "XMOS S2E IPCHANGE aaa.bbb.ccc.ddd"
-   
+
 #. Appropriate S2E device will receive this message, flash the new ip address, resets and starts with the new ip address
 
 #. At the test server, you can now see S2E IP is changed to the new IP address by selecting the device discovery option again
@@ -75,7 +75,7 @@ Modify IP address of all S2E devices to use DHCP server
 
 #. It is important that only the intended S2Es for which the IP address is invalid should be made available in the network
    All other S2Es should be removed from the network.
-   
+
 #. Once the S2E devices IP is changed to the DHCP assigned IP addresses, select discovery option after some time in order to know the the new IP addresses for the device(s)
 
 Data communication using S2E device
@@ -97,7 +97,7 @@ UART serial port setup
    Apply the default settings (Data size = 8, Parity = Even, Handshake = Off, Mode = Free)
    Cross check these settings with the UART settings in the webpage.
 
-#. Click **Open``
+#. Click ``Open``
 
 Telnet client setup
 +++++++++++++++++++
@@ -111,7 +111,6 @@ Telnet client setup
 #. Key in the port number configured for a particular UART (default configured values for each uart channel starts with 46)
 
 #. Click ``Connect``
-
 
 Telnet client connection to the s2e server is now opened; now key in the data to be sent to a particular UART. 
 Files can also be uploaded using this client by right-clicking (and selecting appropriate option) in the ``data`` pane of either sessions.
@@ -131,17 +130,17 @@ Device configuration using web interface
 
 Home page of the application appears
 
-#. Click on a ``Uart Channel`` to configure.
+#. Click on a ``UART Channel`` to configure.
 
-A new page for the selected channel appears with its settings. In order to change the Uart parameters
+A new page for the selected channel appears with its settings. In order to change the UART parameters
 
-#. Select uart parameters to change (Parity, Stop bits, Baud rate, Char Len or Telnet port)
+#. Select UART parameters to change (Parity, Stop bits, Baud rate, Char Len or Telnet port)
 
 #. Click ``Set``.
 
 #. If configuration is set successfully, the ``Response`` text will say 'Ok'
 
-#. Click on ``Back to main config page`` to select a different Uart channel or save the current settings to flash.
+#. Click on ``Back to main config page`` to select a different UART channel or save the current settings to flash.
 
 #. When clicked on ``Save`` in the main config page, current set configuration will be saved to flash. On successfull save, the ``Response`` text will say 'Ok'
 
@@ -151,16 +150,15 @@ Software is tested for the following web browsers
 
 #. Mozilla Firefox
 
-
 Device configuration using telnet interface
 -------------------------------------------
 
-Telnet client can also be used for uart configuration or passing client data to uart channels (and vice versa). These are described as follows:
+Telnet client can also be used for UART configuration or passing client data to UART channels (and vice versa). These are described as follows:
 
-Uart configuration
+UART configuration
 ++++++++++++++++++
 
-A separate telnet socket (default configured to port 23) is used for configuring uart channels via telnet client.
+A separate telnet socket (default configured to port 23) is used for configuring UART channels via telnet client.
 
 #. Open the telnet client (following example uses Hercules 3.2.5)
 
@@ -168,16 +166,15 @@ A separate telnet socket (default configured to port 23) is used for configuring
 
 #. Key in the ip address (for e.g. 169.254.196.178)
 
-#. Key in the port number (for uart config, it is 23)
+#. Key in the port number (for UART config, it is 23)
 
 #. Click ``Connect``
 
-Uart configuration server's welcome message appears in the data pane of Telnet client
+UART configuration server's welcome message appears in the data pane of Telnet client
 
-Use the following format for configuring an uart channel
+Use the following format for configuring an UART channel
 ~C~~P1~~P2~~P3~~P4~~P5~~P6~@
 
-where
 * ~ is the parameter separator
 
 * @ is command termination marker
@@ -188,7 +185,7 @@ where
         3 : Save current configuration of all channels to flash
         4 : Restore and set channel configuration from flash
 
-* P1 : Uart Channel Identifier (typical values range for 0 to 7)
+* P1 : UART Channel Identifier (typical values range for 0 to 7)
 
 * P2 : Parity Configuration (typical values range for 0 to 4)
         0 : No Parity
@@ -217,16 +214,16 @@ where
         300
         150
 
-* P5 : Uart character length. Typical values include
+* P5 : UART character length. Typical values include
         5
         6
         7
         8
         9
 
-* P7 : Telnet port (typical values are 10 to 65536)
+* P6 : Telnet port (typical values are 10 to 65536)
 
-#. Click ``Enter`` to apply the configuration for the channel.
+#. Click ``Enter`` to apply the configuration for the channel
 
 Sample usage
 ++++++++++++
