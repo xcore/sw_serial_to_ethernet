@@ -81,10 +81,6 @@ Known Issues
    for such scenarios.
  * DHCP assignment may not work when S2E is connected to local network adapter
    of the host system. Static IP address setting may be used for such configurations.
- * Restoring device configuration stored at Flash at start-up exhibit inconsistent behavior.
-   Sometimes the configuration is applied properly, where as at some instances, it does not 
-   apply the configuration from Flash properly. This has to be investigated further.
-   
 
 Support
 =======
