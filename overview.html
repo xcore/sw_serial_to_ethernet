@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Application Overview &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <title>Application Overview &mdash; Serial to Ethernet bridging application manual v documentation</title>
     <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,9 +22,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/xcomment.js"></script>
-    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
-    <link rel="next" title="HW platforms" href="hardware_platform.html" />
-    <link rel="prev" title="Serial to Ethernet Bridging Application Manual" href="index.html" /> 
+    <link rel="top" title="Serial to Ethernet bridging application manual v documentation" href="index.html" />
+    <link rel="next" title="Hardware platforms" href="hardware_platform.html" />
+    <link rel="prev" title="Serial to Ethernet bridging application manual" href="index.html" /> 
 
 <script>
 function setheight() {
@@ -62,11 +62,11 @@ document.getElementById('d1').style.height=h2 + "px";
 <h1>Application Overview<a class="headerlink" href="#application-overview" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>The Serial to Ethernet application (referred to as S2E) firmware serves as a reference design to add Ethernet connectivity to any serial device. The solution offers flexibility in configuring multiple UART devices (upto 8 UARTs) to bridge them to ethernet networks. Design utilizes some of the existing XMOS SOFTip components for Ethernet, XTCP and MultiUART components.</p>
-<p>The Firmware mainly functions as bridge between serial and ethernet data communication end points providing buffers to hold data. This application includes telnet server in order to facilitate data communication from host applications via separate telnet sockets for each of the configured UARTs. It also provides an embedded web server and a dedicated telnet socket for UART configuration management. UDP mode device discovery feature is provided in order to determine the S2E devices presence in the network.</p>
+<p>The Serial to Ethernet application (referred to as S2E) firmware serves as a reference design to add Ethernet connectivity to any serial device. The solution offers flexibility in configuring multiple UART devices (upto 8 UARTs) to bridge them to Ethernet networks. Design utilizes some of the existing XMOS xSOFTip for Ethernet, XTCP and MultiUART components.</p>
+<p>The Firmware mainly functions as bridge between serial and Ethernet data communication end points. This application includes telnet server to facilitate data communication from host applications via separate telnet sockets for each of the configured UARTs. It also provides an embedded web server and a dedicated telnet socket for UART configuration management. UDP mode device discovery feature is provided in order to discover and configure the S2E devices available in the network.</p>
 </div>
 <div class="section" id="feature-list">
-<h2>Feature List<a class="headerlink" href="#feature-list" title="Permalink to this headline">¶</a></h2>
+<h2>Feature list<a class="headerlink" href="#feature-list" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="supported">
 <h3>Supported<a class="headerlink" href="#supported" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -85,7 +85,7 @@ document.getElementById('d1').style.height=h2 + "px";
 </div></blockquote>
 </div>
 <div class="section" id="not-supported">
-<h3>Not Supported<a class="headerlink" href="#not-supported" title="Permalink to this headline">¶</a></h3>
+<h3>Not supported<a class="headerlink" href="#not-supported" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>UART to UART communication (serial extender or pair configuration)</li>
@@ -104,20 +104,20 @@ document.getElementById('d1').style.height=h2 + "px";
       </div>
       <div class="sphinxsidebar" id='d2'>
         <div class="sphinxsidebarwrapper">
-<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<h3><a href="index.html">Serial to Ethernet bridging application manual</a></h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Application Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#feature-list">Feature List</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#feature-list">Feature list</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#supported">Supported</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#not-supported">Not Supported</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#not-supported">Not supported</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">HW platforms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="system_description.html">System Description</a></li>
-<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">Hardware platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_description.html">System description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>

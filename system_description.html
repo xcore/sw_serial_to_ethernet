@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>System Description &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <title>System description &mdash; Serial to Ethernet bridging application manual v documentation</title>
     <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,9 +22,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/xcomment.js"></script>
-    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
-    <link rel="next" title="Programming Guide" href="programming_guide.html" />
-    <link rel="prev" title="HW platforms" href="hardware_platform.html" /> 
+    <link rel="top" title="Serial to Ethernet bridging application manual v documentation" href="index.html" />
+    <link rel="next" title="Programming guide" href="programming_guide.html" />
+    <link rel="prev" title="Hardware platforms" href="hardware_platform.html" /> 
 
 <script>
 function setheight() {
@@ -59,32 +59,32 @@ document.getElementById('d1').style.height=h2 + "px";
 
             
   <div class="section" id="system-description">
-<h1>System Description<a class="headerlink" href="#system-description" title="Permalink to this headline">¶</a></h1>
+<h1>System description<a class="headerlink" href="#system-description" title="Permalink to this headline">¶</a></h1>
 <p>This section briefly describes the software components used, thread diagram and resource usage details.</p>
 <div class="section" id="software-architecture">
-<h2>Software Architecture<a class="headerlink" href="#software-architecture" title="Permalink to this headline">¶</a></h2>
+<h2>Software architecture<a class="headerlink" href="#software-architecture" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/s2e_threads.png" src="_images/s2e_threads.png" />
-<p class="caption">Core Usage</p>
+<p class="caption">Core usage</p>
 </div>
-<p>In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is a UART data available, the application fills the appropriate UART buffer and notifies TCP client thread to consume this data. Similarly whenever there is data from Ethernet packets, XTCP server notfies TCP client about data availability and the client stores this data into respective application buffers. This data is then consumed by UART (client) handler.</p>
+<p>In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is any UART data available, the application fills the appropriate UART buffer and notifies TCP client thread to consume this data. Similarly whenever there is any data from Ethernet packets, XTCP server notifies the application&#8217;s TCP client about data availability and the client stores this data into respective application buffers. This data is then consumed by UART (client) handler.</p>
 <div class="section" id="cores">
 <h3>Cores<a class="headerlink" href="#cores" title="Permalink to this headline">¶</a></h3>
 <p>The design uses seven logical cores as described below.</p>
-<p>The multi-UART component comprises two logical cores, one acting as a transmit (TX) server for up to 8 uarts, and the other acting as a receive (RX) server for up to 8 uarts.</p>
-<p>UART_Handler is an application core that interfaces with the UART RX and TX servers. It handles UART configuration requests, facilitates to store the UART data received from UART RX server into respective application buffers and transfers the data received from TCP clients to UART TX server.</p>
-<p>TCP_Handler is another application core that initializes and manages the application. It interfaces with the flash module for UART configuration storage and recovery, and handles all the xtcp application events (application data and UI configuration requests) received from the xtcp server module. UDP discovery management, web server handling, telnet data extraction are all implemented in this logical core.</p>
+<p>The MultiUART component comprises two logical cores, one acting as a transmit (TX) server for up to 8 uarts, and the other acting as a receive (RX) server for up to 8 uarts.</p>
+<p>UART_handler is an application core that interfaces with the UART RX and TX servers. It handles UART configuration requests, facilitates to store the UART data received from UART RX server into respective application buffers and transfers the data received from TCP clients to UART TX server.</p>
+<p>TCP_Handler is another application core that initializes and manages the application. It interfaces with the flash module for UART configuration storage and recovery, handles all the xtcp application events (application data and UI configuration requests) received from the xtcp server module. UDP discovery management, web server handling, telnet data extraction are all implemented in this logical core.</p>
 <p>The XTCP server runs on a single logical core and connects to the Ethernet MAC component which uses a single logical core. It uses XC channel to communicate to clients (TCP_Handler in this case) using XTCP events.</p>
-<p>The Flash core handles flash data sotrage and retrieval requests from TCP_Handler core based on the application dynamics such as start-up or UI driven requests.</p>
+<p>The Flash core handles flash data sotrage and retrieval requests from TCP_handler core based on the application dynamics such as start-up or UI driven requests.</p>
 </div>
 <div class="section" id="buffering">
 <h3>Buffering<a class="headerlink" href="#buffering" title="Permalink to this headline">¶</a></h3>
-<p>Buffering for the TX server is managed by the UART_Handler Core. Data is transferred to the UART TX logical core via a shared memory interface.</p>
-<p>There is no buffering provided by the UART RX server. The UART_Handler core is able to respond to the received data in real time and store them in buffer(s) available in the  TCP_Handler core via token notifcations.</p>
+<p>Buffering for the TX server is managed by the UART_handler Core. Data is transferred to the UART TX logical core via a shared memory interface.</p>
+<p>There is no buffering provided by the UART RX server. The UART_handler core is able to respond to the received data in real time and store them in buffer(s) available in the  TCP_handler core via token notifcations.</p>
 </div>
 <div class="section" id="communication-model">
-<h3>Communication Model<a class="headerlink" href="#communication-model" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">sc_multi_uart</span></tt> module utilises a combination of shared memory and channel communication. Channel communication is used on both the RX and TX servers to pause the logical core and subsequently release the logical core when required for reconfiguration. The primary means of data transfer for both the RX and TX logical cores is shared memory. The RX logical core utilises a channel to notify any client (UART_Handler in this case) of available data - this means that events can be utilised within an application to avoid the requirement for polling for received data.</p>
+<h3>Communication model<a class="headerlink" href="#communication-model" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">sc_multi_uart</span></tt> module utilises a combination of shared memory and channel communication. Channel communication is used on both the RX and TX servers to pause the logical core and subsequently release the logical core when required for reconfiguration. The primary means of data transfer for both the RX and TX logical cores is via shared memory. The RX logical core utilises a channel to notify any client (UART_handler in this case) of available data - this means that events can be utilised within an application to avoid the requirement for polling for received data.</p>
 <p>XTCP module and flash core connects to TCP_handler client using their repective XC channels.</p>
 </div>
 </div>
@@ -102,7 +102,7 @@ document.getElementById('d1').style.height=h2 + "px";
 </thead>
 <tbody valign="top">
 <tr><td>sc_ethernet</td>
-<td>Two thread version of the ethernet component implementing 10/100 Mii ethernet mac and filters</td>
+<td>Two thread version of the ethernet component implementing 10/100 MII Ethernet MAC and filters</td>
 </tr>
 <tr><td>sc_xtcp</td>
 <td>Micro TCP/IP stack for use with sc_ethernet component</td>
@@ -116,14 +116,20 @@ document.getElementById('d1').style.height=h2 + "px";
 <tr><td>sc_website</td>
 <td>Component framework for Embedded web site development</td>
 </tr>
-<tr><td>xcommon</td>
-<td>Common application framework for XMOS software</td>
+<tr><td>sc_slicekit_support</td>
+<td>sliceKIT library to use L2 core board&#8217;s flash for application</td>
+</tr>
+<tr><td>sc_otp</td>
+<td>Library for reading MAC from sliceKIT core board&#8217;s OTP memory</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="resource-usage">
+<h2>Resource usage<a class="headerlink" href="#resource-usage" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/resource_usage.jpg" src="_images/resource_usage.jpg" />
-<p class="caption">Resource Usage</p>
+<p class="caption">Resource usage</p>
 </div>
 </div>
 </div>
@@ -135,21 +141,22 @@ document.getElementById('d1').style.height=h2 + "px";
       </div>
       <div class="sphinxsidebar" id='d2'>
         <div class="sphinxsidebarwrapper">
-<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<h3><a href="index.html">Serial to Ethernet bridging application manual</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Application Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">HW platforms</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">System Description</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#software-architecture">Software Architecture</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="hardware_platform.html">Hardware platforms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">System description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#software-architecture">Software architecture</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cores">Cores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#buffering">Buffering</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#communication-model">Communication Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#communication-model">Communication model</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#software-components-used">Software components used</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resource-usage">Resource usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>

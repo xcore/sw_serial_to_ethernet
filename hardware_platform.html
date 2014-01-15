@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>HW platforms &mdash; Serial to Ethernet Bridging Application Manual v documentation</title>
+    <title>Hardware platforms &mdash; Serial to Ethernet bridging application manual v documentation</title>
     <link rel="stylesheet" href="_static/xdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,8 +22,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/xcomment.js"></script>
-    <link rel="top" title="Serial to Ethernet Bridging Application Manual v documentation" href="index.html" />
-    <link rel="next" title="System Description" href="system_description.html" />
+    <link rel="top" title="Serial to Ethernet bridging application manual v documentation" href="index.html" />
+    <link rel="next" title="System description" href="system_description.html" />
     <link rel="prev" title="Application Overview" href="overview.html" /> 
 
 <script>
@@ -58,18 +58,17 @@ document.getElementById('d1').style.height=h2 + "px";
 </div>
 
             
-  <div class="section" id="hw-platforms">
-<h1>HW platforms<a class="headerlink" href="#hw-platforms" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="hardware-platforms">
+<h1>Hardware platforms<a class="headerlink" href="#hardware-platforms" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="hardware-requirements">
-<h2>Hardware Requirements<a class="headerlink" href="#hardware-requirements" title="Permalink to this headline">¶</a></h2>
+<h2>Hardware requirements<a class="headerlink" href="#hardware-requirements" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt>This application runs on an L1 device on the slicekit core board. Following hardware is required for running this application:</dt>
+<dt>This application runs on an L1 device on the sliceKIT core board. Following hardware is required for running this application:</dt>
 <dd><ul class="first last simple">
-<li>Slicekit Core Board XP-SKC-L2 1V0</li>
-<li>Ethernet Slice XA-SK-E100 1V0</li>
-<li>OctoUART Slice XA-SK-UART-8 1V0</li>
-<li>XTAG adapter for Slicekit XA-SK-XTAG2 1V0 (if program not flashed)</li>
-<li>XTAG2 (if program not flashed)</li>
+<li>XP-SKC-L2 sliceKIT 1V2 L2 core board</li>
+<li>XA-SK-E100 Ethernet 1V1 sliceCARD</li>
+<li>XA-SK-UART-8 OctoUART 1V0 sliceCARD</li>
+<li>xTAG-2 and XA-SK-XTAG2 adapter</li>
 <li>Ethernet cable</li>
 <li>Power supply 5V</li>
 </ul>
@@ -77,8 +76,8 @@ document.getElementById('d1').style.height=h2 + "px";
 </dl>
 </div>
 <div class="section" id="hardware-setup">
-<h2>Hardware SetUp<a class="headerlink" href="#hardware-setup" title="Permalink to this headline">¶</a></h2>
-<p>MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the Serial to Ethernet application runs on U8 (single tile). The SliceCards should be connected to the SliceKit board in the following manner:</p>
+<h2>Hardware setup<a class="headerlink" href="#hardware-setup" title="Permalink to this headline">¶</a></h2>
+<p>MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the <em>Serial to Ethernet</em> application runs on U8 (single tile). The sliceCARDs should be connected to the sliceKIT core board in the following manner:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="31%" />
@@ -86,9 +85,9 @@ document.getElementById('d1').style.height=h2 + "px";
 <col width="34%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head"><strong>SliceCard</strong></th>
-<th class="head"><strong>SliceKit Connector</strong></th>
-<th class="head"><strong>SliceKit - Jumper</strong></th>
+<tr><th class="head"><strong>sliceCARD</strong></th>
+<th class="head"><strong>sliceKIT Connector</strong></th>
+<th class="head"><strong>sliceKIT - Jumper</strong></th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -96,7 +95,7 @@ document.getElementById('d1').style.height=h2 + "px";
 <td>Triangle</td>
 <td>J5</td>
 </tr>
-<tr><td>MUART</td>
+<tr><td>MultiUART</td>
 <td>Star</td>
 <td>J4</td>
 </tr>
@@ -104,17 +103,17 @@ document.getElementById('d1').style.height=h2 + "px";
 </table>
 <div class="figure align-center">
 <img alt="_images/hardware_setup.jpg" src="_images/hardware_setup.jpg" style="width: 50%;" />
-<p class="caption">Hardware Setup</p>
+<p class="caption">Hardware setup</p>
 </div>
 <dl class="docutils">
-<dt>The XA-SK-UART-8 SliceCard has two types of voltage levels of communications.</dt>
+<dt>The XA-SK-UART-8 sliceCARD has two types of voltage levels of communications.</dt>
 <dd><ul class="first last simple">
 <li>CMOS TTL</li>
 <li>RS-232</li>
 </ul>
 </dd>
 </dl>
-<p>By default, XA-SK-UART-8 SliceCard uses the RS-232 levels. In order to use the CMOS TTL levels, short J3 pins (25-26) of the XA-SK-UART-8 Slice Card. At a time, only one voltage level type can be used for all 8 UART channels (RS-232 or CMOS TTL). When using the RS-232 levels, UART device pins must be connected to J4 of the XA-SK-UART-8 SliceCard. When using TTL levels, UART device pins must be connected to J3 of the XA-SK-UART-8 SliceCard (along with J3 25-26 pins shorted). UART mapping information is as below:</p>
+<p>By default, XA-SK-UART-8 sliceCARD uses the RS-232 levels. In order to use the CMOS TTL levels, short J3 pins (25-26) of the XA-SK-UART-8 sliceCARD. At a time, only one voltage level type can be used for all 8 UART channels (RS-232 or CMOS TTL). When using the RS-232 levels, UART device pins must be connected to J4 of the XA-SK-UART-8 sliceCARD. When using TTL levels, UART device pins must be connected to J3 of the XA-SK-UART-8 sliceCARD (along with J3 25-26 pins shorted). UART mapping information is as below:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="28%" />
@@ -172,16 +171,16 @@ document.getElementById('d1').style.height=h2 + "px";
       </div>
       <div class="sphinxsidebar" id='d2'>
         <div class="sphinxsidebarwrapper">
-<h3><a href="index.html">Serial to Ethernet Bridging Application Manual</a></h3>
+<h3><a href="index.html">Serial to Ethernet bridging application manual</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Application Overview</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">HW platforms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#hardware-requirements">Hardware Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hardware-setup">Hardware SetUp</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Hardware platforms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-requirements">Hardware requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-setup">Hardware setup</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="system_description.html">System Description</a></li>
-<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system_description.html">System description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming_guide.html">Programming guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_the_application.html">Using the application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>

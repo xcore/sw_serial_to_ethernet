@@ -1,4 +1,4 @@
-Serial to Ethernet Bridging Application Manual
+Serial to Ethernet bridging application manual
 ==============================================
 
 .. toctree::
