@@ -63,17 +63,17 @@ document.getElementById('d1').style.height=h2 + "px";
 <p>This section details on how to use the application and its user interfaces.</p>
 <div class="section" id="s2e-device-discovery">
 <h2>S2E device discovery<a class="headerlink" href="#s2e-device-discovery" title="Permalink to this headline">¶</a></h2>
-<p>S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder).
+<p>S2E devices discovery on the network is performed by a UDP test server script (available at <tt class="docutils literal"><span class="pre">sw_serial_to_ethernet</span> <span class="pre">-&gt;</span> <span class="pre">tests</span> <span class="pre">-&gt;</span> <span class="pre">udp_test_server</span></tt>).
 This script needs to be executed on a host machine connected to a network router.</p>
 <ul class="simple">
 <li>Make sure the device is flashed with the firmware and web pages</li>
-<li>For Windows 7 users, navigate to testUDP_TestServerwindows and double click on udp_Server.exe file</li>
-<li>For MAC or Linux users, it is recommended to install socket package for python, and double click on udp_Server.py file available in  testUDP_TestServerLiunux_MAC folder</li>
+<li>For Windows users, download <em>Serial_to_Ethernet_UDP_test_server</em> package (XM-004697-SM) and extract its contents to a directory. Navigate to (udp_test_server -&gt; windows -&gt; udp_server.exe), right-click on udp-server.exe and run as Administrator.</li>
+<li>For MAC or Linux users, it is recommended to install socket package for python, and run the script using the command <em>python udp_server.py</em></li>
 </ul>
 <div class="section" id="running-the-udp-test-server">
 <h3>Running the UDP test server<a class="headerlink" href="#running-the-udp-test-server" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Select an appropriate host specific udp_Server package as described above</li>
+<li>Select an appropriate host specific option as described above</li>
 <li>Script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router</li>
 <li>Script displays different options to choose as explained in the following sections:</li>
 </ol>

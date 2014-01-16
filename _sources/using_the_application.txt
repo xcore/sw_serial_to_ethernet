@@ -6,19 +6,19 @@ This section details on how to use the application and its user interfaces.
 S2E device discovery
 --------------------
 
-S2E devices discovery on the network is performed by a UDP test server program (available at sc_multi_uart/test/UDP_TestServer folder). 
+S2E devices discovery on the network is performed by a UDP test server script (available at ``sw_serial_to_ethernet -> tests -> udp_test_server``). 
 This script needs to be executed on a host machine connected to a network router.
 
 * Make sure the device is flashed with the firmware and web pages
 
-* For Windows 7 users, navigate to test\UDP_TestServer\windows and double click on udp_Server.exe file
+* For Windows users, download *Serial_to_Ethernet_UDP_test_server* package (XM-004697-SM) and extract its contents to a directory. Navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator.
 
-* For MAC or Linux users, it is recommended to install socket package for python, and double click on udp_Server.py file available in  test\UDP_TestServer\Liunux_MAC folder
+* For MAC or Linux users, it is recommended to install socket package for python, and run the script using the command *python udp_server.py*
 
 Running the UDP test server
 +++++++++++++++++++++++++++
 
-#. Select an appropriate host specific udp_Server package as described above
+#. Select an appropriate host specific option as described above
 
 #. Script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router
 
