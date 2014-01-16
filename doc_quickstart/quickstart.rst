@@ -57,7 +57,7 @@ Importing the ``serial to ethernet`` reference application:
 * Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
 * Click *Import* option in the *Project Explorer* window (Import -> General -> Existing Projects into Workspace and click Next).
 * Choose *Select archive file* option and click *Browse* button.
-* Select s2e release zip file and click *Finish* button
+* Select s2e release zip file (XM-004695-SM serial_to_ethernet_2.0.0) and click *Finish* button
 * The application is called as *app_serial_to_ethernet* in the *Project Explorer* window.
 
 Building the ``serial to ethernet`` application:
@@ -138,7 +138,7 @@ In addition to the above hardware setup
 
 * Now, in order to establisih a telnet connection to the above serial connection, open a telnet client application (On Windows, open another instance of the Hercules application, select *TCP Client* tab)
 * Configure the telnet client application with ip address as XMOS device address. Key in the port number as *46* in order to connect to the UART0.
-* Click *Connect* so that the telnet client connects to the telnet server running on the S2E device. Onserve a welcome message *Welcome to serial to ethernet telnet server demo! This server is connected to uart channel 0* appears on the client console.
+* Click *Connect* so that the telnet client connects to the telnet server running on the S2E device. Observe a welcome message *Welcome to serial to ethernet telnet server demo! This server is connected to uart channel 0* appears on the client application console.
 
 .. figure:: images/terminal_clients.*
 
@@ -157,6 +157,6 @@ Next steps
 
 * Connect two or more USB-UART adapters to the host and ``XA-SK-UART-8`` sliceCARD. Open the terminal client applications for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
 
-* Detach the ``xTAG-2`` and ``XA-SK-XTAG2`` adapter from the ``XP-SKC-L2`` sliceKIT core board. Connect ``XA-SK-E100`` Ethernet sliceCARD to a spare Ethernet port of the router. Navigate to udp_test_server folder available in the release package. If your platform is a MAC or a linux host, execute the udp_server.py script. If you are using a Windows host, navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Select other choices to change ip configration settings of the S2E device(s). Open a web page or test  Telnet-UART data communiocation using the ip provided by the S2E device.
+* Detach the ``xTAG-2`` and ``XA-SK-XTAG2`` adapter from the ``XP-SKC-L2`` sliceKIT core board. Connect ``XA-SK-E100`` Ethernet sliceCARD to a spare Ethernet port of the router. If your platform is a MAC or a linux host, navigate to ``sw_serial_to_ethernet -> tests -> udp_test_server``and run the udp_server.py python script (python udp_server.py). If you are using a Windows host, download *Serial_to_Ethernet_UDP_test_server* package (XM-004697-SM) and extract its contents to a directory. Navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Open a web page or test Telnet-UART data communiocation using the ip used by the S2E device. Select other choices to change ip configration settings of the S2E device(s).
 
 * Take a look at the ``http://xcore.github.io/sw_serial_to_ethernet`` for a more detailed documentation on using various features, design and programming guide for the application.

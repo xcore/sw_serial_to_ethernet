@@ -17,7 +17,7 @@ The following components are required to build the *Serial to Ethernet applicati
     * sc_slicekit_support: git://github.com/xcore/sc_slicekit_support
     * sc_otp: git://github.com/xcore/sc_otp
 
-All these components are packaged in the software distribution folder. Once these files are extracted, you can install, build and use the software.
+All these components are packaged in the software distribution package (XM-004695-SM serial_to_ethernet_2.0.0). Once this zip file is selected, you can follow the below instructions to build and use the software.
 
 Import and build procedure using xTIMEcomposer studio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
