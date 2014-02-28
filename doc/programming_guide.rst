@@ -17,7 +17,7 @@ The following components are required to build the *Serial to Ethernet applicati
     * sc_slicekit_support: git://github.com/xcore/sc_slicekit_support
     * sc_otp: git://github.com/xcore/sc_otp
 
-All these components are packaged in the software distribution package (XM-004695-SM serial_to_ethernet_2.0.0). Once this zip file is selected, you can follow the below instructions to build and use the software.
+All these components are packaged as a software distribution. Once this zip file is selected, you can follow the below instructions to build and use the software.
 
 Import and build procedure using xTIMEcomposer studio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,6 +27,8 @@ To install the software, open the xTIMEcomposer (v13.0.0 or later) and follow th
 #. Open the xTIMEcomposer studio. 
 
 #. Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
+
+#. Access the Import option either by right clicking in the project explorer window or through File ->Import menu
 
 #. Click *Import* option in the *Project Explorer* window (Import -> General -> Existing Projects into Workspace and click Next).
 
@@ -58,7 +60,7 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 #. Navigate to *XFlash Options* tab and apply the following settings:
 
    * Check *Boot partition size (bytes):* and its value as 0x10000
-   * *Other XFlash Options:* as --data bin/web_data.bin
+   * *Other XFlash Options:* as ``--data bin/web_data.bin``
    
 #. Click on *Apply* and then *Flash* to the XMOS device.
 
@@ -168,7 +170,7 @@ This section provides a brief description on main application interfaces.
 UART configuration
 ------------------
 
-The initialisation and configuration process for both the RX and TX operations is the same. The files ``multi_uart_tx_conf.h`` and ``multi_uart_rx_conf.h`` are used to configure multiUART TX and RX servers for the default values. For application configuration, the function :c:func:`uart_config_init` is used to apply configuration stored from flash or to use default application defined static configuration. The function :c:func:`uart_set_config` is utilised whenever there is a dynamic configuration change request (ie., a particular UART reconfiguration request). The flow is visualised in :ref:`fig_uart_init_flow`.
+The initialisation and configuration process for both the RX and TX operations is the same. The files ``multi_uart_tx_conf.h`` and ``multi_uart_rx_conf.h`` are used to configure multiUART TX and RX servers for the default values. For application configuration, the function :c:func:`uart_config_init` is used to apply configuration stored from flash or to use default application defined static configuration. The function :c:func:`uart_set_config` is utilised whenever there is a dynamic configuration change request (i.e. a particular UART reconfiguration request). The flow is visualised in :ref:`fig_uart_init_flow`.
 
 .. _fig_uart_init_flow:
 

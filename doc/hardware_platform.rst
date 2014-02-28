@@ -5,16 +5,16 @@ Hardware requirements
 ---------------------
 
 This application runs on an L1 device on the sliceKIT core board. Following hardware is required for running this application:
-   * XP-SKC-L2 sliceKIT 1V2 L2 core board
-   * XA-SK-E100 Ethernet 1V1 sliceCARD 
-   * XA-SK-UART-8 OctoUART 1V0 sliceCARD
-   * xTAG-2 and XA-SK-XTAG2 adapter
+   * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
+   * Ethernet sliceCARD 1V1 (XA-SK-E100)
+   * Multi UART sliceCARD (XA-SK-UART-8)
+   * xTAG-2 debug adapter and sliceKIT connector (xTAG-2 and XA-SK-XTAG2)
    * Ethernet cable
    * Power supply 5V
 
 Hardware setup
 --------------
-MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the *Serial to Ethernet* application runs on U8 (single tile). The sliceCARDs should be connected to the sliceKIT core board in the following manner:
+MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the *Serial to Ethernet* application runs on a single tile device. The sliceCARDs should be connected to the sliceKIT core board in the following manner:
 
 ===================== ======================== =======================
 **sliceCARD**         **sliceKIT Connector**   **sliceKIT - Jumper**
@@ -29,11 +29,11 @@ MultiUART             Star                     J4
     
     Hardware setup
     
-The XA-SK-UART-8 sliceCARD has two types of voltage levels of communications.
+The Multi UART sliceCARD has two types of voltage levels of communications.
     * CMOS TTL
     * RS-232
     
-By default, XA-SK-UART-8 sliceCARD uses the RS-232 levels. In order to use the CMOS TTL levels, short J3 pins (25-26) of the XA-SK-UART-8 sliceCARD. At a time, only one voltage level type can be used for all 8 UART channels (RS-232 or CMOS TTL). When using the RS-232 levels, UART device pins must be connected to J4 of the XA-SK-UART-8 sliceCARD. When using TTL levels, UART device pins must be connected to J3 of the XA-SK-UART-8 sliceCARD (along with J3 25-26 pins shorted). UART mapping information is as below:
+By default, Multi UART sliceCARD uses the RS-232 levels. In order to use the CMOS TTL levels, short J3 pins (25-26) of the Multi UART sliceCARD. Only one voltage level type can be used for all 8 UART channels (RS-232 or CMOS TTL). When using the RS-232 levels, UART device pins must be connected to J4 of the Multi UART sliceCARD. When using TTL levels, UART device pins must be connected to J3 of the Multi UART sliceCARD (along with J3 25-26 pins shorted). UART mapping information is as below:
 
 ================ ===================== =====================
 **UART Channel** **J3/J4 Pin no.(TX)** **J3/J4 Pin no.(RX)**

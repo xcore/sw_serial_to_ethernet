@@ -1,23 +1,23 @@
 System description
 ==================
 
-This section briefly describes the software components used, thread diagram and resource usage details.
+This section briefly describes the software components used, logical cores and resource usage details.
 
 Software architecture
 ---------------------
 
-.. figure:: images/s2e_threads.png
+.. figure:: images/s2e_cores.png
     
     Core usage
     
-In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is any UART data available, the application fills the appropriate UART buffer and notifies TCP client thread to consume this data. Similarly whenever there is any data from Ethernet packets, XTCP server notifies the application's TCP client about data availability and the client stores this data into respective application buffers. This data is then consumed by UART (client) handler.
+In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is any UART data available, the `UART Handler` core fills the appropriate UART buffer and notifies `TCP Handler` logical core to consume this data. Similarly whenever there is any data from Ethernet packets, XTCP server avilable in `ETH and TCP/IP` logical core notifies `TCP Handler` logical core, which acts as a TCP client about data availability. `TCP Handler` stores this data into respective application buffers. This data is then consumed by `UART handler` and then pushed to `UART Tx ports` by `UART TX server` logical core.
 
 Cores
 ~~~~~
 
 The design uses seven logical cores as described below.
 
-The MultiUART component comprises two logical cores, one acting as a transmit (TX) server for up to 8 uarts, and the other acting as a receive (RX) server for up to 8 uarts.
+The MultiUART component comprises two logical cores, one acting as a transmit (TX) server for up to 8 UARTs, and the other acting as a receive (RX) server for up to 8 UARTs.
 
 UART_handler is an application core that interfaces with the UART RX and TX servers. It handles UART configuration requests, facilitates to store the UART data received from UART RX server into respective application buffers and transfers the data received from TCP clients to UART TX server.
 
@@ -51,7 +51,7 @@ Software components used
  * - Component
    - Description
  * - sc_ethernet
-   - Two thread version of the ethernet component implementing 10/100 MII Ethernet MAC and filters
+   - Two logical core (lite) version of the ethernet component implementing 10/100 MII Ethernet MAC and filters
  * - sc_xtcp
    - Micro TCP/IP stack for use with sc_ethernet component
  * - sc_multi_uart
@@ -61,7 +61,7 @@ Software components used
  * - sc_website
    - Component framework for Embedded web site development
  * - sc_slicekit_support
-   - sliceKIT library to use L2 core board's flash for application
+   - sliceKIT library to use L-series core board's flash for application
  * - sc_otp
    - Library for reading MAC from sliceKIT core board's OTP memory
 

@@ -7,7 +7,7 @@ Some features of this application are:
 * Supports up to 8 serial ports (UARTs) with baud rates up to 115200 at standard UART configuration settings
 * Webserver to facilitate dynamic UART configuration
 * Telnet server to support data transfer via a telnet socket associated with each UART
-* Device discovery and IP configuration management of the S2E devices in the network
+* Device discovery and IP configuration management of the Serial to Ethernet (S2E) devices in the network
 * Flash memory storage and retrieval for device settings such as IP, UART configuration and web pages
 * CMOS/TTL level and RS232 level communication for UARTs
 
@@ -17,22 +17,25 @@ A computer with:
 
 * With a spare Ethernet port.
 * Internet browser (Internet Explorer, Chrome, Firefox, etc...)
-* Download and install the xTIMEcomposer studio (v13.0.0 or later) from XMOS xTIMEcomposer downloads webpage.
+* Download and install the xTIMEcomposer studio (v13.0.0 or later) from XMOS xTIMEcomposer downloads webpage
+* A spare USB port for XTAG debug
+* A spare DB9 port (alternatively additional USB port for DB9 to USB adapter)
 
 For serial-telnet data communication demo, the following are required in addition to the above:
 
 * A null serial cable to DB-9 connector. The cable will need a cross over between the UART RX and TX pins at each end.
-* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use BF-810 USB-UART adapter (``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
+* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use BF-810 USB-UART adapter 
+(``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
 * A suitable terminal client software. For MAC users, try SecureCRT (``http://www.vandyke.com/download/securecrt/``) and for Linux users, try cutecom (``http://cutecom.sourceforge.net/``). We use hercules client (``http://www.hw-group.com/products/hercules/index_en.html``) on a Windows platform for the demo.
 
 Hardware setup
 --------------
 Required sliceKIT units:
 
-* XP-SKC-L2 sliceKIT L2 core board
-* XA-SK-E100 Ethernet sliceCARD
-* XA-SK-UART-8 OctoUART sliceCARD
-* xTAG-2 and XA-SK-XTAG2 adapter
+* xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
+* Ethernet sliceCARD 1V1 (XA-SK-E100)
+* Multi UART sliceCARD (XA-SK-UART-8)
+* xTAG-2 debug adapter and sliceKIT connector (xTAG-2 and XA-SK-XTAG2)
 
 Setup:
 
@@ -40,7 +43,7 @@ Setup:
 * Ensure the *XMOS Link* switch is off on the ``XA-SK-XTAG2`` adapter to ensure correct operation of the sliceCARD in the Star slot.
 * Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
 * Connect the ``XTAG2`` to your computer using a USB cable.
-* Connect the ``XA-SK-UART-8`` OctoUART sliceCARD to the ``XP-SKC-L2`` core board's ``STAR`` (indicated by a white colour star) slot.
+* Connect the ``XA-SK-UART-8`` Multi UART sliceCARD to the ``XP-SKC-L2`` core board's ``STAR`` (indicated by a white colour star) slot.
 * Connect the ``XA-SK-E100`` Ethernet sliceCARD to the ``XP-SKC-L2`` core board's ``TRIANGLE`` (indicated by a white colour triangle) slot.
 * Using an Ethernet cable, connect the other side of ``XA-SK-E100`` Ethernet sliceCARD to your computer's Ethernet port.
 * Connect the 12V power supply to the core board and switch it ON.
@@ -55,9 +58,10 @@ Importing the ``serial to ethernet`` reference application:
 
 * Open the xTIMEcomposer studio. 
 * Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
-* Click *Import* option in the *Project Explorer* window (Import -> General -> Existing Projects into Workspace and click Next).
+* Access the Import option either by right clicking in the project explorer window or through File ->Import menu
+* Click *Import* option (Import -> General -> Existing Projects into Workspace and click Next).
 * Choose *Select archive file* option and click *Browse* button.
-* Select s2e release zip file (XM-004695-SM serial_to_ethernet_2.0.0) and click *Finish* button
+* Select s2e reference design release package and click *Finish* button
 * The application is called as *app_serial_to_ethernet* in the *Project Explorer* window.
 
 Building the ``serial to ethernet`` application:
@@ -71,13 +75,13 @@ Flash the web pages and device configuration
 
 To flash the web pages and device configuration using xTIMEcomposer studio:
 
-* In the *Project Explorer* window, locate the *app_serial_to_ethernet.xe* and *web_data.bin* in the (app_serial_to_ethernet -> bin).
+* In the *Project Explorer* window, locate the *app_serial_to_ethernet.xe* and *web_data.bin* in the (app_serial_to_ethernet -> bin)
 * Right click on *app_serial_to_ethernet.xe* and click on (Flash As -> Flash Configurations...).
 * In the *Flash Configurations* window, double click the *xCORE Application* to create a new flash configuration.
 * Navigate to *XFlash Options* tab and apply the following settings:
 
    * Check *Boot partition size (bytes):* and its value as 0x10000
-   * *Other XFlash Options:* as --data bin/web_data.bin
+   * *Other XFlash Options:* as ``--data bin/web_data.bin``
 
 * Click on *Apply* and then *Flash* to the XMOS device.
 * Check the *Console* window to verify flashing progress.
@@ -129,11 +133,38 @@ This demo showcases the data bridging between Ethernet and serial devices. Data 
 
 In addition to the above hardware setup
 
-* Connect a null serial cable to DB-9 connector on ``XA-SK-UART-8`` sliceCARD.
+* Connect a null serial cable to DB-9 connector on Multi UART sliceCARD.
 * Connect other end of cable to DB-9 connector slot on the host or USB-UART adapter.
 * Identify the serial (COM) port number provided by the Host or *USB to UART* adapter and open a suitable terminal client software for the selected COM port (refer to the documentation of the selected application).
 
-* Configure the host COM port console settings as: 115200 baud, 8 bit character length, even parity, 1 stop bit, no hardware flow control. The Transmit End-of-Line character should be set to `CR` (other options presented will probably be `LF` and `CR\LF`).
+* Configure the host COM port console settings; sample settings while using Hercules client should be as follows: 
+.. list-table::
+    
+    * - Parameter
+      - Value
+    * - Baud rate
+      - 115200
+    * - Data size
+      - 8
+    * - Parity
+      - Even
+    * - Handshake
+      - off
+    * - Mode
+      - Free
+
+The Transmit End-of-Line character should be set to `CR` (other options presented will probably be `LF` and `CR\LF`). In hercules, this setting is acheived by right clicking on `Received/Sent Data` text box, select `Transmit EOL`, select `CR(Mac)` option
+
+If any other terminal console is used, and has any additional settings, following values are used:
+.. list-table::
+
+    * - Parameter
+      - Value
+    * - Stop bit
+      - 1
+    * - hardware flow control
+      - none
+
 * Click on *Open* to open the COM port.
 
 * Now, in order to establisih a telnet connection to the above serial connection, open a telnet client application (On Windows, open another instance of the Hercules application, select *TCP Client* tab)
@@ -155,8 +186,8 @@ In addition to the above hardware setup
 Next steps
 ----------
 
-* Connect two or more USB-UART adapters to the host and ``XA-SK-UART-8`` sliceCARD. Open the terminal client applications for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
+* Connect two or more USB-UART adapters to the host and Multi UART sliceCARD. Open the terminal client applications for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
 
-* Detach the ``xTAG-2`` and ``XA-SK-XTAG2`` adapter from the ``XP-SKC-L2`` sliceKIT core board. Connect ``XA-SK-E100`` Ethernet sliceCARD to a spare Ethernet port of the router. If your platform is a MAC or a linux host, navigate to ``sw_serial_to_ethernet -> tests -> udp_test_server``and run the udp_server.py python script (python udp_server.py). If you are using a Windows host, download *Serial_to_Ethernet_UDP_test_server* package (XM-004697-SM) and extract its contents to a directory. Navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Open a web page or test Telnet-UART data communiocation using the ip used by the S2E device. Select other choices to change ip configration settings of the S2E device(s).
+* Detach xTAG-2 debug adapter and sliceKIT connector from xCORE General Purpose (L-series) sliceKIT core board. Connect Ethernet sliceCARD to a spare Ethernet port of the router. If your platform is a MAC or a linux host, navigate to ``sw_serial_to_ethernet -> tests -> udp_test_server``and run the udp_server.py python script (python udp_server.py). If you are using a Windows host, download *Serial_to_Ethernet_UDP_test_server* package and extract its contents to a directory. Navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Open a web page or test Telnet-UART data communiocation using the ip used by the S2E device. Select other choices to change ip configration settings of the S2E device(s).
 
 * Take a look at the ``http://xcore.github.io/sw_serial_to_ethernet`` for a more detailed documentation on using various features, design and programming guide for the application.
