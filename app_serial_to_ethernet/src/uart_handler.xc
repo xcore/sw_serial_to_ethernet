@@ -6,6 +6,7 @@
 #include "xc_ptr.h"
 #include "multi_uart_rx.h"
 #include "multi_uart_tx.h"
+#include <print.h>
 
 typedef enum uart_config_cmd_t {
   UART_HANDLER_GET_UART_CONFIG,
@@ -21,6 +22,7 @@ typedef struct uart_tx_info {
   int len; /**< Depth of buffer (bytes remaining to be transferred to UART) */
   int i; /**< Number of bytes consumed from the buffer */
   int notified; /**< Flag to notify all UART TX data is transferred to MUART component*/
+  int sw_fc;
   xc_ptr buffer; /**< Reference to UART TX buffer */
 } uart_tx_info;
 
@@ -68,6 +70,7 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
     // Drop data due to buffer overflow
     //printchar('!');
 #endif
+    printchar('!');
   }
   return;
 }
@@ -80,18 +83,36 @@ static void tx_send_data(streaming chanend c_uart_tx,
                          chanend c_uart_data,
                          mutual_comm_state_t &mstate,
                          uart_tx_info &st,
-                         int uart_id)
+                         int uart_id,
+                         int uart_rx_buf_level)
 {
-  if (st.i < st.len) {
     int buffer_full;
-    int datum;
-    read_byte_via_xc_ptr_indexed(datum, st.buffer,st.i);
-
-    buffer_full = uart_tx_put_char(uart_id, datum);
-    if (buffer_full==0) {
-      st.i += 1;
+    /* Check if RX watermark level has reached; if so, send xon/xoff */
+    /*if ((uart_rx_buf_level >= UART_RX_MAX_WATERMARK) && (!st.sw_fc)) {
+      buffer_full = uart_tx_put_char(uart_id, XOFF);
+      if (buffer_full==0) {
+        st.sw_fc = 1;
+      }
     }
-  }
+    else if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc) {*/
+#if SW_FC_CTRL
+    if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc) {
+      buffer_full = uart_tx_put_char(uart_id, XON);
+      if (buffer_full==0) {
+        st.sw_fc = 0;
+      }
+    }
+    else if (st.i < st.len) {
+#else
+    if (st.i < st.len) {
+#endif
+      int datum;
+      read_byte_via_xc_ptr_indexed(datum, st.buffer,st.i);
+      buffer_full = uart_tx_put_char(uart_id, datum);
+      if (buffer_full==0) {
+        st.i += 1;
+      }
+    }
 }
 
 static int flush_rx_buffer(uart_rx_info &st)
@@ -197,11 +218,11 @@ void uart_handler(chanend c_uart_data,
   }
 
   for (int i=0;i<NUM_UART_CHANNELS;i++) {
-
     c_uart_data :> uart_tx_state[i].buffer;
     uart_tx_state[i].len = 0;
     uart_tx_state[i].i = 0;
     uart_tx_state[i].notified = 0;
+    uart_tx_state[i].sw_fc = 0;
 
     c_uart_data :> uart_rx_state[i].buffer[0];
     c_uart_data :> uart_rx_state[i].buffer[1];
@@ -258,6 +279,15 @@ void uart_handler(chanend c_uart_data,
                                      c_uart_data,
                                      mstate);
               #endif
+#if SW_FC_CTRL
+              if (uart_rx_state[(int) channel_id].current_buffer_len >= UART_RX_MAX_WATERMARK) {
+                if ((!uart_tx_state[(int) channel_id].sw_fc) &&
+                        (uart_tx_put_char((int) channel_id, XOFF)==0)) {
+                  uart_tx_state[(int) channel_id].sw_fc = 1;
+                }
+              }
+#endif
+
             #endif
           }
         }
@@ -358,7 +388,8 @@ void uart_handler(chanend c_uart_data,
         tx_send_data(c_uart_tx,
                      c_uart_data,mstate,
                      uart_tx_state[poll_index],
-                     poll_index);
+                     poll_index,
+                     uart_rx_state[poll_index].current_buffer_len);
 
         if (tx_notifier == -1 &&
             tx_sent_all_data(uart_tx_state[poll_index]) &&

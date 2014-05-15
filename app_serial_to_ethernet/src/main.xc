@@ -15,7 +15,7 @@
 #include "s2e_flash.h"
 
 #define ETH_CORE 0
-#define UART_CORE 0
+#define UART_CORE 1
 
 ethernet_xtcp_ports_t xtcp_ports =
   {    on stdcore[ETH_CORE]:  OTP_PORTS_INITIALIZER,
