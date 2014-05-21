@@ -22,7 +22,8 @@ typedef struct uart_tx_info {
   int len; /**< Depth of buffer (bytes remaining to be transferred to UART) */
   int i; /**< Number of bytes consumed from the buffer */
   int notified; /**< Flag to notify all UART TX data is transferred to MUART component*/
-  int sw_fc;
+  int sw_fc_out; /**< XMOS device setting its Software fc status to the out connection */
+  int sw_fc_in; /**< Software flow control status set by incoming connection */
   xc_ptr buffer; /**< Reference to UART TX buffer */
 } uart_tx_info;
 
@@ -88,21 +89,21 @@ static void tx_send_data(streaming chanend c_uart_tx,
 {
     int buffer_full;
     /* Check if RX watermark level has reached; if so, send xon/xoff */
-    /*if ((uart_rx_buf_level >= UART_RX_MAX_WATERMARK) && (!st.sw_fc)) {
+    /*if ((uart_rx_buf_level >= UART_RX_MAX_WATERMARK) && (!st.sw_fc_out)) {
       buffer_full = uart_tx_put_char(uart_id, XOFF);
       if (buffer_full==0) {
-        st.sw_fc = 1;
+        st.sw_fc_out = 1;
       }
     }
-    else if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc) {*/
+    else if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc_out) {*/
 #if SW_FC_CTRL
-    if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc) {
+    if ((uart_rx_buf_level < UART_RX_MIN_WATERMARK) && st.sw_fc_out) {
       buffer_full = uart_tx_put_char(uart_id, XON);
       if (buffer_full==0) {
-        st.sw_fc = 0;
+        st.sw_fc_out = 0;
       }
     }
-    else if (st.i < st.len) {
+    else if ((st.i < st.len) && (!st.sw_fc_in)) {
 #else
     if (st.i < st.len) {
 #endif
@@ -222,7 +223,8 @@ void uart_handler(chanend c_uart_data,
     uart_tx_state[i].len = 0;
     uart_tx_state[i].i = 0;
     uart_tx_state[i].notified = 0;
-    uart_tx_state[i].sw_fc = 0;
+    uart_tx_state[i].sw_fc_out = 0;
+    uart_tx_state[i].sw_fc_in = 0;
 
     c_uart_data :> uart_rx_state[i].buffer[0];
     c_uart_data :> uart_rx_state[i].buffer[1];
@@ -254,12 +256,12 @@ void uart_handler(chanend c_uart_data,
             i=0;
         }
         break;
-#endif
+#endif  //S2E_DEBUG_AUTO_TRAFFIC
       case c_uart_rx :> char channel_id:
         { unsigned uart_char;
           uart_char = (unsigned) uart_rx_grab_char(channel_id);
           if(uart_rx_validate_char(channel_id, uart_char) == 0) {
-            #ifdef S2E_DEBUG_BROADCAST_UART_0
+#ifdef S2E_DEBUG_BROADCAST_UART_0
               // In this debug mode the data from uart 0 is sent to
               // all connections
               if (channel_id == 0) {
@@ -272,23 +274,36 @@ void uart_handler(chanend c_uart_data,
               else {
                 // Drop anything coming in on the other serial ports
               }
-            #else
-              #ifndef S2E_DEBUG_AUTO_TRAFFIC
+#else  //S2E_DEBUG_BROADCAST_UART_0
+#ifndef S2E_DEBUG_AUTO_TRAFFIC
+#if SW_FC_CTRL
+              if ((uart_char == XOFF) || (uart_char == XON)) {
+                  uart_tx_state[(int) channel_id].sw_fc_in = uart_char & 0x02;
+                  //printcharln(uart_char);
+              }
+              else {
+                  push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
+                                         uart_char,
+                                         c_uart_data,
+                                         mstate);
+              }
+#else  //SW_FC_CTRL
               push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
                                      uart_char,
                                      c_uart_data,
                                      mstate);
-              #endif
+#endif  //SW_FC_CTRL
+#endif  //S2E_DEBUG_AUTO_TRAFFIC
+
 #if SW_FC_CTRL
               if (uart_rx_state[(int) channel_id].current_buffer_len >= UART_RX_MAX_WATERMARK) {
-                if ((!uart_tx_state[(int) channel_id].sw_fc) &&
+                if ((!uart_tx_state[(int) channel_id].sw_fc_out) &&
                         (uart_tx_put_char((int) channel_id, XOFF)==0)) {
-                  uart_tx_state[(int) channel_id].sw_fc = 1;
+                  uart_tx_state[(int) channel_id].sw_fc_out = 1;
                 }
               }
-#endif
-
-            #endif
+#endif  //SW_FC_CTRL
+#endif  //S2E_DEBUG_BROADCAST_UART_0
           }
         }
         break;

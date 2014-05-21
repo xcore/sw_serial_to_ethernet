@@ -1,5 +1,5 @@
-#define UART_RX_MAX_PACKET_SIZE 1100 //128
-#define UART_RX_MIN_PACKET_SIZE 800 //128
+#define UART_RX_MAX_PACKET_SIZE 550 //128
+#define UART_RX_MIN_PACKET_SIZE 400 //128
 #define TELNET_UART_BASE_PORT 46
 #define SW_FC_CTRL  1
 
@@ -9,6 +9,7 @@
 #define UART_RX_MAX_WATERMARK   UART_RX_MAX_PACKET_SIZE -  WATERMARK_LEVEL//UART_RX_MAX_PACKET_SIZE-(UART_RX_MAX_PACKET_SIZE/WATERMARK_LEVEL_PERCENT)
 #define UART_RX_MIN_WATERMARK   WATERMARK_LEVEL //UART_RX_MAX_PACKET_SIZE/WATERMARK_LEVEL_PERCENT
 
+/* Ensure to update 'sw_fc_in' value if the below values are modified, */
 #define XOFF    0x13    //Pause Transmission
 #define XON     0x11    //Resume Transmission
 #endif
