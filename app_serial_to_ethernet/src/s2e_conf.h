@@ -1,5 +1,5 @@
-#define UART_RX_MAX_PACKET_SIZE 550 //128
-#define UART_RX_MIN_PACKET_SIZE 400 //128
+#define UART_RX_MAX_PACKET_SIZE 1100 //550 for local hosts
+#define UART_RX_MIN_PACKET_SIZE 800 //400 for local hosts
 #define TELNET_UART_BASE_PORT 46
 #define SW_FC_CTRL  1
 

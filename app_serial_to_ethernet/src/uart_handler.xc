@@ -278,8 +278,7 @@ void uart_handler(chanend c_uart_data,
 #ifndef S2E_DEBUG_AUTO_TRAFFIC
 #if SW_FC_CTRL
               if ((uart_char == XOFF) || (uart_char == XON)) {
-                  uart_tx_state[(int) channel_id].sw_fc_in = uart_char & 0x02;
-                  //printcharln(uart_char);
+                  uart_tx_state[(int) channel_id].sw_fc_in = (uart_char & 0x02) >> 1;
               }
               else {
                   push_to_uart_rx_buffer(uart_rx_state[(int) channel_id],
