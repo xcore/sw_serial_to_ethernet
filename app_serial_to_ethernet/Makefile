@@ -26,8 +26,8 @@ endif
 XCC_FLAGS_Release = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
 XCC_FLAGS_Debug = -O0 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
 
-XCC_C_FLAGS_Release = $(XCC_FLAGS) -Os -pg
-XCC_C_FLAGS_Debug = $(XCC_FLAGS) -O0 -pg
+XCC_C_FLAGS_Release = $(XCC_FLAGS) -Os
+XCC_C_FLAGS_Debug = $(XCC_FLAGS) -O0
 
 # The USED_MODULES variable lists other module used by the application.
 USED_MODULES = module_multi_uart module_webserver module_xtcp module_slicekit_support

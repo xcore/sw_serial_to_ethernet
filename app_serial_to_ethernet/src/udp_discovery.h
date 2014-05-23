@@ -29,7 +29,7 @@
  * Define to specify S2E firmware version
  */
 #ifndef S2E_FIRMWARE_VER
-#define S2E_FIRMWARE_VER		    "2.0.0"
+#define S2E_FIRMWARE_VER		    "2.1.0"
 #endif
 
 #ifndef UDP_QUERY_S2E_IP
