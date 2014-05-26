@@ -1,0 +1,26 @@
+Running Sphinx v1.0.7
+Found and adding aafig extension
+!!!!!!!
+/home/srini/XMOS/xSoftIPTools/1.0.22/xpd/docutils/writers/html4css1/html4css1.css
+Found and adding aafig extension
+Running XMOS Documentation setup:xdehtml
+loading pickled environment... not yet created
+building [xdehtml]: all documents
+updating environment: 2 added, 0 changed, 0 removed
+reading sources... [ 50%] changelog
+reading sources... [100%] index
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+['index', 'changelog']
+writing output... [ 50%] changelog
+Adding scope descriptions
+writing output... [100%] index
+Adding scope descriptions
+
+writing additional files...
+copying static files... done
+dumping object inventory... done
+build succeeded.
