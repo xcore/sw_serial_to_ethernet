@@ -38,7 +38,7 @@ enum telnet_commands_t {
 };
 
 enum telnet_options_t {
-  SUPPRESS_GA=3, 
+  SUPPRESS_GA=3,
   STATUS=5,
   ECHO=1,
   TIMING_MARK=6,

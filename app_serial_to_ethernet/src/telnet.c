@@ -29,10 +29,10 @@ int parse_telnet_buffer(char *data,
   while (i<len) {
     switch (*parse_state) {
     case PARSING_CMD:
-      switch (data[i]) 
-        {        
+      switch (data[i])
+        {
         case SB:
-          *parse_state = PARSING_OPTIONS;          
+          *parse_state = PARSING_OPTIONS;
           break;
         case SE:
           *parse_state = PARSING_DATA;
@@ -48,11 +48,11 @@ int parse_telnet_buffer(char *data,
         case IP:
           *close_request = 1;
           return j;
-        default:          
+        default:
           // unsupported command - ignore
           *parse_state = PARSING_DATA;
           break;
-        };   
+        };
       i++;
       break;
     case PARSING_NOTIFICATION:
@@ -65,12 +65,12 @@ int parse_telnet_buffer(char *data,
       i++;
       break;
     case PARSING_OPTIONS:
-      if (data[i] == IAC) 
+      if (data[i] == IAC)
         *parse_state = PARSING_CMD;
       i++;
       break;
     case PARSING_DATA:
-      switch (data[i]) 
+      switch (data[i])
         {
         case IAC:
           *parse_state = PARSING_CMD;

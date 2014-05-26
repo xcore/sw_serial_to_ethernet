@@ -22,7 +22,7 @@ int itoa(int n, char buf[], int base, int fill)
     fill--;
     n = next;
   }
-  for (;fill > 0;fill--) {    
+  for (;fill > 0;fill--) {
     buf[i] = '0';
     i++;
   }

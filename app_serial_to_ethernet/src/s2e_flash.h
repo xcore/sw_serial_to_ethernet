@@ -25,7 +25,7 @@
 #ifdef __XC__
 /**
  *  s2e_flash
- *  The S2E flash thread will keep looking for data (or commands) on the 
+ *  The S2E flash thread will keep looking for data (or commands) on the
  *  c_flash_data channel.
  *
  *  @param c_flash_web      channel for webpage data
@@ -49,8 +49,8 @@ void s2e_flash(chanend c_flash_web,
  *  @return none
  *
  **/
-void send_cmd_to_flash_thread(chanend c_flash_data, 
-                              int data_type, 
+void send_cmd_to_flash_thread(chanend c_flash_data,
+                              int data_type,
                               int command);
 
 /**
@@ -65,8 +65,8 @@ int get_flash_access_result(chanend c_flash_data);
 
 /**
  *  send_data_to_flash_thread
- *  Send UART configuration data to flash. Send one configuration at a 
- *  time. In order to send configuration for all the channels, this routine 
+ *  Send UART configuration data to flash. Send one configuration at a
+ *  time. In order to send configuration for all the channels, this routine
  *  must be called in a loop; each time sending the current channels config.
  *
  *  @param c_flash_data     channel for s2e data
@@ -79,8 +79,8 @@ void send_data_to_flash_thread(chanend c_flash_data,
 
 /**
  *  get_data_from_flash_thread
- *  Get UART configuration data from flash. Get one configuration at a 
- *  time. In order to get configuration for all the channels, this routine must 
+ *  Get UART configuration data from flash. Get one configuration at a
+ *  time. In order to get configuration for all the channels, this routine must
  *  be called in a loop; each time updating the current channels config. Telnet
  *  ports for each channel are also updated.
  *
