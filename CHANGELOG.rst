@@ -1,6 +1,11 @@
 sc_slicekit_support Change Log
 ==============================
 
+2.1.0
+-----
+  * L8-128 version with more buffer sizes, UART software flow control at 
+    application cores and bug fixes
+  
 2.0.0
 -----
   * Modifications to compile with latest 3.0 tools release and with latest 
