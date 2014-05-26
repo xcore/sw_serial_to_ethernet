@@ -1,9 +1,12 @@
 Serial to Ethernet bridging software
 .....................................
 
+:Latest release: 2.1.0alpha0
+:Maintainer: xmos
+:Description: Reference design to demonstrate serial device to ethernet bridging applications
+
 :Version: 1.1.2rc0
 :Vendor: XMOS
-:Description: Reference design to bridge serial (UART) devices to Ethernet
 
 Key Features
 ============
@@ -21,7 +24,6 @@ Required tools
 ==============
 
 xTIMEcomposer studio version 13.0.0 and later
-
 
 Support
 =======
@@ -42,7 +44,6 @@ SUPPORTED FEATURES: Reference hardware
  * XA-SK-E100 Ethernet sliceCARD
  * XA-SK-UART-8 OctoUART sliceCARD
 
-
 Firmware detail
 ===============
 
@@ -54,7 +55,6 @@ Documentation
 =============
 
 http://xcore.github.io/sw_serial_to_ethernet/
-
 
 Known Issues
 ============
@@ -89,4 +89,17 @@ Support
   at:
 
       http://www.xmos.com/support
+
+Required software (dependencies)
+================================
+
+  * sc_xtcp (https://github.com/xcore/sc_xtcp.git)
+  * sc_multi_uart (https://github.com/xcore/sc_multi_uart.git)
+  * sc_website (https://github.com/xcore/sc_website.git)
+  * sc_ethernet (git@github.com:xcore/sc_ethernet.git)
+  * sc_slicekit_support (https://github.com/xcore/sc_slicekit_support)
+  * sc_wifi (git@github.com:xcore/sc_wifi)
+  * sc_otp (git@github.com:xcore/sc_otp)
+  * sc_util (git@github.com:xcore/sc_util)
+  * sc_spi (https://github.com/xcore/sc_spi.git)
 
