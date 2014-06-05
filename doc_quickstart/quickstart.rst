@@ -30,6 +30,7 @@ For serial-telnet data communication demo, the following are required in additio
 
 Hardware setup
 --------------
+
 Required sliceKIT units:
 
 * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
@@ -138,6 +139,7 @@ In addition to the above hardware setup
 * Identify the serial (COM) port number provided by the Host or *USB to UART* adapter and open a suitable terminal client software for the selected COM port (if required, refer to the documentation of the selected application).
 
 * Configure the host COM port console settings; sample settings while using Hercules client should be as follows: 
+
 .. list-table::
     
     * - Parameter
