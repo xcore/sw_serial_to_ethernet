@@ -1,9 +1,10 @@
 Serial to Ethernet bridging software
 .....................................
 
-:Latest release: 2.1.0alpha0
+:Latest release: 2.1.0alpha1
 :Maintainer: xmos
 :Description: Reference design to demonstrate serial device to ethernet bridging applications
+
 
 :Version: 1.1.2rc0
 :Vendor: XMOS
