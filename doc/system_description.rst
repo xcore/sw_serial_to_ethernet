@@ -10,7 +10,7 @@ Software architecture
     
     Core usage
     
-In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is any UART data available, the `UART Handler` core fills the appropriate UART buffer and notifies `TCP Handler` logical core to consume this data. Similarly whenever there is any data from Ethernet packets, XTCP server avilable in `ETH and TCP/IP` logical core notifies `TCP Handler` logical core, which acts as a TCP client about data availability. `TCP Handler` stores this data into respective application buffers. This data is then consumed by `UART handler` and then pushed to `UART Tx ports` by `UART TX server` logical core.
+In order to achieve the desired data bridging, this application essentially maps each of the configured UART to a telnet socket and maintains application buffers (FIFOs) for each of such mapping. Whenever there is any UART data available, the `UART Handler` core fills the appropriate UART Rx buffer and notifies `TCP Handler` logical core to consume this data. Similarly whenever there is any Ethernet data from `Ethernet MAC/MII server`, `XTCP Server` logical core notifies `TCP Handler` core, which acts as a TCP client about data availability. `TCP Handler` stores this data into respective application buffers. This data is then consumed by `UART handler` and then pushed to `UART Tx ports` by `UART TX server` logical core.
 
 Cores
 ~~~~~
@@ -67,6 +67,14 @@ Software components used
 
 Resource usage
 --------------
+
+The overall platform usage and individual node usage shown in :ref:`fig_resource_usage`. User can get this information on the `Binary` window or by a ``double click`` of the binary file present on the `Binaries` folder in `Project Explorer`, after compiling the application using `xTIMEcomposer`.
+
+.. figure:: images/binary_window.png
+   
+   Binary window on xTIMEcomposer
+
+.. _fig_resource_usage:
 
 .. figure:: images/resource_usage.jpg
     
