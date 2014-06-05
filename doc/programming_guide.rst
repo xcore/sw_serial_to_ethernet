@@ -4,8 +4,10 @@ Programming guide
 Getting started
 +++++++++++++++
 
-Installation
-------------
+Installation of xTIMEcomposer Tools Suite
+-----------------------------------------
+
+The Serial to Ethernet application requires xTIMEcomposer version 13.0.0 or greater. It can be downloaded at the following URL http://www.xmos.com/support/xtools
 
 The following components are required to build the *Serial to Ethernet application*:
     * sw_serial_to_ethernet: git://github.com/xcore/sw_serial_to_ethernet
@@ -28,7 +30,7 @@ To install the software, open the xTIMEcomposer (v13.0.0 or later) and follow th
 
 #. Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
 
-#. Access the Import option either by right clicking in the project explorer window or through File ->Import menu
+#. Access the Import option either by right clicking the project in the project explorer window or through File ->Import menu
 
 #. Click *Import* option in the *Project Explorer* window (Import -> General -> Existing Projects into Workspace and click Next).
 
@@ -65,6 +67,10 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 #. Click on *Apply* and then *Flash* to the XMOS device.
 
 #. Check the *Console* window to verify flashing progress.
+
+.. figure:: images/flashing.png
+
+   Flashing the web pages
 
 Building from command line tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -185,7 +191,7 @@ Webserver
 
 The webserver handles all HTTP requests from the web clients. A web client may request to change UART settings, save current settings, or apply the previously saved UART seetings etc. Webserver identifies these requests, validates them and services those requests. It calls appropriate UART handler api's to retrieve and set channel settings. For example, for a 'Set' request from the web page, the webserver handler utilizes website component in order to parse the form data from web page, the required UART parameters are extracted and the UART_Handler's uart_set_config api is called to set the new UART configuration.
 
-The Webserver interface utilises sc_website component to implement web server functionality. Refer to the Programming Guide section within the ``SliceKit GPIO Example Applications`` documentation linked from the front page documentation of ``sw_gpio_examples`` repository (git://github.com/xcore/sw_gpio_examples.git). This documentation contains more information on how to utilize the ``Embedded Webserver Function Library`` component in customizing web server applications.
+The Webserver interface utilises *sc_website* component to implement web server functionality. Refer to the `Quickstart Guide` within `Documentation` or `Developer Column` of the ``Slicekit GPIO and Ethernet Combo Demo`` example in xSOFTip browser. This documentation contains more information on how to utilize the ``Embedded Webserver Function Library`` component in customizing web server applications.
 
 Flash interface
 ---------------

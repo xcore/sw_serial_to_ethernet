@@ -13,16 +13,17 @@ Feature list
 
 Supported
 ~~~~~~~~~
-    * Design fits in a single tile xCORE device
     * 10/100 Mbit Ethernet port
     * Supports up to 8 serial ports at the following baud rates: 115200, 57600, 38400, 
       28800, 19200, 14400, 9600, 7200, 4800, 2400, 1200, 600, 300, 150
+    * Supports various parity mode, character length, start/stop bit
     * Device discovery and device IP configuration management using UDP
     * Web page for UART configuration
-    * Telnet server functionality; supports data transfer via telnet socket for each UART
+    * Telnet server functionality: supports data transfer via telnet socket for each UART
     * Flash support for IP and UART configuration, web page storage and retrieval
     * Telnet mode UART configuration support
     * CMOS/TTL level and RS232 level communication for UARTs
+    * All the 8 UARTs can be configured in different configurations
 
 Not supported
 ~~~~~~~~~~~~~

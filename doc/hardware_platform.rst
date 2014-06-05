@@ -4,30 +4,24 @@ Hardware platforms
 Hardware requirements
 ---------------------
 
-This application runs on an L1 device on the sliceKIT core board. Following hardware is required for running this application:
+This application runs on an L2 device on the sliceKIT core board. Following hardware is required for running this application:
    * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
    * Ethernet sliceCARD 1V1 (XA-SK-E100)
    * Multi UART sliceCARD (XA-SK-UART-8)
    * xTAG-2 debug adapter and sliceKIT connector (xTAG-2 and XA-SK-XTAG2)
    * Ethernet cable
-   * Power supply 5V
+   * Power supply 12V
 
 Hardware setup
 --------------
-MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the *Serial to Ethernet* application runs on a single tile device. The sliceCARDs should be connected to the sliceKIT core board in the following manner:
+MultiUART component requires 8-bit ports for both transmit and receive ports. The current version of the *Serial to Ethernet* application runs on a two tile device. The sliceCARDs should be connected to the sliceKIT core board in the following manner:
 
 ===================== ======================== =======================
 **sliceCARD**         **sliceKIT Connector**   **sliceKIT - Jumper**
 ===================== ======================== =======================
 Ethernet              Triangle                 J5
-MultiUART             Star                     J4
+MultiUART             Square                   J8
 ===================== ======================== =======================
-
-.. figure:: images/hardware_setup.jpg
-    :align: center
-    :width: 50%
-    
-    Hardware setup
     
 The Multi UART sliceCARD has two types of voltage levels of communications.
     * CMOS TTL
@@ -47,3 +41,9 @@ By default, Multi UART sliceCARD uses the RS-232 levels. In order to use the CMO
 6                19                    20
 7                23                    24
 ================ ===================== =====================
+
+.. figure:: images/hardware_setup.png
+    :align: center
+    :width: 50%
+    
+    Hardware setup
