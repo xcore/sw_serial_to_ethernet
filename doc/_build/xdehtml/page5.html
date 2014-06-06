@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using the application &mdash; Serial to Ethernet bridging application manual v documentation</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/ui.css" type="text/css" />
+    <link rel="stylesheet" href="_static/app.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/xde.css"
+    type="text/css" /><script type="text/javascript" src="_static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Serial to Ethernet bridging application manual v documentation" href="index.html" />
+    <link rel="next" title="References" href="page6.html" />
+    <link rel="prev" title="API" href="page4.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Using the application</h1>
+
+             <div class='columns'>
+            
+  <p>This section details on how to use the application and its user interfaces.</p>
+<h2 class="topic" id="s2e-device-discovery">S2E device discovery</h2>
+<div><p>S2E devices discovery on the network is performed by a UDP test server script (available at <tt class="docutils literal"><span class="pre">sw_serial_to_ethernet</span> <span class="pre">-&gt;</span> <span class="pre">tests</span> <span class="pre">-&gt;</span> <span class="pre">udp_test_server</span></tt>).
+This script needs to be executed on a host machine connected to a network router.</p>
+<ul>
+<li>Make sure the device is flashed with the firmware and web pages</li>
+<li>For Windows users, download <em>Serial_to_Ethernet_UDP_test_server</em> package (XM-004697-SM) and extract its contents to a directory. Navigate to (udp_test_server -&gt; windows -&gt; udp_server.exe), right-click on udp-server.exe and run as Administrator.</li>
+<li>For MAC or Linux users, it is recommended to install socket package for python, and run the script using the command <em>python udp_server.py</em></li>
+</ul>
+<h3 id="running-the-udp-test-server">Running the UDP test server</h3>
+<div><ol class="arabic simple">
+<li>Select an appropriate host specific option as described above</li>
+<li>Script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router</li>
+<li>Script displays different options to choose as explained in the following sections:</li>
+</ol>
+<div align="center" class="figure">
+<div class="caption"><span>S2E device discovery using udp_test_server</span></div>
+<img alt="_images/udp_test_server.png" src="_images/udp_test_server.png" style="width: 50%;" />
+</div>
+</div><h3 id="discover-the-s2e-devices-on-the-network">Discover the S2E devices on the network</h3>
+<div><ol class="arabic simple">
+<li>Key in option <em>1</em> from the choices.</li>
+<li>Once the script is executed, it sends a broadcast request for all S2E devices in the network to respond.
+The message format is &#8220;XMOS S2E REPLY&#8221; broadcasted to 255.255.255.255</li>
+<li>XMOS S2E devices monitor this broadcast message and responds to the test server using the following format:
+&#8220;XMOS S2E VER:a.b.c;MAC:xx:xx:xx:xx:xx:xx;IP:abc.def.uvw.xyz&#8221;</li>
+<li>The test server parses this response received from S2E devices available in the network and displays
+the following information on the console:
+VER &#8211;&gt; Firmware Version
+MAC &#8211;&gt; MAC Address
+IP &#8211;&gt; IP address of the S2E device</li>
+<li>The above information is displayed for all the S2E devices available in the network</li>
+</ol>
+</div><h3 id="modify-ip-address-of-a-particular-s2e-device">Modify IP address of a particular S2E device</h3>
+<div><ol class="arabic simple">
+<li>Key in option <em>2</em> from the choices.</li>
+<li>The device discovery (option 1) should be used prior to using this option</li>
+<li>Upon selecting the above option, ensure all available S2Es on the network are displayed</li>
+<li>You can now select an appropriate S2E from the list and provide a new IP address for the selected S2E device.
+The server sends a unicast message using the format: &#8220;XMOS S2E IPCHANGE aaa.bbb.ccc.ddd&#8221;</li>
+<li>Appropriate S2E device will receive this message, flash the new ip address, resets and starts with the new ip address</li>
+<li>At the test server, you can now see S2E IP is changed to the new IP address by selecting the device discovery option again</li>
+</ol>
+</div><h3 id="modify-ip-address-of-all-s2e-devices-to-use-dhcp-server">Modify IP address of all S2E devices to use DHCP server</h3>
+<div><ol class="arabic simple">
+<li>Key in option <em>3</em> from the choices.</li>
+<li>This is a request and enables the s2e devices to DHCP mode. A DHCP server can be used to assign IP address to all S2E devices.
+The test server sends a broadcast message using the format: &#8220;XMOS S2E IPCHANGE 0.0.0.0&#8221;</li>
+<li>It is important that only the intended S2Es for which the IP address is invalid should be made available in the network
+All other S2Es should be removed from the network.</li>
+<li>Once the S2E devices IP is changed to the DHCP assigned IP addresses, select discovery option after some time in order to know the the new IP addresses for the device(s)</li>
+</ol>
+</div></div><h2 class="topic" id="data-communication-using-s2e-device">Data communication using S2E device</h2>
+<div><p>Apart from the standard UART and Telnet clients available on the host, following tools may be installed on the host system in order to use the S2E application.</p>
+<ul>
+<li>For Win 7 users, Hercules Utility by HW-Group available at <a class="reference" href="http://www.hw-group.com/products/hercules/index_en.html"><span>http://www.hw-group.com/products/hercules/index_en.html</span></a></li>
+<li>For MAC users, SecureCRT7.0 utility available at <a class="reference" href="http://www.vandyke.com/download/securecrt/"><span>http://www.vandyke.com/download/securecrt/</span></a></li>
+</ul>
+<p>The following example uses Hercules 3.2.5</p>
+<h3 id="uart-serial-port-setup">UART serial port setup</h3>
+<div><ol class="arabic simple">
+<li>Open the client application and change to <tt class="docutils literal"><span class="pre">Serial</span></tt> tab</li>
+<li>Select appropriate options in the <tt class="docutils literal"><span class="pre">Serial</span></tt> pane.
+Apply the default settings (Data size = 8, Parity = Even, Handshake = Off, Mode = Free)
+Cross check these settings with the UART settings in the webpage.</li>
+<li>Click <tt class="docutils literal"><span class="pre">Open</span></tt></li>
+</ol>
+</div><h3 id="telnet-client-setup">Telnet client setup</h3>
+<div><ol class="arabic simple">
+<li>Open the client application</li>
+<li>Switch to <tt class="docutils literal"><span class="pre">TCP</span> <span class="pre">Client</span></tt> tab</li>
+<li>Key in the ip address (for e.g. 169.254.196.178) of the s2e device</li>
+<li>Key in the port number configured for a particular UART (default configured values for each uart channel starts with 46)</li>
+<li>Click <tt class="docutils literal"><span class="pre">Connect</span></tt></li>
+</ol>
+<p>Telnet client connection to the s2e server is now opened; now key in the data to be sent to a particular UART.
+Files can also be uploaded using this client by right-clicking (and selecting appropriate option) in the <tt class="docutils literal"><span class="pre">data</span></tt> pane of either sessions.</p>
+<p>Software is tested for the following telnet clients</p>
+<ol class="arabic simple">
+<li>Putty</li>
+<li>Hercules</li>
+</ol>
+</div></div><h2 class="topic" id="device-configuration-using-web-interface">Device configuration using web interface</h2>
+<div><ol class="arabic simple">
+<li>Open the browser window</li>
+<li>Key in the ip address (for e.g. <a class="reference" href="http://169.254.196.178/"><span>http://169.254.196.178/</span></a>) of the S2E device and press <tt class="docutils literal"><span class="pre">Enter</span></tt>.</li>
+</ol>
+<p>Home page of the application appears</p>
+<ol class="arabic simple">
+<li>Click on a <tt class="docutils literal"><span class="pre">UART</span> <span class="pre">Channel</span></tt> to configure.</li>
+</ol>
+<p>A new page for the selected channel appears with its settings. In order to change the UART parameters</p>
+<ol class="arabic simple">
+<li>Select UART parameters to change (Parity, Stop bits, Baud rate, Char Len or Telnet port)</li>
+<li>Click <tt class="docutils literal"><span class="pre">Set</span></tt>.</li>
+<li>If configuration is set successfully, the <tt class="docutils literal"><span class="pre">Response</span></tt> text will say &#8216;Ok&#8217;</li>
+<li>Click on <tt class="docutils literal"><span class="pre">Back</span> <span class="pre">to</span> <span class="pre">main</span> <span class="pre">config</span> <span class="pre">page</span></tt> to select a different UART channel or save the current settings to flash.</li>
+<li>When clicked on <tt class="docutils literal"><span class="pre">Save</span></tt> in the main config page, current set configuration will be saved to flash. On successfull save, the <tt class="docutils literal"><span class="pre">Response</span></tt> text will say &#8216;Ok&#8217;</li>
+</ol>
+<p>Software is tested for the following web browsers</p>
+<ol class="arabic simple">
+<li>Google Chrome</li>
+<li>Mozilla Firefox</li>
+</ol>
+</div><h2 class="topic" id="device-configuration-using-telnet-interface">Device configuration using telnet interface</h2>
+<div><p>Telnet client can also be used for UART configuration or passing client data to UART channels (and vice versa). These are described as follows:</p>
+<h3 id="uart-configuration">UART configuration</h3>
+<div><p>A separate telnet socket (default configured to port 23) is used for configuring UART channels via telnet client.</p>
+<ol class="arabic simple">
+<li>Open the telnet client (following example uses Hercules 3.2.5)</li>
+<li>Switch to <tt class="docutils literal"><span class="pre">TCP</span> <span class="pre">Client</span></tt> tab</li>
+<li>Key in the ip address (for e.g. 169.254.196.178)</li>
+<li>Key in the port number (for UART config, it is 23)</li>
+<li>Click <tt class="docutils literal"><span class="pre">Connect</span></tt></li>
+</ol>
+<p>UART configuration server&#8217;s welcome message appears in the data pane of Telnet client</p>
+<p>Use the following format for configuring an UART channel
+~C~~P1~~P2~~P3~~P4~~P5~~P6~&#64;</p>
+<ul>
+<li>~ is the parameter separator</li>
+<li>&#64; is command termination marker</li>
+<li><dl class="docutils">
+<dt>C <span class="classifier-delimiter">:</span> <span class="classifier">Command code</span></dt>
+<dd><p>1 : Get channel configuration for a particular channel
+2 : Set channel configuration
+3 : Save current configuration of all channels to flash
+4 : Restore and set channel configuration from flash</p>
+</dd>
+</dl>
+</li>
+<li>P1 : UART Channel Identifier (typical values range for 0 to 7)</li>
+<li><dl class="docutils">
+<dt>P2 <span class="classifier-delimiter">:</span> <span class="classifier">Parity Configuration (typical values range for 0 to 4)</span></dt>
+<dd><p>0 : No Parity
+1 : Odd Parity
+2 : Even Parity
+3 : Mark (always 1) parity bit
+4 : Space (always 0) parity bit</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>P3 <span class="classifier-delimiter">:</span> <span class="classifier">Stop bits configuration (typical values are 0 or 1)</span></dt>
+<dd><p>0 : Single stop bit
+1 : Two stop bits</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>P4 <span class="classifier-delimiter">:</span> <span class="classifier">Baud rate configuration. Typical values (bits per second) include</span></dt>
+<dd><p>115200
+57600
+38400
+28800
+19200
+14400
+9600
+7200
+4800
+2400
+1200
+600
+300
+150</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>P5 <span class="classifier-delimiter">:</span> <span class="classifier">UART character length. Typical values include</span></dt>
+<dd><p>5
+6
+7
+8
+9</p>
+</dd>
+</dl>
+</li>
+<li>P6 : Telnet port (typical values are 10 to 65536)</li>
+</ul>
+<ol class="arabic simple">
+<li>Click <tt class="docutils literal"><span class="pre">Enter</span></tt> to apply the configuration for the channel</li>
+</ol>
+</div><h3 id="sample-usage">Sample usage</h3>
+<div><ul>
+<li><dl class="docutils">
+<dt>Get: ~1~~0~&#64;</dt>
+<dd><p>Gets channel &#8216;0&#8217; configuration.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>Set: ~2~~0~~2~~0~~115200~~8~~100~&#64;</dt>
+<dd><p>Sets channel &#8216;0&#8217; with: Even parity, single stop bits, 115200 baud, 8 character length and telnet port to communicate with this channel as 100.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>Save: ~3~&#64;</dt>
+<dd><p>Save current set configuration of all channels to flash</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>Restore: ~4~&#64;</dt>
+<dd><p>Restores and sets channels configuration from flash</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">Application Overview</a></li>
+             <li><a href="page1.html">Hardware platforms</a></li>
+             <li><a href="page2.html">System description</a></li>
+             <li><a href="page3.html">Programming guide</a></li>
+             <li><a href="page4.html">API</a></li>
+             <li><a href="page6.html">References</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

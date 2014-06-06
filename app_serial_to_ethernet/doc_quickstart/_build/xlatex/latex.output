@@ -1,0 +1,374 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012)
+ \write18 enabled.
+entering extended mode
+
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, lo
+aded.
+
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/quickstart.tex
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/xmosmodern.
+cls
+Document Class: xmosmodern 2010/12/10 v3.0b XMOS Modern Style Class
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/memoir.cls
+Document Class: memoir 2010/02/20 v1.618033988c configurable book, report, arti
+cle document class
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/ifpdf.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/ifxetex/ifxetex.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/ifluatex.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/etex-pkg/etex.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/mem9.clo)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/mempatch.st
+y))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/calc.sty)
+
+******************************************************
+Stock height and width: 668.63976pt by 506.45905pt
+Top and edge trims: 0.0pt and 0.0pt
+Page height and width: 668.63976pt by 506.45905pt
+Text height and width: 519.0pt by 341.0pt
+Spine and edge margins: 113.81102pt and 51.21497pt
+Upper and lower margins: 71.13188pt and 78.50787pt
+Headheight and headsep: 10.0pt and 20.0pt
+Footskip: 20.0pt
+Columnsep and columnseprule: 10.0pt and 0.0pt
+Marginparsep and marginparwidth: 11.38109pt and 51.21495pt
+Sidecapsep and sidecapwidth: 7.0pt and 85.0pt
+Sidebarhsep and sidebarwidth: 7.0pt and 85.0pt
+Sidebarvsep and sidebartopsep: 10.0pt and 0.0pt
+Sidebarheight: 546.99997pt
+Sidefoothsep and sidefootwidth: 7.0pt and 85.0pt
+Sidefootvsep and sidefootheight: 10.0pt and 546.99997pt
+******************************************************
+
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/graphics/graphicx.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/graphics/keyval.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/graphics/graphics.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/graphics/trig.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/latexconfig/graphics.cfg)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/pdftex-def/pdftex.def
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/infwarerr.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/ltxcmds.sty))))
+Writing index file xmos_texfile.idx 
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsmath/amstext.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsmath/amsgen.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsmath/amsbsy.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsmath/amsopn.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/pstool/pstool.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/catchfile.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/etexcmds.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/graphics/color.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/latexconfig/color.cfg))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/ifplatform.
+sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/pdftexcmds.sty)
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.w18))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/psfrag.sty)
+ (/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/suffix.sty
+)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/xkeyval.sty
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/xkeyval/xkeyval.tex)))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/microtype.s
+ty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/microtype/microtype.cfg))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/stmaryrd.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/alltt.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsfonts/amsfonts.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/multicol.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/ifthen.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/longtable.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/textcomp.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/ts1enc.def))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/url.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/listings.st
+y
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/listings/lstmisc.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/listings/listings.cfg))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/gensymb.sty
+)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/manfnt/manfnt.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/psnfss/pifont.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/psnfss/upzd.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/psnfss/upsy.fd))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/xspace.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/multirow.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/colortbl/colortbl.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/varioref.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/fixltx2e.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/enumitem.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/placeins.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/flafter.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/float.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/marginnote.
+sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/layouts/layouts.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/units/units.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/units/nicefrac.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/savesym/savesym.sty
+
+LaTeX Warning: You have requested package `savesym',
+               but the package provides `savesymbol'.
+
+)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/marvosym.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/bbding/bbding.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/dingbat/dingbat.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/hyperref/hyperref.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/hobsub-hyperref.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/hobsub-generic.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/oberdiek/auxhook.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/oberdiek/kvoptions.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/hyperref/pd1enc.def)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/latexconfig/hyperref.cfg))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/memhfixc.st
+y)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/hyperref/hpdftex.def
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/oberdiek/rerunfilecheck.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/lastpage.st
+y)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/tools/afterpage.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/fontenc.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/t1enc.def))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucidabr/lucidabr.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucida/t1hls.fd))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/upquote.sty
+)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/terminology
+.tex)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/bib.tex))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/inputenc.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/utf8.def
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/t1enc.dfu)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/ot1enc.dfu)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/omsenc.dfu)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/ts1enc.dfu)))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/xsphinx.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/framed.sty)
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/fancyvrb.st
+y
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/threepartta
+ble.sty))
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/indent.sty)
+Writing index file xmos_texfile.idx 
+
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.aux)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/ts1cmr.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucidabr/lmrhlcm.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/cont
+ext/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/oberdiek/epstopdf-base.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/oberdiek/grfext.sty)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/latexconfig/epstopdf-sys.cfg))
+
+Package layouts Warning: Layout scale set to 0.5 on input line 31.
+
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/hyperref/nameref.sty
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/gene
+ric/oberdiek/gettitlestring.sty))
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.out)
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.out)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/marvosym/umvs.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/microtype/mt-mvs.cfg)
+Underfull \hbox (badness 10000) in paragraph at lines 45--45
+
+
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucida/ts1hls.fd) <xmoslogo18pt.pdf, id=34, 54.06036pt x 15.07974pt>
+<use xmoslogo18pt.pdf>
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucida/t1hlh.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucidabr/omlhlcm.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucidabr/omshlcy.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/tex/lat
+ex/lucidabr/omxhlcv.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/microtype/mt-cmr.cfg)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsfonts/umsa.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/microtype/mt-msa.cfg)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/amsfonts/umsb.fd)
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/microtype/mt-msb.cfg) [1
+Non-PDF special ignored!{/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/l
+atex/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </home/vineela/setups/XMOS_2
+/XMOS/xSoftIPTools/1.0.21/xpd/texinputs/xmoslogo18pt.pdf>]
+(/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/tex/late
+x/base/t1cmtt.fd)
+Overfull \hbox (90.13957pt too wide) in paragraph at lines 103--105
+[]\T1/hls/m/n/9 (-20) ([]\T1/cmtt/m/n/9 http://www.bafo.com/products/accessorie
+s/usb-devices/bf-810-usb-to-serial-adapter-db9.html\T1/hls/m/n/9 (-20) ).
+
+Underfull \hbox (badness 2142) in paragraph at lines 103--105
+\T1/hls/m/n/9 (+20) * A suit-able ter-mi-nal client soft-ware. For MAC users, t
+ry Se-cure-CRT
+
+Underfull \hbox (badness 6559) in paragraph at lines 103--105
+\T1/hls/m/n/9 (+20) ([]\T1/cmtt/m/n/9 http://www.vandyke.com/download/securecrt
+/\T1/hls/m/n/9 (+20) ) and for Linux users, try
+
+Underfull \hbox (badness 7704) in paragraph at lines 103--105
+\T1/hls/m/n/9 (+20) cute-com ([]\T1/cmtt/m/n/9 http://cutecom.sourceforge.net/\
+T1/hls/m/n/9 (+20) ). We use her-cules client
+
+Underfull \hbox (badness 2302) in paragraph at lines 103--105
+\T1/hls/m/n/9 (+20) ([]\T1/cmtt/m/n/9 http://www.hw-group.com/products/hercules
+/index_en.html\T1/hls/m/n/9 (+20) ) on a Win-dows
+<hardware_setup.png, id=62, 224.33812pt x 151.3153pt> <use hardware_setup.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<use xmoslogo18pt.pdf> [2] <use xmoslogo18pt.pdf> [3 </home/vineela/GITRepos/Fo
+rk/sw_serial_to_ethernet/app_serial_to_ethernet/doc_quickstart/_build/xlatex/ha
+rdware_setup.png>] <webpage.png, id=77, 221.32687pt x 259.7203pt>
+<use webpage.png> <use xmoslogo18pt.pdf> [4]
+<modify_uart_configuration.png, id=90, 226.59656pt x 353.82187pt>
+<use modify_uart_configuration.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<use xmoslogo18pt.pdf> [5 </home/vineela/GITRepos/Fork/sw_serial_to_ethernet/ap
+p_serial_to_ethernet/doc_quickstart/_build/xlatex/webpage.png>]
+<use xmoslogo18pt.pdf> [6 </home/vineela/GITRepos/Fork/sw_serial_to_ethernet/ap
+p_serial_to_ethernet/doc_quickstart/_build/xlatex/modify_uart_configuration.png
+>] <terminal_clients.png, id=103, 226.59656pt x 156.585pt>
+<use terminal_clients.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<data_communication.png, id=105, 225.84375pt x 159.59625pt>
+<use data_communication.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<use xmoslogo18pt.pdf> [7] <use xmoslogo18pt.pdf> [8 </home/vineela/GITRepos/Fo
+rk/sw_serial_to_ethernet/app_serial_to_ethernet/doc_quickstart/_build/xlatex/te
+rminal_clients.png> </home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_seri
+al_to_ethernet/doc_quickstart/_build/xlatex/data_communication.png>]
+<use xmoslogo18pt.pdf> AED: lastpage setting LastPage [9]
+(/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_q
+uickstart/_build/xlatex/xmos_texfile.aux) ) )
+(see the transcript file for additional information){/home/vineela/setups/XMOS_
+2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t
+1.enc}{/home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/fo
+nts/enc/dvips/base/8r.enc}</home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21
+/latex/texmf-local/fonts/type1/bh/lucida/lsd.pfb></home/vineela/setups/XMOS_2/X
+MOS/xSoftIPTools/1.0.21/latex/texmf-local/fonts/type1/bh/lucida/lsi.pfb></home/
+vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-local/fonts/type1/bh
+/lucida/lsr.pfb></home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/tex
+mf-dist/fonts/type1/public/marvosym/marvosym.pfb></home/vineela/setups/XMOS_2/X
+MOS/xSoftIPTools/1.0.21/latex/texmf-dist/fonts/type1/public/cm-super/sftt0800.p
+fb></home/vineela/setups/XMOS_2/XMOS/xSoftIPTools/1.0.21/latex/texmf-dist/fonts
+/type1/public/cm-super/sftt0900.pfb>
+Output written on xmos_texfile.pdf (9 pages, 547765 bytes).
+Transcript written on xmos_texfile.log.

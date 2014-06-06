@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="s2e__webserver_8h" kind="file">
+    <compoundname>s2e_webserver.h</compoundname>
+    <includes local="yes">xccompat.h</includes>
+    <includes local="yes">xtcp_client.h</includes>
+    <incdepgraph>
+      <node id="38">
+        <label>xtcp_client.h</label>
+      </node>
+      <node id="36">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/s2e_webserver.h</label>
+        <link refid="s2e_webserver.h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>xccompat.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="s2e__webserver_8h_1cc2e8af1e331869db31dd9f71b70deaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s2e_webserver_init</definition>
+        <argsstring>(chanend c_xtcp, NULLABLE_RESOURCE(chanend, c_flash), chanend c_uart_config, NULLABLE_RESOURCE(chanend, c_flash_data))</argsstring>
+        <name>s2e_webserver_init</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_xtcp</declname>
+        </param>
+        <param>
+          <type>NULLABLE_RESOURCE(chanend, c_flash)</type>
+        </param>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>NULLABLE_RESOURCE(chanend, c_flash_data)</type>
+        </param>
+        <briefdescription>
+<para>s2e_webserver_init The S2E webserver initialization routine. </para>        </briefdescription>
+        <detaileddescription>
+<para>Registers all channels used by it.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c_xtcp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel connecting to the xtcp module </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_flash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel for web page data </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel for UART configuration </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_flash_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel for s2e flash data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>none </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_webserver.h" line="20"/>
+      </memberdef>
+      <memberdef kind="function" id="s2e__webserver_8h_13dd09a7ce18778e9f47f6b5664eee9b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s2e_webserver_event_handler</definition>
+        <argsstring>(chanend c_xtcp, NULLABLE_RESOURCE(chanend, c_flash), chanend c_uart_config, REFERENCE_PARAM(xtcp_connection_t, conn))</argsstring>
+        <name>s2e_webserver_event_handler</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_xtcp</declname>
+        </param>
+        <param>
+          <type>NULLABLE_RESOURCE(chanend, c_flash)</type>
+        </param>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(xtcp_connection_t, conn)</type>
+        </param>
+        <briefdescription>
+<para>s2e_webserver_event_handler Handles webserver event. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c_xtcp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel connecting to the xtcp module </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_flash</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel for web page data </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>channel for UART configuration </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>XTCP connection state </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>none </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_webserver.h" line="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__S2E_WEBSERVER_H__</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__S2E_WEBSERVER_H__</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#include<sp/>&quot;xccompat.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;xtcp_client.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="s2e__webserver_8h_1cc2e8af1e331869db31dd9f71b70deaa" kindref="member" tooltip="s2e_webserver_init The S2E webserver initialization routine.">s2e_webserver_init</ref>(chanend<sp/>c_xtcp,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULLABLE_RESOURCE(chanend,<sp/>c_flash),</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULLABLE_RESOURCE(chanend,<sp/>c_flash_data));</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="s2e__webserver_8h_13dd09a7ce18778e9f47f6b5664eee9b5" kindref="member" tooltip="s2e_webserver_event_handler Handles webserver event.">s2e_webserver_event_handler</ref>(chanend<sp/>c_xtcp,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULLABLE_RESOURCE(chanend,<sp/>c_flash),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(xtcp_connection_t,<sp/>conn));</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__S2E_WEBSERVER_H__</highlight></codeline>
+<codeline lineno="38"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_webserver.h"/>
+  </compounddef>
+</doxygen>

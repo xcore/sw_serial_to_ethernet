@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="web__server__conf_8h" kind="file">
+    <compoundname>web_server_conf.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="web__server__conf_8h_14aaeb36eda38c8be6dff89e300a72507" prot="public" static="no">
+        <name>WEB_SERVER_USE_FLASH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="1" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="1" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="web__server__conf_8h_1e8d1fd9bd301237fa6398fe329ef17bb" prot="public" static="no">
+        <name>WEB_SERVER_FLASH_DEVICES</name>
+        <initializer>flash_devices</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="3" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="3" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="web__server__conf_8h_1f8a0c459b3dcffb33ada0d9d1692962b" prot="public" static="no">
+        <name>WEB_SERVER_NUM_FLASH_DEVICES</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="5" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="5" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="web__server__conf_8h_18d1a338935101e860f43423e15481691" prot="public" static="no">
+        <name>WEB_SERVER_POST_RENDER_FUNCTION</name>
+        <initializer>s2e_post_render</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="7" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="web__server__conf_8h_19e6061058be6f6ca1c1d39d899d9802a" prot="public" static="no">
+        <name>WEB_SERVER_SEPARATE_FLASH_TASK</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="9" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="web__server__conf_8h_1ecb00acc2601e5c209904bf36f1e89d0" prot="public" static="no">
+        <name>WEB_SERVER_NUM_CONNECTIONS</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="11" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="web__server__conf_8h_11ed0ab7f3293bd231ac3b9e9308e6c97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s2e_post_render</definition>
+        <argsstring>(int app_state, int connection_state)</argsstring>
+        <name>s2e_post_render</name>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="14"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_1c737dd1e6336aa1c59916514fa249a1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_get_port</definition>
+        <argsstring>(char buf[], int app_state, int connection_state)</argsstring>
+        <name>s2e_web_get_port</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="15"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_194e2e4f2b51a2ccbe487d1dfc8314dc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_configure</definition>
+        <argsstring>(char buf[], int app_state, int connection_state)</argsstring>
+        <name>s2e_web_configure</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="16"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_101a4461bfcf79b37a2a02200dacc1880" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_get_cl_selected</definition>
+        <argsstring>(char buf[], int app_state, int connection_state, int cl)</argsstring>
+        <name>s2e_web_get_cl_selected</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>cl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="21"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_18c8b6fbf157bed0aeea131fd5258f933" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_get_br_selected</definition>
+        <argsstring>(char buf[], int app_state, int connection_state, int br)</argsstring>
+        <name>s2e_web_get_br_selected</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>br</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="26"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_17c9915493f4625cdd97dec8b5dcf24b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_get_pc_selected</definition>
+        <argsstring>(char buf[], int app_state, int connection_state, int parity)</argsstring>
+        <name>s2e_web_get_pc_selected</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>parity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="31"/>
+      </memberdef>
+      <memberdef kind="function" id="web__server__conf_8h_1f3c6e773352538616501d6adddcb5178" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int s2e_web_get_sb_selected</definition>
+        <argsstring>(char buf[], int app_state, int connection_state, int stop_bits)</argsstring>
+        <name>s2e_web_get_sb_selected</name>
+        <param>
+          <type>char</type>
+          <declname>buf</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>app_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>connection_state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>stop_bits</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h" line="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="web__server__conf_8h_14aaeb36eda38c8be6dff89e300a72507" refkind="member"><highlight class="preprocessor">#define<sp/>WEB_SERVER_USE_FLASH<sp/><sp/><sp/><sp/>1</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="web__server__conf_8h_1e8d1fd9bd301237fa6398fe329ef17bb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WEB_SERVER_FLASH_DEVICES<sp/>flash_devices</highlight></codeline>
+<codeline lineno="4"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5" refid="web__server__conf_8h_1f8a0c459b3dcffb33ada0d9d1692962b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WEB_SERVER_NUM_FLASH_DEVICES<sp/>1</highlight></codeline>
+<codeline lineno="6"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="web__server__conf_8h_18d1a338935101e860f43423e15481691" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WEB_SERVER_POST_RENDER_FUNCTION<sp/>s2e_post_render</highlight></codeline>
+<codeline lineno="8"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="web__server__conf_8h_19e6061058be6f6ca1c1d39d899d9802a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WEB_SERVER_SEPARATE_FLASH_TASK<sp/>1</highlight></codeline>
+<codeline lineno="10"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="web__server__conf_8h_1ecb00acc2601e5c209904bf36f1e89d0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>WEB_SERVER_NUM_CONNECTIONS<sp/>2</highlight></codeline>
+<codeline lineno="12"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>prototypes<sp/>of<sp/>functions<sp/>called<sp/>by<sp/>the<sp/>dynamic<sp/>evaluation<sp/>in<sp/>the<sp/>webpages</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_11ed0ab7f3293bd231ac3b9e9308e6c97" kindref="member">s2e_post_render</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_1c737dd1e6336aa1c59916514fa249a1e" kindref="member">s2e_web_get_port</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_194e2e4f2b51a2ccbe487d1dfc8314dc9" kindref="member">s2e_web_configure</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_101a4461bfcf79b37a2a02200dacc1880" kindref="member">s2e_web_get_cl_selected</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cl);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_18c8b6fbf157bed0aeea131fd5258f933" kindref="member">s2e_web_get_br_selected</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>br);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_17c9915493f4625cdd97dec8b5dcf24b0" kindref="member">s2e_web_get_pc_selected</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>parity);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="web__server__conf_8h_1f3c6e773352538616501d6adddcb5178" kindref="member">s2e_web_get_sb_selected</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[],</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>app_state,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>connection_state,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>stop_bits);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/web_server_conf.h"/>
+  </compounddef>
+</doxygen>

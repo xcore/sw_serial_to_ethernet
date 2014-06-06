@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="uart__config_8h" kind="file">
+    <compoundname>uart_config.h</compoundname>
+    <includes local="yes">xccompat.h</includes>
+    <includes local="yes">multi_uart_common.h</includes>
+    <includedby refid="copy__array_8h" local="yes">_build/.doxygen/app_serial_to_ethernet/src/copy_array.h</includedby>
+    <includedby refid="s2e__flash_8h" local="yes">_build/.doxygen/app_serial_to_ethernet/src/s2e_flash.h</includedby>
+    <includedby refid="uart__handler_8h" local="yes">_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h</includedby>
+    <incdepgraph>
+      <node id="63">
+        <label>multi_uart_common.h</label>
+      </node>
+      <node id="61">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/uart_config.h</label>
+        <link refid="uart_config.h"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>xccompat.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="66">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/s2e_flash.h</label>
+        <link refid="s2e__flash_8h"/>
+      </node>
+      <node id="67">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h</label>
+        <link refid="uart__handler_8h"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/uart_config.h</label>
+        <link refid="uart_config.h"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/copy_array.h</label>
+        <link refid="copy__array_8h"/>
+      </node>
+      <node id="68">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/s2e_validation.h</label>
+        <link refid="s2e__validation_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structuart__config__data__t" prot="public">uart_config_data_t</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="uart__config_8h_19ebdcdd17e1500a537eabd1b354ce445" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void uart_config_init</definition>
+        <argsstring>(chanend c_uart_config, NULLABLE_RESOURCE(chanend, c_flash_data), NULLABLE_RESOURCE(chanend, c_xtcp), REFERENCE_PARAM(int, telnet_port_address))</argsstring>
+        <name>uart_config_init</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>NULLABLE_RESOURCE(chanend, c_flash_data)</type>
+        </param>
+        <param>
+          <type>NULLABLE_RESOURCE(chanend, c_xtcp)</type>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(int, telnet_port_address)</type>
+        </param>
+        <briefdescription>
+<para>This function retrieves configuration of each UARTs from flash, and applies it to the base configuration structure of type <ref refid="structuart__config__data__t" kindref="compound">uart_config_data_t</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>Telnet port applicable for corresponding UART is also fetched from flash and applied to repective UART configuration structure. If there is no valid flash configuration, default in-program configuration with following values EvenParity-1StopBit-115200Baud-Start0Polarity-8UARTCharLen is used <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c_uart_config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end to communicate UART configuration details between TCP handler and UART handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_flash_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end to communicate UART configuration data stored in flash to TCP handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_xtcp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end between XTCP and TCP handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>telnet_port_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to structure holding Telnet port addresses mapped for UARTs </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>None </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/uart_config.h" line="44"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__uart_config_h__</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__uart_config_h__</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#include<sp/>&quot;xccompat.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;multi_uart_common.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="structuart__config__data__t" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12" refid="structuart__config__data__t_1f61136a3d13a4e33d9197a018eb4d203" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structuart__config__data__t_1f61136a3d13a4e33d9197a018eb4d203" kindref="member" tooltip="UART Id.">channel_id</ref>;<sp/></highlight></codeline>
+<codeline lineno="13" refid="structuart__config__data__t_1be6d8c79226c003c75344032cf74b0d5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>e_uart_config_parity<sp/><ref refid="structuart__config__data__t_1be6d8c79226c003c75344032cf74b0d5" kindref="member" tooltip="One of valid parity: Odd, Even, Mark, Space, None.">parity</ref>;<sp/></highlight></codeline>
+<codeline lineno="14" refid="structuart__config__data__t_1916c54301fbaa8b3372571e04c2ed276" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>e_uart_config_stop_bits<sp/><ref refid="structuart__config__data__t_1916c54301fbaa8b3372571e04c2ed276" kindref="member" tooltip="Stop bits configuration: Single or Two.">stop_bits</ref>;<sp/></highlight></codeline>
+<codeline lineno="15" refid="structuart__config__data__t_1bb2e6e7fd80a950b9e4e0482dc6ac32c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>e_uart_config_polarity<sp/><ref refid="structuart__config__data__t_1bb2e6e7fd80a950b9e4e0482dc6ac32c" kindref="member" tooltip="Polarity setting: Start bit as 1 or 0.">polarity</ref>;<sp/></highlight></codeline>
+<codeline lineno="16" refid="structuart__config__data__t_11b2ea60408d683920af3e5208b0ab86f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structuart__config__data__t_11b2ea60408d683920af3e5208b0ab86f" kindref="member" tooltip="Baud rate of UART channel.">baud</ref>;<sp/></highlight></codeline>
+<codeline lineno="17" refid="structuart__config__data__t_14098873b9f0096a46ec1ca0486858287" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structuart__config__data__t_14098873b9f0096a46ec1ca0486858287" kindref="member" tooltip="Number of bits each UART character contain.">char_len</ref>;<sp/></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">}<sp/><ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__XC__</highlight></codeline>
+<codeline lineno="21"><highlight class="preprocessor"></highlight><highlight class="comment">/*<sp/>Get<sp/>the<sp/>configuration<sp/>structure<sp/>for<sp/>a<sp/>uart<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref><sp/>*uart_get_config(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="24"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="41"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="uart__config_8h_19ebdcdd17e1500a537eabd1b354ce445" kindref="member" tooltip="This function retrieves configuration of each UARTs from flash, and applies it to...">uart_config_init</ref>(chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULLABLE_RESOURCE(chanend,<sp/>c_flash_data),</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULLABLE_RESOURCE(chanend,<sp/>c_xtcp),</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">,<sp/>telnet_port_address));</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="47"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/uart_config.h"/>
+  </compounddef>
+</doxygen>

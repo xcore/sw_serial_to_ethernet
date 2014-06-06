@@ -10,3 +10,4 @@ Serial to Ethernet bridging application manual
    api
    using_the_application
    references
+

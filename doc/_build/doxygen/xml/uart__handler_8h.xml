@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="uart__handler_8h" kind="file">
+    <compoundname>uart_handler.h</compoundname>
+    <includes local="no">xccompat.h</includes>
+    <includes local="yes">multi_uart_tx.h</includes>
+    <includes local="yes">multi_uart_rx.h</includes>
+    <includes refid="uart__config_8h" local="yes">uart_config.h</includes>
+    <includedby refid="s2e__validation_8h" local="yes">_build/.doxygen/app_serial_to_ethernet/src/s2e_validation.h</includedby>
+    <incdepgraph>
+      <node id="72">
+        <label>multi_uart_rx.h</label>
+      </node>
+      <node id="71">
+        <label>multi_uart_tx.h</label>
+      </node>
+      <node id="69">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h</label>
+        <link refid="uart_handler.h"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>multi_uart_common.h</label>
+      </node>
+      <node id="73">
+        <label>uart_config.h</label>
+        <link refid="uart__config_8h"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>xccompat.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="75">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h</label>
+        <link refid="uart_handler.h"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="76">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/s2e_validation.h</label>
+        <link refid="s2e__validation_8h"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="uart__handler_8h_1554d2f083794b5b61907592d2629adf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void uart_handler</definition>
+        <argsstring>(chanend c_uart_data, chanend c_uart_config, streaming chanend c_uart_rx, streaming chanend c_uart_tx)</argsstring>
+        <name>uart_handler</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_data</declname>
+        </param>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>streaming chanend</type>
+          <declname>c_uart_rx</declname>
+        </param>
+        <param>
+          <type>streaming chanend</type>
+          <declname>c_uart_tx</declname>
+        </param>
+        <briefdescription>
+<para>This function configures UARTs, initializes application buffers states. </para>        </briefdescription>
+        <detaileddescription>
+<para>As a part of event handling, this function does the following: (i) handles incoming data from UARTs and stores into appropirate buffers (ii) in case of data transfer transaction, either notifies or acknowledges TCP handler about UART data; otherwise, listens from TCP handler to (a) collect telnet received data to UART (b) share appropriate UART buffer holding UART recived data (iii) in case of UART configuration requests, collects appropriate UART configuration and reconfigures UART for received configuration (iv) sends a data byte from telnet UART buffers in a round robin basis, and notifies current transmit and receive transactions <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c_uart_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end to communicate UART data between TCP handler and UART handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end to communicate UART configuration details between TCP handler and UART handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_rx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel primarily to send UART data from application to MultiUART RX server thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_tx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel primarily to collect UART data from MultiUART TX server thread into UART handler thread </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>None </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h" line="34"/>
+      </memberdef>
+      <memberdef kind="function" id="uart__handler_8h_1b79354de8c1873a6885496d6a274ef40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void uart_set_config</definition>
+        <argsstring>(chanend c_uart_config, REFERENCE_PARAM(uart_config_data_t, data))</argsstring>
+        <name>uart_set_config</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound">uart_config_data_t</ref>, data)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h" line="38"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__UART_HANDLER_H__</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__UART_HANDLER_H__</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#include<sp/>&lt;xccompat.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;multi_uart_tx.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;multi_uart_rx.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="uart__config_8h" kindref="compound">uart_config.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__XC__</highlight></codeline>
+<codeline lineno="9"><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="31"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="uart__handler_8h_1554d2f083794b5b61907592d2629adf8" kindref="member" tooltip="This function configures UARTs, initializes application buffers states.">uart_handler</ref>(chanend<sp/>c_uart_data,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>streaming<sp/>chanend<sp/>c_uart_rx,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>streaming<sp/>chanend<sp/>c_uart_tx);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="uart__handler_8h_1b79354de8c1873a6885496d6a274ef40" kindref="member">uart_set_config</ref>(chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref>,<sp/>data));</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__UART_HANDLER_H__</highlight></codeline>
+<codeline lineno="41"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/uart_handler.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="telnet__config_8h" kind="file">
+    <compoundname>telnet_config.h</compoundname>
+    <includes local="yes">xccompat.h</includes>
+    <includes local="yes">xtcp_client.h</includes>
+    <includes local="yes">mutual_thread_comm.h</includes>
+    <includes refid="s2e__conf_8h" local="yes">s2e_conf.h</includes>
+    <incdepgraph>
+      <node id="47">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h</label>
+        <link refid="telnet_config.h"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>mutual_thread_comm.h</label>
+      </node>
+      <node id="49">
+        <label>xtcp_client.h</label>
+      </node>
+      <node id="51">
+        <label>s2e_conf.h</label>
+        <link refid="s2e__conf_8h"/>
+      </node>
+      <node id="48">
+        <label>xccompat.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="telnet__config_8h_1727249d087791c57f8b5e5b065d04101" prot="public" static="no">
+        <name>S2E_TELNET_CONFIG_PORT</name>
+        <initializer>23</initializer>
+        <briefdescription>
+<para>Define to specify telnet port to use for UART configuration. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h" line="12" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="telnet__config_8h_1aaf76356dbcb0c75f8242d69bc3b54e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void telnet_config_init</definition>
+        <argsstring>(chanend c_xtcp)</argsstring>
+        <name>telnet_config_init</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_xtcp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h" line="16"/>
+      </memberdef>
+      <memberdef kind="function" id="telnet__config_8h_1f0a3e81555b3fb8207ce5d6d6e736a2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void telnet_config_event_handler</definition>
+        <argsstring>(chanend c_xtcp, chanend c_uart_config, chanend c_flash_data, REFERENCE_PARAM(xtcp_connection_t, conn))</argsstring>
+        <name>telnet_config_event_handler</name>
+        <param>
+          <type>chanend</type>
+          <declname>c_xtcp</declname>
+        </param>
+        <param>
+          <type>chanend</type>
+          <declname>c_uart_config</declname>
+        </param>
+        <param>
+          <type>chanend</type>
+          <declname>c_flash_data</declname>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(xtcp_connection_t, conn)</type>
+        </param>
+        <briefdescription>
+<para>This function handles UART configuration requests from telnet configuration client. </para>        </briefdescription>
+        <detaileddescription>
+<para>It initializes cofnig parse state machine, receives configuration request events, sends response back to the client <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>c_xtcp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end between XTCP and TCP handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_uart_configChannel-end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to communicate UART configuration data TCP handler and UART handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c_flash_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Channel-end to communicate UART configuration data stored in flash to TCP handler thread </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>conn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to structure holding IP configuration info </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>None </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h" line="33"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__TELNET_CONFIG_H__</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__TELNET_CONFIG_H__</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#include<sp/>&quot;xccompat.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;xtcp_client.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;mutual_thread_comm.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="s2e__conf_8h" kindref="compound">s2e_conf.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="preprocessor">#ifndef<sp/>S2E_TELNET_CONFIG_PORT</highlight></codeline>
+<codeline lineno="12" refid="telnet__config_8h_1727249d087791c57f8b5e5b065d04101" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>S2E_TELNET_CONFIG_PORT<sp/>23</highlight></codeline>
+<codeline lineno="13"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="14"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="telnet__config_8h_1aaf76356dbcb0c75f8242d69bc3b54e2" kindref="member">telnet_config_init</ref>(chanend<sp/>c_xtcp);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="telnet__config_8h_1f0a3e81555b3fb8207ce5d6d6e736a2a" kindref="member" tooltip="This function handles UART configuration requests from telnet configuration client...">telnet_config_event_handler</ref>(chanend<sp/>c_xtcp,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chanend<sp/>c_uart_config,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chanend<sp/>c_flash_data,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(xtcp_connection_t,<sp/>conn));</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__TELNET_CONFIG_H__</highlight></codeline>
+<codeline lineno="36"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/telnet_config.h"/>
+  </compounddef>
+</doxygen>

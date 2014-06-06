@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="dir_53cb1c0008b3a57a4e55f5fd03047b89" kind="dir">
+    <compoundname>_build/.doxygen/app_serial_to_ethernet/src/</compoundname>
+    <innerfile refid="copy__array_8h">copy_array.h</innerfile>
+    <innerfile refid="ethernet__conf_8h">ethernet_conf.h</innerfile>
+    <innerfile refid="itoa_8h">itoa.h</innerfile>
+    <innerfile refid="multi__uart__rx__conf_8h">multi_uart_rx_conf.h</innerfile>
+    <innerfile refid="multi__uart__tx__conf_8h">multi_uart_tx_conf.h</innerfile>
+    <innerfile refid="s2e__conf_8h">s2e_conf.h</innerfile>
+    <innerfile refid="s2e__def_8h">s2e_def.h</innerfile>
+    <innerfile refid="s2e__flash_8h">s2e_flash.h</innerfile>
+    <innerfile refid="s2e__validation_8h">s2e_validation.h</innerfile>
+    <innerfile refid="s2e__webserver_8h">s2e_webserver.h</innerfile>
+    <innerfile refid="slicekit__conf_8h">slicekit_conf.h</innerfile>
+    <innerfile refid="tcp__handler_8h">tcp_handler.h</innerfile>
+    <innerfile refid="telnet_8h">telnet.h</innerfile>
+    <innerfile refid="telnet__config_8h">telnet_config.h</innerfile>
+    <innerfile refid="telnet__protocol_8h">telnet_protocol.h</innerfile>
+    <innerfile refid="telnet__to__uart_8h">telnet_to_uart.h</innerfile>
+    <innerfile refid="uart__config_8h">uart_config.h</innerfile>
+    <innerfile refid="uart__handler_8h">uart_handler.h</innerfile>
+    <innerfile refid="udp__discovery_8h">udp_discovery.h</innerfile>
+    <innerfile refid="util_8h">util.h</innerfile>
+    <innerfile refid="web__server__conf_8h">web_server_conf.h</innerfile>
+    <innerfile refid="xtcp__client__conf_8h">xtcp_client_conf.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/"/>
+  </compounddef>
+</doxygen>

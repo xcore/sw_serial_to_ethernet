@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="slicekit__conf_8h" kind="file">
+    <compoundname>slicekit_conf.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="slicekit__conf_8h_1e832e561468d415a15ec9bb060d60b09" prot="public" static="no">
+        <name>SLICEKIT_ENABLE_FLASH</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/slicekit_conf.h" line="1" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/slicekit_conf.h" bodystart="1" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="slicekit__conf_8h_1e832e561468d415a15ec9bb060d60b09" refkind="member"><highlight class="preprocessor">#define<sp/>SLICEKIT_ENABLE_FLASH<sp/>1</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/slicekit_conf.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+\BOOKMARK [0][-]{chapter.1}{Application Overview}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Introduction}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Feature list}{chapter.1}% 3
+\BOOKMARK [2][-]{subsection.1.2.1}{Supported}{section.1.2}% 4
+\BOOKMARK [2][-]{subsection.1.2.2}{Not supported}{section.1.2}% 5
+\BOOKMARK [0][-]{chapter.2}{Hardware platforms}{}% 6
+\BOOKMARK [1][-]{section.2.1}{Hardware requirements}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.2}{Hardware setup}{chapter.2}% 8
+\BOOKMARK [0][-]{chapter.3}{System description}{}% 9
+\BOOKMARK [1][-]{section.3.1}{Software architecture}{chapter.3}% 10
+\BOOKMARK [2][-]{subsection.3.1.1}{Cores}{section.3.1}% 11
+\BOOKMARK [2][-]{subsection.3.1.2}{Buffering}{section.3.1}% 12
+\BOOKMARK [2][-]{subsection.3.1.3}{Communication model}{section.3.1}% 13
+\BOOKMARK [1][-]{section.3.2}{Software components used}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{Resource usage}{chapter.3}% 15
+\BOOKMARK [0][-]{chapter.4}{Programming guide}{}% 16
+\BOOKMARK [1][-]{section.4.1}{Getting started}{chapter.4}% 17
+\BOOKMARK [2][-]{subsection.4.1.1}{Installation of xTIMEcomposer Tools Suite}{section.4.1}% 18
+\BOOKMARK [2][-]{subsection.4.1.2}{Flash the web pages and device configuration}{section.4.1}% 19
+\BOOKMARK [1][-]{section.4.2}{Source code structure}{chapter.4}% 20
+\BOOKMARK [2][-]{subsection.4.2.1}{Directory structure}{section.4.2}% 21
+\BOOKMARK [2][-]{subsection.4.2.2}{Key files}{section.4.2}% 22
+\BOOKMARK [1][-]{section.4.3}{Notes on application interfaces}{chapter.4}% 23
+\BOOKMARK [2][-]{subsection.4.3.1}{UART configuration}{section.4.3}% 24
+\BOOKMARK [2][-]{subsection.4.3.2}{Webserver}{section.4.3}% 25
+\BOOKMARK [2][-]{subsection.4.3.3}{Flash interface}{section.4.3}% 26
+\BOOKMARK [0][-]{chapter.5}{API}{}% 27
+\BOOKMARK [1][-]{section.5.1}{Configuration defines}{chapter.5}% 28
+\BOOKMARK [1][-]{section.5.2}{Constants}{chapter.5}% 29
+\BOOKMARK [1][-]{section.5.3}{Data structures}{chapter.5}% 30
+\BOOKMARK [1][-]{section.5.4}{Configuration functions}{chapter.5}% 31
+\BOOKMARK [1][-]{section.5.5}{Interface functions}{chapter.5}% 32
+\BOOKMARK [1][-]{section.5.6}{Module functions}{chapter.5}% 33
+\BOOKMARK [0][-]{chapter.6}{Using the application}{}% 34
+\BOOKMARK [1][-]{section.6.1}{S2E device discovery}{chapter.6}% 35
+\BOOKMARK [2][-]{subsection.6.1.1}{Running the UDP test server}{section.6.1}% 36
+\BOOKMARK [2][-]{subsection.6.1.2}{Discover the S2E devices on the network}{section.6.1}% 37
+\BOOKMARK [2][-]{subsection.6.1.3}{Modify IP address of a particular S2E device}{section.6.1}% 38
+\BOOKMARK [2][-]{subsection.6.1.4}{Modify IP address of all S2E devices to use DHCP server}{section.6.1}% 39
+\BOOKMARK [1][-]{section.6.2}{Data communication using S2E device}{chapter.6}% 40
+\BOOKMARK [2][-]{subsection.6.2.1}{UART serial port setup}{section.6.2}% 41
+\BOOKMARK [2][-]{subsection.6.2.2}{Telnet client setup}{section.6.2}% 42
+\BOOKMARK [1][-]{section.6.3}{Device configuration using web interface}{chapter.6}% 43
+\BOOKMARK [1][-]{section.6.4}{Device configuration using telnet interface}{chapter.6}% 44
+\BOOKMARK [2][-]{subsection.6.4.1}{UART configuration}{section.6.4}% 45
+\BOOKMARK [2][-]{subsection.6.4.2}{Sample usage}{section.6.4}% 46
+\BOOKMARK [0][-]{chapter.7}{References}{}% 47

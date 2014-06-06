@@ -1,0 +1,93 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Application Overview &mdash; Serial to Ethernet bridging application manual v documentation</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/ui.css" type="text/css" />
+    <link rel="stylesheet" href="_static/app.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/xde.css"
+    type="text/css" /><script type="text/javascript" src="_static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Serial to Ethernet bridging application manual v documentation" href="index.html" />
+    <link rel="next" title="Hardware platforms" href="page1.html" />
+    <link rel="prev" title="Serial to Ethernet bridging application manual" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Application Overview</h1>
+
+             <div class='columns'>
+            
+  <h2 class="topic" id="introduction">Introduction</h2>
+<div><p>The Serial to Ethernet application (referred to as S2E) firmware serves as a reference design to add Ethernet connectivity to any serial device. The solution offers flexibility in configuring multiple UART devices (up to 8 UARTs) to bridge them to Ethernet networks. Design utilizes some of the existing XMOS xSOFTip components to implement Ethernet MAC, TCP/IP and multiUART functionality.</p>
+<p>The firmware mainly functions as bridge between serial and Ethernet data communication end points. This application includes a telnet server in order to facilitate data communication from host applications via separate telnet sockets for each of the configured UARTs. It also provides an embedded web server and a dedicated telnet socket for UART configuration management. UDP mode device discovery feature is provided in order to discover and configure the S2E devices available in the network.</p>
+</div><h2 class="topic" id="feature-list">Feature list</h2>
+<div><h3 id="supported">Supported</h3>
+<div><blockquote>
+<div><ul>
+<li>10/100 Mbit Ethernet port</li>
+<li>Supports up to 8 serial ports at the following baud rates: 115200, 57600, 38400,
+28800, 19200, 14400, 9600, 7200, 4800, 2400, 1200, 600, 300, 150</li>
+<li>Supports various parity mode, character length, start/stop bit</li>
+<li>Device discovery and device IP configuration management using UDP</li>
+<li>Web page for UART configuration</li>
+<li>Telnet server functionality: supports data transfer via telnet socket for each UART</li>
+<li>Flash support for IP and UART configuration, web page storage and retrieval</li>
+<li>Telnet mode UART configuration support</li>
+<li>CMOS/TTL level and RS232 level communication for UARTs</li>
+<li>All the 8 UARTs can be configured in different configurations</li>
+</ul>
+</div></blockquote>
+</div><h3 id="not-supported">Not supported</h3>
+<div><blockquote>
+<div><ul>
+<li>UART to UART communication (serial extender or pair configuration)</li>
+<li>UDP mode data transfer</li>
+<li>VirtualCOM port for the UARTs for Configuration</li>
+</ul>
+</div></blockquote>
+</div></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page1.html">Hardware platforms</a></li>
+             <li><a href="page2.html">System description</a></li>
+             <li><a href="page3.html">Programming guide</a></li>
+             <li><a href="page4.html">API</a></li>
+             <li><a href="page5.html">Using the application</a></li>
+             <li><a href="page6.html">References</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

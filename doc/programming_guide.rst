@@ -68,9 +68,6 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 
 #. Check the *Console* window to verify flashing progress.
 
-.. figure:: images/flashing.png
-
-   Flashing the web pages
 
 Building from command line tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

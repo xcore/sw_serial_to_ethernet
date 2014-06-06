@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="ethernet__conf_8h" kind="file">
+    <compoundname>ethernet_conf.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="ethernet__conf_8h_16d90b77a939f982c12f749bb1158b9b6" prot="public" static="no">
+        <name>PHY_ADDRESS</name>
+        <initializer>0x0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/ethernet_conf.h" line="1" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/ethernet_conf.h" bodystart="1" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ethernet__conf_8h_14b5f6cd0d5a1e758a5c1c98635dc0bb8" prot="public" static="no">
+        <name>ETHERNET_USE_TRIANGLE_SLOT</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/ethernet_conf.h" line="2" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/ethernet_conf.h" bodystart="2" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="ethernet__conf_8h_16d90b77a939f982c12f749bb1158b9b6" refkind="member"><highlight class="preprocessor">#define<sp/>PHY_ADDRESS<sp/>0x0</highlight></codeline>
+<codeline lineno="2" refid="ethernet__conf_8h_14b5f6cd0d5a1e758a5c1c98635dc0bb8" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>ETHERNET_USE_TRIANGLE_SLOT<sp/><sp/>1</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/ethernet_conf.h"/>
+  </compounddef>
+</doxygen>

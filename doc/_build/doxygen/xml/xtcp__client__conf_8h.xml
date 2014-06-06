@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="xtcp__client__conf_8h" kind="file">
+    <compoundname>xtcp_client_conf.h</compoundname>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="xtcp__client__conf_8h_17bbe2fb8e25d092243adc52d0a3c31e9" prot="public" static="no">
+        <name>XTCP_VERBOSE_DEBUG</name>
+        <initializer>(1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="8" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_18424f9c05b2933ad7a77d7f2b6be2081" prot="public" static="no">
+        <name>UIP_CONF_RECEIVE_WINDOW</name>
+        <initializer>128</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="10" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_190fef6d7607fae5c3a0f6c9298b1230f" prot="public" static="no">
+        <name>UIP_PACKET_SPLIT_THRESHOLD</name>
+        <initializer>64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="12" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1d7b390f30e69d88bd1e7ae7685a36c10" prot="public" static="no">
+        <name>UIP_USE_SINGLE_THREADED_ETHERNET</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="13" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1f360da4ff0096b62b53b1f4dd21ed36a" prot="public" static="no">
+        <name>UIP_CONF_UDP_CONNS</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="14" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1c2549725f3c7c9029b0c480d90ad17be" prot="public" static="no">
+        <name>UIP_SINGLE_SERVER_SINGLE_BUFFER_TX</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="15" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_144251c2ec5e5f8bb2852c41f4a189317" prot="public" static="no">
+        <name>UIP_SINGLE_THREAD_RX_BUFFER_SIZE</name>
+        <initializer>14000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="17" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_185262d88fbe5cad23592fd5fb88b3b3a" prot="public" static="no">
+        <name>XTCP_ENABLE_PARTIAL_PACKET_ACK</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="19" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_10af594535a536550ecb685b4eca5e995" prot="public" static="no">
+        <name>UIP_ACCEPT_PACKETS_AFTER_PAUSE</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="21" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1af66680b15bc5d19c50fc10e67549129" prot="public" static="no">
+        <name>UIP_MAX_TRANSMIT_SIZE</name>
+        <initializer>1350</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="23" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_11372f2766c3ff101cbac0f14ae3ebe5f" prot="public" static="no">
+        <name>XTCP_CLIENT_BUF_SIZE</name>
+        <initializer>1300</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="24" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_17ac0958ffa4124708269926762a926f2" prot="public" static="no">
+        <name>XTCP_EXCLUDE_SET_POLL_INTERVAL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="26" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_16a421ee73a7e5b1fa604ab662b2a4a7e" prot="public" static="no">
+        <name>XTCP_EXCLUDE_JOIN_GROUP</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="27" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1dc8a8c2d3eb2438a321fffeea048dd82" prot="public" static="no">
+        <name>XTCP_EXCLUDE_LEAVE_GROUP</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="28" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1d26f5e51480b28120402a4242807a3c2" prot="public" static="no">
+        <name>XTCP_EXCLUDE_PAUSE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="29" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="xtcp__client__conf_8h_1488fe28924f97a27cc513930a1583f9d" prot="public" static="no">
+        <name>XTCP_EXCLUDE_UNPAUSE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" line="30" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>2011,<sp/>XMOS<sp/>Ltd,<sp/>All<sp/>rights<sp/>reserved</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>software<sp/>is<sp/>freely<sp/>distributable<sp/>under<sp/>a<sp/>derivative<sp/>of<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>University<sp/>of<sp/>Illinois/NCSA<sp/>Open<sp/>Source<sp/>License<sp/>posted<sp/>in</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>LICENSE.txt<sp/>and<sp/>at<sp/>&lt;http://github.xcore.com/&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Remove<sp/>this<sp/>to<sp/>prevent<sp/>some<sp/>information<sp/>being<sp/>displayed<sp/>on<sp/>the<sp/>debug<sp/>console</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8" refid="xtcp__client__conf_8h_17bbe2fb8e25d092243adc52d0a3c31e9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>XTCP_VERBOSE_DEBUG<sp/>(1)</highlight></codeline>
+<codeline lineno="9"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="xtcp__client__conf_8h_18424f9c05b2933ad7a77d7f2b6be2081" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UIP_CONF_RECEIVE_WINDOW<sp/>128</highlight></codeline>
+<codeline lineno="11"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="xtcp__client__conf_8h_190fef6d7607fae5c3a0f6c9298b1230f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UIP_PACKET_SPLIT_THRESHOLD<sp/>64</highlight></codeline>
+<codeline lineno="13" refid="xtcp__client__conf_8h_1d7b390f30e69d88bd1e7ae7685a36c10" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>UIP_USE_SINGLE_THREADED_ETHERNET</highlight></codeline>
+<codeline lineno="14" refid="xtcp__client__conf_8h_1f360da4ff0096b62b53b1f4dd21ed36a" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>UIP_CONF_UDP_CONNS<sp/>3</highlight></codeline>
+<codeline lineno="15" refid="xtcp__client__conf_8h_1c2549725f3c7c9029b0c480d90ad17be" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>UIP_SINGLE_SERVER_SINGLE_BUFFER_TX<sp/>1</highlight></codeline>
+<codeline lineno="16"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="xtcp__client__conf_8h_144251c2ec5e5f8bb2852c41f4a189317" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UIP_SINGLE_THREAD_RX_BUFFER_SIZE<sp/>14000<sp/><sp/>//7000</highlight></codeline>
+<codeline lineno="18"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="xtcp__client__conf_8h_185262d88fbe5cad23592fd5fb88b3b3a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>XTCP_ENABLE_PARTIAL_PACKET_ACK<sp/>1</highlight></codeline>
+<codeline lineno="20"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="xtcp__client__conf_8h_10af594535a536550ecb685b4eca5e995" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UIP_ACCEPT_PACKETS_AFTER_PAUSE<sp/>1</highlight></codeline>
+<codeline lineno="22"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="xtcp__client__conf_8h_1af66680b15bc5d19c50fc10e67549129" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>UIP_MAX_TRANSMIT_SIZE<sp/>1350<sp/>//600</highlight></codeline>
+<codeline lineno="24" refid="xtcp__client__conf_8h_11372f2766c3ff101cbac0f14ae3ebe5f" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>XTCP_CLIENT_BUF_SIZE<sp/>1300<sp/>//750</highlight></codeline>
+<codeline lineno="25"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="xtcp__client__conf_8h_17ac0958ffa4124708269926762a926f2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>XTCP_EXCLUDE_SET_POLL_INTERVAL</highlight></codeline>
+<codeline lineno="27" refid="xtcp__client__conf_8h_16a421ee73a7e5b1fa604ab662b2a4a7e" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>XTCP_EXCLUDE_JOIN_GROUP</highlight></codeline>
+<codeline lineno="28" refid="xtcp__client__conf_8h_1dc8a8c2d3eb2438a321fffeea048dd82" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>XTCP_EXCLUDE_LEAVE_GROUP</highlight></codeline>
+<codeline lineno="29" refid="xtcp__client__conf_8h_1d26f5e51480b28120402a4242807a3c2" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>XTCP_EXCLUDE_PAUSE</highlight></codeline>
+<codeline lineno="30" refid="xtcp__client__conf_8h_1488fe28924f97a27cc513930a1583f9d" refkind="member"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>XTCP_EXCLUDE_UNPAUSE</highlight></codeline>
+<codeline lineno="31"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/xtcp_client_conf.h"/>
+  </compounddef>
+</doxygen>

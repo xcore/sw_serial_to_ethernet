@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="dir_973b30f3e6b0f3b31cfe5f7bd35fd13f" kind="dir">
+    <compoundname>_build/.doxygen/app_serial_to_ethernet/</compoundname>
+    <innerdir refid="dir_53cb1c0008b3a57a4e55f5fd03047b89">_build/.doxygen/app_serial_to_ethernet/src/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/"/>
+  </compounddef>
+</doxygen>

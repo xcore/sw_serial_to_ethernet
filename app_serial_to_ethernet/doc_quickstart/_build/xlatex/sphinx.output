@@ -1,0 +1,21 @@
+Running Sphinx v1.0.7
+Found and adding aafig extension
+Running XMOS Documentation setup:xlatex
+Using XMOS Styled LaTeX
+loading pickled environment... not yet created
+building [xlatex]: all documents
+updating environment: 1 added, 0 changed, 0 removed
+reading sources... [100%] quickstart
+
+/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/app_serial_to_ethernet/doc_quickstart/quickstart.rst:32: (WARNING/2) Bullet list ends without a blank line; unexpected unindent.
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+processing quickstart.tex... quickstart 
+resolving references...
+Adding scope descriptions
+writing... done
+copying images... images/hardware_setup.png images/modify_uart_configuration.png images/terminal_clients.png images/data_communication.png images/webpage.png
+copying TeX support files... done
+build succeeded, 1 warning.

@@ -70,10 +70,6 @@ Resource usage
 
 The overall platform usage and individual node usage shown in :ref:`fig_resource_usage`. User can get this information on the `Binary` window or by a ``double click`` of the binary file present on the `Binaries` folder in `Project Explorer`, after compiling the application using `xTIMEcomposer`.
 
-.. figure:: images/binary_window.png
-   
-   Binary window on xTIMEcomposer
-
 .. _fig_resource_usage:
 
 .. figure:: images/resource_usage.jpg

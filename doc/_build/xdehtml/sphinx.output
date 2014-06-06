@@ -1,0 +1,73 @@
+Running Sphinx v1.0.7
+Found and adding aafig extension
+Running XMOS Documentation setup:xdehtml
+loading pickled environment... not yet created
+building [xdehtml]: all documents
+updating environment: 8 added, 0 changed, 0 removed
+reading sources... [ 12%] api
+struct
+Rendering Doxygen struct uart_config_data_t
+Rendering Doxygen function void uart_config_init
+Rendering Doxygen function void s2e_webserver_init
+Rendering Doxygen function void telnet_to_uart_init
+Rendering Doxygen function void udp_discovery_init
+Rendering Doxygen function void uart_handler
+Rendering Doxygen function void tcp_handler
+Rendering Doxygen function void telnet_config_event_handler
+Rendering Doxygen function void s2e_webserver_event_handler
+Rendering Doxygen function void telnet_to_uart_event_handler
+Rendering Doxygen function void udp_discovery_event_handler
+Rendering Doxygen function void s2e_flash
+Rendering Doxygen function void send_data_to_flash_thread
+Rendering Doxygen function void get_data_from_flash_thread
+Rendering Doxygen function void send_ipconfig_to_flash_thread
+Rendering Doxygen function void get_ipconfig_from_flash_thread
+Rendering Doxygen function void send_cmd_to_flash_thread
+Rendering Doxygen function int get_flash_access_result
+Rendering Doxygen function int parse_telnet_buffer
+reading sources... [ 25%] hardware_platform
+reading sources... [ 37%] index
+reading sources... [ 50%] overview
+reading sources... [ 62%] programming_guide
+reading sources... [ 75%] references
+reading sources... [ 87%] system_description
+reading sources... [100%] using_the_application
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+['index', 'programming_guide', 'system_description', 'overview', 'api', 'references', 'hardware_platform', 'using_the_application']
+writing output... [ 12%] api
+Adding scope descriptions
+writing output... [ 25%] hardware_platform
+Adding scope descriptions
+writing output... [ 37%] index
+Adding scope descriptions
+writing output... [ 50%] overview
+Adding scope descriptions
+writing output... [ 62%] programming_guide
+Adding scope descriptions
+writing output... [ 75%] references
+Adding scope descriptions
+writing output... [ 87%] system_description
+Adding scope descriptions
+WARNING: Image `images/s2e_cores.png' is greater that 300 pixels.
+  Ideally, there should be an image <= 300 pixels and an associated `images/s2e_cores-wide.png' image that can be wider.
+
+writing output... [100%] using_the_application
+Adding scope descriptions
+WARNING: Image `images/udp_test_server.png' is greater that 300 pixels.
+  Ideally, there should be an image <= 300 pixels and an associated `images/udp_test_server-wide.png' image that can be wider.
+
+
+writing additional files...
+copying images... [ 20%] images/s2e_cores.png
+copying images... [ 40%] images/hardware_setup.png
+copying images... [ 60%] images/resource_usage.jpg
+copying images... [ 80%] images/udp_test_server.png
+copying images... [100%] images/muart_config_flow.png
+
+copying static files... done
+dumping object inventory... done
+build succeeded.

@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="copy__array_8h" kind="file">
+    <compoundname>copy_array.h</compoundname>
+    <includes local="no">xccompat.h</includes>
+    <includes refid="uart__config_8h" local="yes">uart_config.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>multi_uart_common.h</label>
+      </node>
+      <node id="2">
+        <label>uart_config.h</label>
+        <link refid="uart__config_8h"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="0">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/copy_array.h</label>
+        <link refid="copy_array.h"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>xccompat.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="copy__array_8h_1e35ef349a9f0d426b95c148177fd5585" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int copy_config_from_array</definition>
+        <argsstring>(char data[], int i, REFERENCE_PARAM(uart_config_data_t, config), REFERENCE_PARAM(int, telnet_port))</argsstring>
+        <name>copy_config_from_array</name>
+        <param>
+          <type>char</type>
+          <declname>data</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound">uart_config_data_t</ref>, config)</type>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(int, telnet_port)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/copy_array.h" line="7"/>
+      </memberdef>
+      <memberdef kind="function" id="copy__array_8h_1157d69f30c20201c858ecceea39297d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int copy_config_to_array</definition>
+        <argsstring>(char data[], int i, REFERENCE_PARAM(uart_config_data_t, config), int telnet_port)</argsstring>
+        <name>copy_config_to_array</name>
+        <param>
+          <type>char</type>
+          <declname>data</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound">uart_config_data_t</ref>, config)</type>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>telnet_port</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/copy_array.h" line="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;xccompat.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="uart__config_8h" kindref="compound">uart_config.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="copy__array_8h_1e35ef349a9f0d426b95c148177fd5585" kindref="member">copy_config_from_array</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>data[],</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref>,<sp/>config),</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">,<sp/>telnet_port));</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="copy__array_8h_1157d69f30c20201c858ecceea39297d3" kindref="member">copy_config_to_array</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>data[],</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REFERENCE_PARAM(<ref refid="structuart__config__data__t" kindref="compound" tooltip="Structure to hold UART configuration details.">uart_config_data_t</ref>,<sp/>config),</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>telnet_port);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/copy_array.h"/>
+  </compounddef>
+</doxygen>

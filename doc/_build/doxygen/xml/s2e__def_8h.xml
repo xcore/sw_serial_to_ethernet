@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="s2e__def_8h" kind="file">
+    <compoundname>s2e_def.h</compoundname>
+    <includes refid="multi__uart__rx__conf_8h" local="yes">multi_uart_rx_conf.h</includes>
+    <incdepgraph>
+      <node id="18">
+        <label>_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h</label>
+        <link refid="s2e_def.h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>multi_uart_rx_conf.h</label>
+        <link refid="multi__uart__rx__conf_8h"/>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="s2e__def_8h_12f6df32e3ca46af5018caa6a3697a57c" prot="public" static="no">
+        <name>NUM_UART_CHANNELS</name>
+        <initializer>UART_RX_CHAN_COUNT</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" line="17" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbf" prot="public" static="no">
+        <name>tcp_handler_to_uart_handler_cmds</name>
+        <enumvalue id="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbfe9ad49f9ac00187f8e9dda8be6178df3" prot="public">
+          <name>NEW_UART_TX_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbff1630fad6a3c5e667c4c651d4691951d" prot="public">
+          <name>GET_UART_RX_DATA_TO_SEND</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" line="6" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" bodystart="6" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="enum" id="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003" prot="public" static="no">
+        <name>uart_handler_to_tcp_handler_cmds</name>
+        <enumvalue id="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003d55b9dba86520fa6c5dde72812f25e1a" prot="public">
+          <name>SENT_UART_TX_DATA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d00388601bcc1bfa515b9b315a53cadc74ff" prot="public">
+          <name>UART_RX_DATA_READY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" line="11" bodyfile="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h" bodystart="11" bodyend="14"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__S2E_DEF_H__</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__S2E_DEF_H__</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="multi__uart__rx__conf_8h" kindref="compound">multi_uart_rx_conf.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6" refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="7" refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbfe9ad49f9ac00187f8e9dda8be6178df3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbfe9ad49f9ac00187f8e9dda8be6178df3" kindref="member">NEW_UART_TX_DATA</ref>,</highlight></codeline>
+<codeline lineno="8" refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbff1630fad6a3c5e667c4c651d4691951d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbff1630fad6a3c5e667c4c651d4691951d" kindref="member">GET_UART_RX_DATA_TO_SEND</ref></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">}<sp/><ref refid="s2e__def_8h_128b496498aba80d1eea7d6a19ac7dfbf" kindref="member">tcp_handler_to_uart_handler_cmds</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="12" refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003d55b9dba86520fa6c5dde72812f25e1a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003d55b9dba86520fa6c5dde72812f25e1a" kindref="member">SENT_UART_TX_DATA</ref>,</highlight></codeline>
+<codeline lineno="13" refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d00388601bcc1bfa515b9b315a53cadc74ff" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d00388601bcc1bfa515b9b315a53cadc74ff" kindref="member">UART_RX_DATA_READY</ref></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}<sp/><ref refid="s2e__def_8h_1c912dbfe5866a3b5be14f6e36d47d003" kindref="member">uart_handler_to_tcp_handler_cmds</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="s2e__def_8h_12f6df32e3ca46af5018caa6a3697a57c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NUM_UART_CHANNELS<sp/>UART_RX_CHAN_COUNT</highlight></codeline>
+<codeline lineno="18"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__S2E_DEF_H__</highlight></codeline>
+<codeline lineno="20"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/vineela/GITRepos/Fork/sw_serial_to_ethernet/doc/_build/.doxygen/app_serial_to_ethernet/src/s2e_def.h"/>
+  </compounddef>
+</doxygen>
