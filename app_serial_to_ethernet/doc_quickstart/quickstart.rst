@@ -30,7 +30,6 @@ For serial-telnet data communication demo, the following are required in additio
 
 Hardware setup
 --------------
-
 Required sliceKIT units:
 
 * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
