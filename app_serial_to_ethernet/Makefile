@@ -40,7 +40,7 @@ WEB_ROOT_DIR = web
 .PHONY: flash
 
 flash:
-	xflash --boot-partition-size 0x10000 $(BIN_DIR)/$(APP_NAME).xe --data $(BIN_DIR)/web_data.bin
+	xflash --boot-partition-size 0x10000 $(BIN_DIR)$(APP_NAME).xe --data $(BIN_DIR)web_data.bin
 
 #=============================================================================
 #=============================================================================
