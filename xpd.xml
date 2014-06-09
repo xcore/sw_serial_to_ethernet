@@ -5,23 +5,23 @@
             <board>L-series sliceKIT core board</board>
             <board>Ethernet sliceCARD</board>
             <board>Multi-UART sliceCARD</board>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_slicekit_support.git" version = "1.0.4">module_slicekit_support</componentDependency>
-            <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet_smi</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_website" version = "1.0.3">module_webserver</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_wifi.git" version = "1.1.2">module_wifi_tiwisl</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_multi_uart.git" version = "1.0.4">module_multi_uart</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_spi" version = "1.4.0">module_spi_master</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_wifi.git" version = "1.1.2">module_wifi_tiwisl</componentDependency>
+            <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_xc_ptr</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_locks</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_website" version = "1.0.3">module_webserver</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_slicekit_support.git" version = "1.0.4">module_slicekit_support</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
             <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet_board_support</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet_smi</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_locks</componentDependency>
             <keyword>S2E</keyword>
             <keyword>TCP/IP</keyword>
             <keyword>UART</keyword>
@@ -81,6 +81,7 @@
     <partnumber>XM-005775-DH</partnumber>
     <release parenthash = "c3304228ec52543edc09d38ffe47ba6207ddb57d" version = "2.1.0alpha0" githash = "d921c138fb2045af2e6a6449cfae6242bffa69f9"></release>
     <release parenthash = "fb9ce85593504431ad9a9138c6a9b84ea70ccbad" version = "2.1.0alpha1" githash = "90b560cdb68797e428a9845c635e722ce5f3879a"></release>
+    <release parenthash = "60423e0d53044ec2035b54695ce7769afc3793dc" version = "2.1.0alpha2"></release>
     <subpartnumber>XM-005776-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <version_defines></version_defines>

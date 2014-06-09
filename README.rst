@@ -1,7 +1,7 @@
 Serial to Ethernet bridging software
 .....................................
 
-:Latest release: 2.1.0alpha1
+:Latest release: 2.1.0alpha2
 :Maintainer: xmos
 :Description: Reference design to demonstrate serial device to ethernet bridging applications
 
@@ -98,7 +98,7 @@ Required software (dependencies)
   * sc_multi_uart (https://github.com/xcore/sc_multi_uart.git)
   * sc_website (https://github.com/xcore/sc_website.git)
   * sc_ethernet (git@github.com:xcore/sc_ethernet.git)
-  * sc_slicekit_support (https://github.com/xcore/sc_slicekit_support)
+  * sc_slicekit_support (git@github.com:xcore/sc_slicekit_support)
   * sc_wifi (git@github.com:xcore/sc_wifi)
   * sc_otp (git@github.com:xcore/sc_otp)
   * sc_util (git@github.com:xcore/sc_util)
