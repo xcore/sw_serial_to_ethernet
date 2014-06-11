@@ -56,12 +56,13 @@ Import and build the application
 --------------------------------
 Importing the ``serial to ethernet`` reference application:
 
-* Open the xTIMEcomposer studio. 
-* Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
-* Access the *Import* option either by right clicking in the project explorer window or through File ->Import menu
-* Click *Import* option (Import -> General -> Existing Projects into Workspace and click Next).
-* Choose *Select archive file* option and click *Browse* button.
-* Select s2e reference design release package and click *Finish* button
+* Open the xTIMEcomposer studio and ensure that it is operating in online mode.
+* Open the *XMOS Edit* perspective (Window -> Open Perspective -> XMOS Edit).
+* Open the xSOFTip view from (Window -> Show View -> xSOFTip). An xSOFTip window appears on the bottom-left.
+* Find the `Serial to Ethernet bridging application` in the listed software blocks
+* Click and drag it into the Project Explorer window. Doing this will open an Import xTIMEcomposer Software window.
+* Click on Finish to download and complete the import.
+* This will also automatically import dependencies for this application.
 * The application is called as *app_serial_to_ethernet* in the *Project Explorer* window.
 
 Building the ``serial to ethernet`` application:
@@ -85,6 +86,7 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 
 * Click on *Apply* and then *Flash* to the XMOS device.
 * Check the *Console* window to verify flashing progress.
+* Power cycle the ``XP-SKC-L2`` core board.
 
 Run the application
 -------------------
@@ -94,8 +96,11 @@ To run the application using xTIMEcomposer studio:
 * In the *Project Explorer* window, locate the *app_serial_to_ethernet.xe* in the (app_serial_to_ethernet -> Binaries).
 * Right click on *app_serial_to_ethernet.xe* and click on (Run As -> xCORE Application).
 * In the *Run Configurations* window, double click the *xCORE Application* to create a new xCORE application launch configuration.
-* A *Select Device* window appears.
-* Select *XMOS XTAG-2 connected to L1* and click *Apply*.
+* A *Target* selection list is dispalyed.
+* Select *XMOS XTAG-2 connected to L1*.
+* Select *Target I/O options:* checkbox to *xSCOPE(via xCONNECT/UART)* option
+* Navigate to *XScope* pane and select *Mode* as *Offline [XScope] mode* option
+* Click *Apply*
 * Click *Run* and check the *Console* window for any messages.
 
 Demo:
@@ -140,31 +145,34 @@ In addition to the above hardware setup
 * Configure the host COM port console settings; sample settings while using Hercules client should be as follows: 
 
 .. list-table::
-    
-    * - Parameter
-      - Value
-    * - Baud rate
-      - 115200
-    * - Data size
-      - 8
-    * - Parity
-      - Even
-    * - Handshake
-      - off
-    * - Mode
-      - Free
+ :header-rows: 1
+
+ * - Parameter
+   - Value
+ * - Baud rate
+   - 115200
+ * - Data size
+   - 8
+ * - Parity
+   - Even
+ * - Handshake
+   - off
+ * - Mode
+   - Free
 
 The Transmit End-of-Line character should be set to `CR` (other options presented will probably be `LF` and `CR\LF`). In hercules, this setting is achieved by right clicking on `Received/Sent Data` text box, select `Transmit EOL`, select `CR(Mac)` option
 
 If any other terminal console is used, and has any additional settings, following values are used:
-.. list-table::
 
-    * - Parameter
-      - Value
-    * - Stop bit
-      - 1
-    * - hardware flow control
-      - none
+.. list-table::
+ :header-rows: 1
+
+ * - Parameter
+   - Value
+ * - Stop bit
+   - 1
+ * - hardware flow control
+   - none
 
 * Click on *Open* to open the COM port.
 

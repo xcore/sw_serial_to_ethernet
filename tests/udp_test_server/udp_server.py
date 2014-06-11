@@ -5,8 +5,10 @@ import time
 send_port = 15534
 recv_port = 15533
 
-ip = socket.gethostbyname(socket.gethostname())
-Host_IP=str(ip)
+ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+ip.connect(("google.com",80))
+Host_IP = (ip.getsockname()[0])
+ip.close()
 
 print '\n'+'-------------------------------------------------------'
 print '     WELCOME TO XMOS UDP BROADCAST SERVER FOR S2E      '

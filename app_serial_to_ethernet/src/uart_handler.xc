@@ -69,9 +69,8 @@ static void push_to_uart_rx_buffer(uart_rx_info &st,
   } else {
 #ifdef S2E_DEBUG_OVERFLOW
     // Drop data due to buffer overflow
-    //printchar('!');
-#endif
     printchar('!');
+#endif
   }
   return;
 }
