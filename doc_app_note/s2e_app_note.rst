@@ -124,67 +124,100 @@ Configuration tuning
 
 This section defines the key configuration parameters that may need to be modified in order to tune the application to more specific needs
 
-.. list-table::
- :header-rows: 1
+ **UIP_CONF_RECEIVE_WINDOW**
 
- * - Parameter
-   - Source
-   - Default value
-   - Usage
- * - UIP_CONF_RECEIVE_WINDOW
-   - xtcp_client_conf.h
-   - 128
-   - Size of the advertised receiver's window for incoming XTCP packets
- * - UIP_PACKET_SPLIT_THRESHOLD
-   - xtcp_client_conf.h
-   - 64
-   - Packets above this size will be split during TCP transmits (to avoid delayed acks)
- * - UIP_SINGLE_THREAD_RX_BUFFER_SIZE
-   - xtcp_client_conf.h
-   - 14000
-   - Buffer size to hold incoming receive packets from Ethernet MII layer
- * - UIP_MAX_TRANSMIT_SIZE
-   - xtcp_client_conf.h
-   - 1350
-   - Maximum buffer size (MTU) for TCP transmit packets 
- * - XTCP_CLIENT_BUF_SIZE
-   - xtcp_client_conf.h
-   - 1300
-   - Defines buffer size to hold packets for TCP transmissions
- * - UART_RX_MAX_PACKET_SIZE
-   - s2e_conf.h
-   - 1100
-   - Maximum size of application buffers to collect data received from UARTs
- * - UART_RX_MIN_PACKET_SIZE
-   - s2e_conf.h
-   - 800
-   - This value determines the size of TCP transmit packets
- * - SW_FC_CTRL
-   - s2e_conf.h
-   - 1
-   - Enable this to include `software flow control` for all the conigured UARTs
- * - ETHERNET_USE_TRIANGLE_SLOT
-   - ethernet_conf.h
-   - 1
-   - Use different define according to the usage of Ethernet sliceCARD slot; eg, for STAR slot, use ETHERNET_USE_STAR_SLOT
- * - UART_RX_CHAN_COUNT
-   - multi_uart_rx_conf.h
-   - 8
-   - Number of UARTs to support by MultiUART RX server. Must be a power of 2 (i.e. 1,2,4,8)
- * - UART_TX_CHAN_COUNT
-   - multi_uart_tx_conf.h
-   - 8
-   - Number of UARTs to support by MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8)
- * - UART_TX_BUF_SIZE
-   - multi_uart_tx_conf.h
-   - 8
-   - UART buffer size maintained at MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8,16,32 etc)
-   
+    source: xtcp_client_conf.h
+    Default value = 128
+
+    Size of the advertised receiver's window for incoming XTCP packets
+
+ **UIP_PACKET_SPLIT_THRESHOLD**
+
+    source: xtcp_client_conf.h
+    Default value = 64
+
+    Packets above this size will be split during TCP transmits (to avoid delayed acks)
+
+ **UIP_SINGLE_THREAD_RX_BUFFER_SIZE**
+
+    source: xtcp_client_conf.h
+    Default value = 14000
+
+    Buffer size to hold incoming receive packets from Ethernet MII layer
+
+ **UIP_MAX_TRANSMIT_SIZE**
+
+    source: xtcp_client_conf.h
+    Default value = 1350
+
+    Maximum buffer size (MTU) for TCP transmit packets 
+
+ **XTCP_CLIENT_BUF_SIZE**
+
+    source: xtcp_client_conf.h
+    Default value = 1300
+
+    Defines buffer size to hold packets for TCP transmissions
+
+ **UART_RX_MAX_PACKET_SIZE**
+
+    source: s2e_conf.h
+    Default value = 1100
+
+    Maximum size of application buffers to collect data received from UARTs
+
+ **UART_RX_MIN_PACKET_SIZE**
+
+    source: s2e_conf.h
+    Default value = 800
+
+    This value determines the size of TCP transmit packets
+
+ **SW_FC_CTRL**
+
+    source: s2e_conf.h
+    Default value = 1
+
+    Enable this to include `software flow control` for all the conigured UARTs
+
+ **ETHERNET_USE_TRIANGLE_SLOT**
+
+    source: ethernet_conf.h
+    Default value = 1
+
+    Use different define according to the usage of Ethernet sliceCARD slot; eg, for STAR slot, use ETHERNET_USE_STAR_SLOT
+
+ **UART_RX_CHAN_COUNT**
+
+    source: multi_uart_rx_conf.h
+    Default value = 8
+
+    Number of UARTs to support by MultiUART RX server. Must be a power of 2 (i.e. 1,2,4,8)
+
+ **UART_TX_CHAN_COUNT**
+
+    source: multi_uart_tx_conf.h
+    Default value = 8
+
+    Number of UARTs to support by MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8)
+    
+ **UART_TX_BUF_SIZE**
+
+    source: multi_uart_tx_conf.h
+    Default value = 8
+
+    UART buffer size maintained at MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8,16,32 etc)
+    
 API design and overview
 ------------------------
 
 Refer to ``API`` section of ``Serial to Ethernet bridging application manual`` for available API's and its usage
 
+Points to note
+--------------
+  #. Hosts with long TCP/IP response times, or large latency due to switches will result in data loss. In such cases, use traffic/network analysis tools such as Wireshark to verify host and device response times. As a thumb rule, the `TCP round trip time time` to send and receive an acknowledgement for a transmitted UART buffer should not exceed the UART buffer filling time. Application buffers may need to be increased as a result to avoid such data losses. Refer to FAQ section for more details.
+  
+  #. This application uses XS1-L8-128 device. Two tile devices provide more room for larger application buffers to accomodate slow hosts, more scope to add more custom functionality in the available spare logical core(s). They also provide additional IO ports to cater to the hardware needs such as hardware flow control etc.,
 
 FAQs
 ----
@@ -200,16 +233,14 @@ FAQs
     
   * Can I implement hardware flow control in the existing application?
 
-  Yes, this is possible. It requires additional 8 pairs of RTS and CTS pins for flow control.
-  Additionally, MultiUART TX server requires some modifications to include RTS, CTS flow control checks.
-  MultiUART RX server has no more MIPs to accommodate any additional logic and hence needs to be handled in the application core.
+  Yes, this is possible. It requires additional 8 pairs of RTS and CTS pins for flow control. MultiUART TX server module (run_multi_uart_tx) might need to check CTS assertion status before outputting to the UART port. MultiUART RX server has no more MIPS to accommodate any additional logic and hence application core should manage RTS assertion states.
 
   * Is it possible to extend the design to other series of devices?
  
   Yes, more core devices may be used, but the following needs to be factored into the implementation:
 
-  #. MultiUART servers and application handlers should all be on a single tile, as they use shared memory
-  
+  #. MultiUART server cores (run_multi_uart_tx and run_multi_uart_rx) and application handler cores (TCP_Handler and UART_Handler) should all be on a single tile, as they use shared memory
+  #. Ethernet related modifications like adding more TCP and/or UDP message handlers may be accomodated by the TCP_Handler core in a similar manner as telnet_config_event_handler and udp_discovery_event_handler functions
 
   * Can I add custom web pages?
   
