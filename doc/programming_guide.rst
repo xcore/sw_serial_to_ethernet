@@ -9,34 +9,24 @@ Installation of xTIMEcomposer Tools Suite
 
 The Serial to Ethernet application requires xTIMEcomposer version 13.0.0 or greater. It can be downloaded at the following URL http://www.xmos.com/support/xtools
 
-The following components are required to build the *Serial to Ethernet application*:
-    * sw_serial_to_ethernet: git://github.com/xcore/sw_serial_to_ethernet
-    * sc_multi_uart: git://github.com/xcore/sc_multi_uart.git
-    * sc_xtcp: git://github.com/xcore/sc_xtcp.git
-    * sc_ethernet: git://github.com/xcore/sc_ethernet.git
-    * sc_util: git://github.com/xcore/sc_util.git
-    * sc_website: git://github.com/xcore/sc_website.git
-    * sc_slicekit_support: git://github.com/xcore/sc_slicekit_support
-    * sc_otp: git://github.com/xcore/sc_otp
-
-All these components are packaged as a software distribution. Once this zip file is selected, you can follow the below instructions to build and use the software.
-
 Import and build procedure using xTIMEcomposer studio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install the software, open the xTIMEcomposer (v13.0.0 or later) and follow these steps:
 
-#. Open the xTIMEcomposer studio. 
+#. Open the xTIMEcomposer studio and ensure that it is operating in online mode.
 
-#. Open the *Edit* perspective (Window -> Open Perspective -> XMOS Edit).
+#. Open the *XMOS Edit* perspective (Window -> Open Perspective -> XMOS Edit).
 
-#. Access the Import option either by right clicking the project in the project explorer window or through File ->Import menu
+#. Open the xSOFTip view from (Window -> Show View -> xSOFTip). An xSOFTip window appears on the bottom-left.
 
-#. Click *Import* option in the *Project Explorer* window (Import -> General -> Existing Projects into Workspace and click Next).
+#. Find the `Serial to Ethernet bridging application` in the listed software blocks
 
-#. Choose *Select archive file* option and click *Browse* button.
+#. Click and drag it into the Project Explorer window. Doing this will open an Import xTIMEcomposer Software window.
 
-#. Select s2e release zip file and click *Finish* button
+#. Click on Finish to download and complete the import.
+
+#. This will also automatically import dependencies for this application.
 
 #. The application is called as *app_serial_to_ethernet* in the *Project Explorer* window.
 
@@ -68,23 +58,20 @@ To flash the web pages and device configuration using xTIMEcomposer studio:
 
 #. Check the *Console* window to verify flashing progress.
 
-.. figure:: images/flashing.png
-
-   Flashing the web pages
 
 Building from command line tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To build from the command line, navigate to `app_serial_to_ethernet` directory and execute the command:
+To build from the command line, navigate to `app_serial_to_ethernet` directory and execute the command::
 
        xmake all
 
-Inorder to build the firmware with a static IP (say 169.254.196.178), execute the following command:
+Inorder to build the firmware with a static IP (say 169.254.196.178), execute the following command::
 
        xmake all STATIC_IP=169.254.196.178
 
 
-To flash the application, configration and web pages, execute the command:
+To flash the application, configration and web pages, execute the command::
 
     xmake flash
 

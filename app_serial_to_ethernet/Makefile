@@ -23,11 +23,9 @@ ifneq ($(STATIC_IP),)
 STATIC_IP_FLAGS = -DSTATIC_IP={$(subst .,$(COMMA),$(STATIC_IP))}
 endif
 
-XCC_FLAGS_Release = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
-XCC_FLAGS_Debug = -O0 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
+XCC_FLAGS = -O3 -save-temps -g -report -Xmapper --map -Xmapper MAPFILE -lflash $(STATIC_IP_FLAGS)
 
-XCC_C_FLAGS_Release = $(XCC_FLAGS) -Os
-XCC_C_FLAGS_Debug = $(XCC_FLAGS) -O0
+XCC_C_FLAGS = $(XCC_FLAGS) -Os
 
 # The USED_MODULES variable lists other module used by the application.
 USED_MODULES = module_multi_uart module_webserver module_xtcp module_slicekit_support
@@ -45,14 +43,6 @@ flash:
 	xflash --boot-partition-size 0x10000 $(BIN_DIR)$(APP_NAME).xe --data $(BIN_DIR)web_data.bin
 
 #=============================================================================
-#=============================================================================
-# The following part of the Makefile includes the common build infrastructure
-# for compiling XMOS applications. You should not need to edit below here.
-
-XMOS_MAKE_PATH ?= ../..
-ifneq ($(wildcard $(XMOS_MAKE_PATH)/xcommon/module_xcommon/build/Makefile.common),)
-
-
 #=============================================================================
 # The following part of the Makefile includes the common build infrastructure
 # for compiling XMOS applications. You should not need to edit below here.

@@ -26,7 +26,7 @@ void s2e_webserver_init(chanend c_xtcp,
  *  @param c_xtcp           channel connecting to the xtcp module
  *  @param c_flash          channel for web page data
  *  @param c_uart_config    channel for UART configuration
- *  @param c_flash_data     channel for s2e flash data
+ *  @param conn             XTCP connection state
  *  @return none
  *
  **/
