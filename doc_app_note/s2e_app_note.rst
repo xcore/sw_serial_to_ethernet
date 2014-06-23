@@ -60,11 +60,11 @@ Application cores and its functions
 +++++++++++++++++++++++++++++++++++
 MultiUART interfacing comprises two logical cores, one acting as a transmit (TX) server and the other acting as a receive (RX) server. We use an external clock to derive the timing required to support baud rate up to 115200 bits per second for up to 8 UARTs.
 
-UART_Handler is an application core that handles UART configuration, interfaces to UART servers, and manages application buffers and key data structures. As it is of great importance not to lose any data received from UART servers, this core implements a double buffer to manage data received from each UARTs.
+UART_Handler is an application core that handles UART configuration, interfaces to UART servers (MultiUART Module), and manages application buffers and key data structures. As it is of great importance not to lose any data received from UART servers (MultiUART Module), this core implements a double buffer to manage data received from each UARTs.
 
-TCP_Handler is an application core that acts as client to xtcp server and handles all xtcp application events. It initializes the application, interfaces with the flash module for UART configuration, invokes respective application handlers for parsing Telnet data, and handles web page requests and device discovery messages. This acts as the control core for the whole application in terms of data managing data transfers from Telnet sockets and UART interfaces.
+TCP_Handler is an application core that acts as client to xtcp server (Ethernet/TCP Module) and handles all xtcp application events. It initializes the application, interfaces with the flash module for UART configuration, invokes respective application handlers for parsing Telnet data, and handles web page requests and device discovery messages. This acts as the control core for the whole application in terms of data managing data transfers from Telnet sockets and UART interfaces.
 
-XTCP server runs on a single logical core and connects to the Ethernet MAC component which uses another single logical core.
+XTCP server (Ethernet/TCP Module) runs on a single logical core and connects to the Ethernet MAC (Layer 2 Ethernet MAC) component which uses another single logical core.
 
 Flash core handles TCP_handler requests for UART configuration storage and retrieval.
 
@@ -77,10 +77,10 @@ Communication model between logical cores
  * - Cores
    - Communication mode
    - Usage
- * - Ethernet, XTCP
+ * - L2 Ethernet MAC, Ethernet/TCP
    - Channel
    - Communicates MII data from Ethernet packets to/from XTCP core
- * - XTCP, TCP_Handler
+ * - Ethernet/TCP, TCP_Handler
    - Channel
    - Telnet application data to TCP_Application Core
  * - TCP_Handler, UART_Handler
@@ -89,10 +89,10 @@ Communication model between logical cores
  * - TCP_Handler, UART_Handler
    - Shared memory
    - Data buffers to hold UART data and Telnet data
- * - UART_Handler, UART_TX_Server
+ * - UART_Handler, MultiUART(TX)
    - Shared memory
    - API level data sharing
- * - UART_Handler, UART_RX_Server
+ * - UART_Handler, MultiUART(RX)
    - Shared memory
    - API level data sharing
  * - Flash_Handler, TCP_Handler
@@ -126,87 +126,75 @@ This section defines the key configuration parameters that may need to be modifi
 
  **UIP_CONF_RECEIVE_WINDOW**
 
-    source: xtcp_client_conf.h
-    Default value = 128
-
-    Size of the advertised receiver's window for incoming XTCP packets
+  -  source: xtcp_client_conf.h
+  -  Default value = 128
+  -  Size of the advertised receiver's window for incoming XTCP packets
 
  **UIP_PACKET_SPLIT_THRESHOLD**
 
-    source: xtcp_client_conf.h
-    Default value = 64
-
-    Packets above this size will be split during TCP transmits (to avoid delayed acks)
+  -  source: xtcp_client_conf.h
+  -  Default value = 64
+  -  Packets above this size will be split during TCP transmits (to avoid delayed acks)
 
  **UIP_SINGLE_THREAD_RX_BUFFER_SIZE**
 
-    source: xtcp_client_conf.h
-    Default value = 14000
-
-    Buffer size to hold incoming receive packets from Ethernet MII layer
+  -  source: xtcp_client_conf.h
+  -  Default value = 14000
+  -  Buffer size to hold incoming receive packets from Ethernet MII layer
 
  **UIP_MAX_TRANSMIT_SIZE**
 
-    source: xtcp_client_conf.h
-    Default value = 1350
-
-    Maximum buffer size (MTU) for TCP transmit packets 
+  -  source: xtcp_client_conf.h
+  -  Default value = 1350
+  -  Maximum buffer size (MTU) for TCP transmit packets 
 
  **XTCP_CLIENT_BUF_SIZE**
 
-    source: xtcp_client_conf.h
-    Default value = 1300
-
-    Defines buffer size to hold packets for TCP transmissions
+  -  source: xtcp_client_conf.h
+  -  Default value = 1300
+  -  Defines buffer size to hold packets for TCP transmissions
 
  **UART_RX_MAX_PACKET_SIZE**
 
-    source: s2e_conf.h
-    Default value = 1100
-
-    Maximum size of application buffers to collect data received from UARTs
+  -  source: s2e_conf.h
+  -  Default value = 1100
+  -  Maximum size of application buffers to collect data received from UARTs
 
  **UART_RX_MIN_PACKET_SIZE**
 
-    source: s2e_conf.h
-    Default value = 800
-
-    This value determines the size of TCP transmit packets
+  -  source: s2e_conf.h
+  -  Default value = 800
+  -  This value determines the size of TCP transmit packets
 
  **SW_FC_CTRL**
 
-    source: s2e_conf.h
-    Default value = 1
-
-    Enable this to include `software flow control` for all the conigured UARTs
+  -  source: s2e_conf.h
+  -  Default value = 1
+  -  Enable this to include `software flow control` for all the conigured UARTs
 
  **ETHERNET_USE_TRIANGLE_SLOT**
 
-    source: ethernet_conf.h
-    Default value = 1
-
-    Use different define according to the usage of Ethernet sliceCARD slot; eg, for STAR slot, use ETHERNET_USE_STAR_SLOT
+  -  source: ethernet_conf.h
+  -  Default value = 1
+  -  Use different define according to the usage of Ethernet sliceCARD slot; eg, for STAR slot, use ETHERNET_USE_STAR_SLOT
 
  **UART_RX_CHAN_COUNT**
 
-    source: multi_uart_rx_conf.h
-    Default value = 8
-
-    Number of UARTs to support by MultiUART RX server. Must be a power of 2 (i.e. 1,2,4,8)
+  -  source: multi_uart_rx_conf.h
+  -  Default value = 8
+  -  Number of UARTs to support by MultiUART RX server. Must be a power of 2 (i.e. 1,2,4,8)
 
  **UART_TX_CHAN_COUNT**
 
-    source: multi_uart_tx_conf.h
-    Default value = 8
-
-    Number of UARTs to support by MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8)
+  -  source: multi_uart_tx_conf.h
+  -  Default value = 8
+  -  Number of UARTs to support by MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8)
     
  **UART_TX_BUF_SIZE**
 
-    source: multi_uart_tx_conf.h
-    Default value = 8
-
-    UART buffer size maintained at MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8,16,32 etc)
+  -  source: multi_uart_tx_conf.h
+  -  Default value = 8
+  -  UART buffer size maintained at MultiUART TX server. Must be a power of 2 (i.e. 1,2,4,8,16,32 etc)
     
 API design and overview
 ------------------------
@@ -215,9 +203,9 @@ Refer to ``API`` section of ``Serial to Ethernet bridging application manual`` f
 
 Points to note
 --------------
-  #. Hosts with long TCP/IP response times, or large latency due to switches will result in data loss. In such cases, use traffic/network analysis tools such as Wireshark to verify host and device response times. As a thumb rule, the `TCP round trip time time` to send and receive an acknowledgement for a transmitted UART buffer should not exceed the UART buffer filling time. Application buffers may need to be increased as a result to avoid such data losses. Refer to FAQ section for more details.
+.. warning:: Hosts with long TCP/IP response times, or large latency due to switches will result in data loss. In such cases, use traffic/network analysis tools such as Wireshark to verify host and device response times. As a thumb rule, the `TCP round trip time time` to send and receive an acknowledgement for a transmitted UART buffer should not exceed the UART buffer filling time. Application buffers may need to be increased as a result to avoid such data losses. Refer to FAQ section for more details.
   
-  #. This application uses XS1-L8-128 device. Two tile devices provide more room for larger application buffers to accomodate slow hosts, more scope to add more custom functionality in the available spare logical core(s). They also provide additional IO ports to cater to the hardware needs such as hardware flow control etc.,
+.. note:: This application uses XS1-L8-128 device. Two tile devices provide more room for larger application buffers to accomodate slow hosts, more scope to add more custom functionality in the available spare logical core(s). They also provide additional IO ports to cater to the hardware needs such as hardware flow control etc.,
 
 FAQs
 ----
@@ -245,7 +233,7 @@ FAQs
   * Can I add custom web pages?
   
   Yes, they can be added. These pages can be stored into the on board flash as well.
-  Take a look at the ``http://xcore.github.io/sc_website`` and its demo application ``Embedded Webserver Demo (SPI flash)`` available at xSOFTip browser
+  Take a look at the ``sc_website`` and its demo application ``Embedded Webserver Demo (SPI flash)`` available at xSOFTip browser
 
   * Can I add any additional application logic?
   
@@ -269,8 +257,10 @@ FAQs
 References
 ----------
 
-.. ``Serial to Ethernet bridging application manual``
+ #. ``Serial to Ethernet bridging application manual``
 
-.. ``Serial to Ethernet (S2E) bridging application quickstart guide``
+ #. ``Serial to Ethernet (S2E) bridging application quickstart guide``
 
-.. [XM-001600-PC] Multi-UART Module Manual. XMOS Ltd, 2012. http://xcore.github.io/sc_multi_uart/
+ #. ``MultiUART module usage manual``. XMOS Ltd, 2012.
+ 
+    - https://www.xmos.com/published/multi-uart-module-usage-manual 
