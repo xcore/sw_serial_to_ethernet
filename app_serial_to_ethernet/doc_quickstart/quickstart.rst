@@ -24,9 +24,16 @@ A computer with:
 For serial-telnet data communication demo, the following are required in addition to the above:
 
 * A null serial cable to DB-9 connector. The cable will need a cross over between the UART RX and TX pins at each end.
-* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use BF-810 USB-UART adapter 
-(``http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html``).
-* A suitable terminal client software. For MAC users, try SecureCRT (``http://www.vandyke.com/download/securecrt/``) and for Linux users, try cutecom (``http://cutecom.sourceforge.net/``). We use hercules client (``http://www.hw-group.com/products/hercules/index_en.html``) on a Windows platform for the demo.
+* If the computer does not have a DB-9 connector slot, any USB-UART cable can be used. For the demo, we use BF-810 USB-UART adapter.  
+(`http://www.bafo.com/products/accessories/usb-devices/bf-810-usb-to-serial-adapter-db9.html`).
+
+A suitable terminal client software: 
+
+- For MAC users, try SecureCRT (`http://www.vandyke.com/download/securecrt/`)
+- For Linux users, try cutecom (`http://cutecom.sourceforge.net/`). 
+- For Windows users, hercules (`http://www.hw-group.com/products/hercules/index_en.html`).
+
+.. note:: We use hercules client for this demo.(Windows Platform)
 
 Hardware setup
 --------------
