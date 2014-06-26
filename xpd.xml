@@ -5,23 +5,23 @@
             <board>L-series sliceKIT core board</board>
             <board>Ethernet sliceCARD</board>
             <board>Multi-UART sliceCARD</board>
-            <componentDependency repo = "git://github.com/xcore/sc_wifi.git" version = "1.1.2">module_wifi_tiwisl</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet_smi</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_slicekit_support.git" version = "1.0.4">module_slicekit_support</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_spi" version = "1.4.0">module_spi_master</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_locks</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet_board_support</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.1">module_ethernet</componentDependency>
-            <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_website" version = "1.0.3">module_webserver</componentDependency>
-            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_xc_ptr</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_multi_uart.git" version = "1.0.4">module_multi_uart</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.2">module_ethernet_smi</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
+            <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_xc_ptr</componentDependency>
             <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
             <componentDependency repo = "git://github.com/davelxmos/sc_xtcp" version = "3.2.1">module_xtcp</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.2">module_ethernet</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_wifi.git" version = "1.0.0">module_wifi_tiwisl</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_ethernet.git" version = "2.3.2">module_ethernet_board_support</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_mutual_thread_comm</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_spi" version = "1.4.0">module_spi_master</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_website" version = "1.0.3">module_webserver</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_util" version = "1.0.4">module_locks</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_otp" version = "1.0.0">module_otp_board_info</componentDependency>
+            <componentDependency repo = "git://github.com/xcore/sc_slicekit_support.git" version = "1.0.4">module_slicekit_support</componentDependency>
             <keyword>S2E</keyword>
             <keyword>TCP/IP</keyword>
             <keyword>UART</keyword>
@@ -86,6 +86,7 @@
     <release parenthash = "227accb33b22285e941fb9857add6932aa92db87" version = "2.1.0beta0" githash = "78d7a5433e55b6b261b548d489ffe399ee91723e"></release>
     <release parenthash = "edb1865458421b73eadf85c9db96666191564420" version = "2.1.0beta1" githash = "66fcb2b8d6f76e5a3d0334814d626b83b34c003c"></release>
     <release parenthash = "877527f888a52197d8abad178aec414ae07a696a" version = "2.1.0beta2" githash = "c8af72566a8d0188ca4ac8fa5bffca84a6720819"></release>
+    <release parenthash = "0c21300592aef6ac1832233dd0e31957731c7b67" version = "2.1.0rc0"></release>
     <subpartnumber>XM-005776-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <version_defines></version_defines>
