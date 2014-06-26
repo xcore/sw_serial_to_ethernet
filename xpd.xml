@@ -31,28 +31,28 @@
         </component>
     </components>
     <dependency repo = "sc_xtcp">
-        <gitbranch>master</gitbranch>
-        <githash>7f6b2029954a52a9a2349150530bb3470a76f4c3</githash>
+        <gitbranch>(no branch)</gitbranch>
+        <githash>251e2095ed6670a5c72c123d1c89bc6a0bba962c</githash>
         <uri>https://github.com/xcore/sc_xtcp.git</uri>
-        <version>3.2.1rc0</version>
+        <version>3.2.1rc1</version>
     </dependency>
     <dependency repo = "sc_multi_uart">
-        <gitbranch>master</gitbranch>
-        <githash>144ab4898c592f6d3ef6a0d597b552ad09669004</githash>
+        <gitbranch>(no branch)</gitbranch>
+        <githash>1e52289adbd5f05c0612cd10ced8e0a2e6e0988d</githash>
         <uri>https://github.com/xcore/sc_multi_uart.git</uri>
-        <version>1.0.4rc1</version>
+        <version>1.0.4rc2</version>
     </dependency>
     <dependency repo = "sc_website">
-        <gitbranch>master</gitbranch>
-        <githash>0ea5f32d7f2d57aa58bb5065ef924e6d48c29186</githash>
+        <gitbranch>(no branch)</gitbranch>
+        <githash>6cfe636356122e93e3108c47439ab33dd52b7ea3</githash>
         <uri>https://github.com/xcore/sc_website.git</uri>
-        <version>1.0.3rc0</version>
+        <version>1.0.3rc1</version>
     </dependency>
     <dependency repo = "sc_ethernet">
         <gitbranch>(no branch)</gitbranch>
-        <githash>dc3e178da0c676f502fcbfe9538cade86bc1b240</githash>
+        <githash>28bf300515766c9fa2c033531a0a0d587608360e</githash>
         <uri>https://github.com/xcore/sc_ethernet.git</uri>
-        <version>2.3.1rc0</version>
+        <version>2.3.2rc0</version>
     </dependency>
     <dependency repo = "sc_slicekit_support">
         <gitbranch>(no branch)</gitbranch>
@@ -85,7 +85,7 @@
     <release parenthash = "60423e0d53044ec2035b54695ce7769afc3793dc" version = "2.1.0alpha2" githash = "f6a9e1f8b9e538ed49d078c6d37f49305fb194a6"></release>
     <release parenthash = "227accb33b22285e941fb9857add6932aa92db87" version = "2.1.0beta0" githash = "78d7a5433e55b6b261b548d489ffe399ee91723e"></release>
     <release parenthash = "edb1865458421b73eadf85c9db96666191564420" version = "2.1.0beta1" githash = "66fcb2b8d6f76e5a3d0334814d626b83b34c003c"></release>
-    <release parenthash = "877527f888a52197d8abad178aec414ae07a696a" version = "2.1.0beta2"></release>
+    <release parenthash = "877527f888a52197d8abad178aec414ae07a696a" version = "2.1.0beta2" githash = "c8af72566a8d0188ca4ac8fa5bffca84a6720819"></release>
     <subpartnumber>XM-005776-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <version_defines></version_defines>
