@@ -74,7 +74,6 @@
     </dependency>
     <description>Reference design to demonstrate serial device to ethernet bridging applications</description>
     <docdir>app_serial_to_ethernet/doc_quickstart</docdir>
-    <docdir>doc_app_note</docdir>
     <docdir>doc</docdir>
     <location>https://github.com/xcore/sw_serial_to_ethernet.git</location>
     <name>sw_serial_to_ethernet</name>
