@@ -215,7 +215,7 @@ FAQs
   If data is lost during simultaneous data transfers over several serial and Ethernet connections, the application parameters may be tuned to get more stability. 
   Following steps should be of help to deal with data loss:
   
-    #. Connect xTAG-2 debug adapter to the ``XP-SKC-L2`` sliceKIT core board and ensure `XMOS Link` switch is `ON`
+    #. Connect XA-XTAG2 debug adapter to the ``XP-SKC-L2`` sliceKIT core board and ensure `XMOS Link` switch is `ON`
     #. Enable `S2E_DEBUG_OVERFLOW` parameter available in `s2e_conf.h` file; use xscope debug and observe if there are any '!' prints in the console. In such a case, application buffers to collect data from UARTs are overflowing. Tuning (increasing) `UART_RX_MAX_PACKET_SIZE` value should avoid such a data loss. 
     #. If there is still a data loss, tune the software flow control parameters available under `SW_FC_CTRL` in `s2e_conf.h` Modify `UART_RX_MAX_WATERMARK` and `UART_RX_MIN_WATERMARK` values for better stability. Ensure value of `UART_RX_MAX_WATERMARK` > `UART_RX_MIN_PACKET_SIZE`
     
@@ -233,7 +233,7 @@ FAQs
   * Can I add custom web pages?
   
   Yes, they can be added. These pages can be stored into the on board flash as well.
-  Take a look at the ``sc_website`` and its demo application ``Embedded Webserver Demo (SPI flash)`` available at xSOFTip browser
+  Take a look at the ``Embedded Webserver Function Library`` and its demo application ``Embedded Webserver Demo (SPI flash)`` available at xSOFTip browser
 
   * Can I add any additional application logic?
   
@@ -247,7 +247,7 @@ FAQs
   * Getting an exception after modifying few application parameters!
   
   #. Insufficient memory will be reported at build time if the application buffers exceed a certain size. In such cases, check for the default values and modify to a value that suits accordingly
-  #. For sc_xtcp related exceptions, check if UIP_MAX_TRANSMIT_SIZE > XTCP_CLIENT_BUF_SIZE; use wireshark tool to dissect network packets and check for any obvious anomalies
+  #. For exceptions related to Ethernet/TCP module, check if UIP_MAX_TRANSMIT_SIZE > XTCP_CLIENT_BUF_SIZE; use wireshark tool to dissect network packets and check for any obvious anomalies
 
   * What is our test methodology?
   
@@ -261,6 +261,3 @@ References
 
  #. ``Serial to Ethernet (S2E) bridging application quickstart guide``
 
- #. ``MultiUART module usage manual``. XMOS Ltd, 2012.
- 
-    - https://www.xmos.com/published/multi-uart-module-usage-manual 

@@ -5,10 +5,10 @@ Hardware requirements
 ---------------------
 
 This application runs on an L2 device on the sliceKIT core board. Following hardware is required for running this application:
-   * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
-   * Ethernet sliceCARD 1V1 (XA-SK-E100)
-   * Multi UART sliceCARD (XA-SK-UART-8)
-   * xTAG-2 debug adapter and sliceKIT connector (xTAG-2 and XA-SK-XTAG2)
+   * xCORE General Purpose (L-series) sliceKIT core board 1V2
+   * Ethernet sliceCARD 1V1
+   * Multi UART sliceCARD
+   * XA-XTAG2 debug adapter and sliceKIT connector
    * Ethernet cable
    * Power supply 12V
 

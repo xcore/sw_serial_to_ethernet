@@ -37,33 +37,9 @@ Buffering
 Communication model
 ~~~~~~~~~~~~~~~~~~~
 
- #. The ``sc_multi_uart`` module utilises a combination of shared memory and channel communication. Channel communication is used on both the RX and TX servers to pause the logical core and subsequently release the logical core when required for reconfiguration. The primary means of data transfer for both the `multiUART RX and TX` logical cores is via shared memory. The RX logical core utilises a channel to notify any client (`UART_handler` in this case) of available data - this means that events can be utilised within an application to avoid the requirement for polling for received data.
+ #. `MultiUART` module utilises a combination of shared memory and channel communication. Channel communication is used on both the RX and TX servers to pause the logical core and subsequently release the logical core when required for reconfiguration. The primary means of data transfer for both the `multiUART RX and TX` logical cores is via shared memory. The RX logical core utilises a channel to notify any client (`UART_handler` in this case) of available data - this means that events can be utilised within an application to avoid the requirement for polling for received data.
 
  #. `Ethernet/TCP` module and `Flash_handler` core connects to `TCP_handler` client using their repective XC channels.
-
-
-Software components used
-------------------------
-
-.. list-table::
- :header-rows: 1
-
- * - Component
-   - Description
- * - sc_ethernet
-   - Two logical core (lite) version of the ethernet component implementing 10/100 MII Ethernet MAC and filters
- * - sc_xtcp
-   - Micro TCP/IP stack for use with sc_ethernet component
- * - sc_multi_uart
-   - Component for implementing multiple serial device communication
- * - sc_util
-   - General utility modules for developing for XMOS devices
- * - sc_website
-   - Component framework for Embedded web site development
- * - sc_slicekit_support
-   - sliceKIT library to use L-series core board's flash for application
- * - sc_otp
-   - Library for reading MAC from sliceKIT core board's OTP memory
 
 Resource usage
 --------------

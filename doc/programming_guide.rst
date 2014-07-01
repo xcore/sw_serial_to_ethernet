@@ -178,7 +178,7 @@ Webserver
 
 The webserver handles all HTTP requests from the web clients. A web client may request to change UART settings, save current settings, or apply the previously saved UART seetings etc. Webserver identifies these requests, validates them and services those requests. It calls appropriate UART handler api's to retrieve and set channel settings. For example, for a 'Set' request from the web page, the webserver handler utilizes website component in order to parse the form data from web page, the required UART parameters are extracted and the UART_Handler's uart_set_config api is called to set the new UART configuration.
 
-The Webserver interface utilises *sc_website* component to implement web server functionality. Refer to the `Quickstart Guide` within `Documentation` or `Developer Column` of the ``Slicekit GPIO and Ethernet Combo Demo`` example in xSOFTip browser. This documentation contains more information on how to utilize the ``Embedded Webserver Function Library`` component in customizing web server applications.
+The Webserver interface utilises *Embedded Webserver Function Library* to implement web server functionality. Refer to the `Quickstart Guide` within `Documentation` or `Developer Column` of the ``Slicekit GPIO and Ethernet Combo Demo`` example in xSOFTip browser. This documentation contains more information on how to utilize the ``Embedded Webserver Function Library`` component in customizing web server applications.
 
 Flash interface
 ---------------

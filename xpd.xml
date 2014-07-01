@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <xpd>
     <components>
-        <component description = "Reference application for serial to Ethernet bridge applications" type = "demoCode" scope = "Early Development" path = "app_serial_to_ethernet" local = "false" id = "app_serial_to_ethernet" name = "Serial to Ethernet bridging application">
+        <component description = "Demo application for serial to Ethernet bridge applications" type = "demoCode" scope = "Early Development" path = "app_serial_to_ethernet" local = "false" id = "app_serial_to_ethernet" name = "Serial to Ethernet bridging application">
             <board>L-series sliceKIT core board</board>
             <board>Ethernet sliceCARD</board>
             <board>Multi-UART sliceCARD</board>
@@ -72,7 +72,7 @@
         <uri>https://github.com/xcore/sc_util.git</uri>
         <version>1.0.4rc0</version>
     </dependency>
-    <description>Reference design to demonstrate serial device to ethernet bridging applications</description>
+    <description>Example application to demonstrate serial to Ethernet bridge</description>
     <docdir>app_serial_to_ethernet/doc_quickstart</docdir>
     <docdir>doc</docdir>
     <exclude_dir>doc_app_note</exclude_dir>

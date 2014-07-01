@@ -1,5 +1,5 @@
-sc_slicekit_support Change Log
-==============================
+Change Log
+==========
 
 2.1.0
 -----

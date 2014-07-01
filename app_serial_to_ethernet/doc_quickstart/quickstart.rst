@@ -1,6 +1,6 @@
 Serial to Ethernet (S2E) bridging application quickstart guide
 ==============================================================
-This application serves as a reference design to demonstrate bridging between Ethernet and serial communication devices.
+This firmware serves as an example application to demonstrate bridging between Ethernet and serial communication devices.
 Some features of this application are:
 
 * 10/100 Mbit Ethernet port
@@ -33,23 +33,23 @@ A suitable terminal client software:
 - For Linux users, try cutecom (`http://cutecom.sourceforge.net/`). 
 - For Windows users, hercules (`http://www.hw-group.com/products/hercules/index_en.html`).
 
-.. note:: We use hercules client for this demo.(Windows Platform)
+We use hercules client on a Windows platform for this demo.
 
 Hardware setup
 --------------
-Required sliceKIT units:
+Required sliceKIT components:
 
 * xCORE General Purpose (L-series) sliceKIT core board 1V2 (XP-SKC-L2)
 * Ethernet sliceCARD 1V1 (XA-SK-E100)
 * Multi UART sliceCARD (XA-SK-UART-8)
-* xTAG-2 debug adapter and sliceKIT connector (xTAG-2 and XA-SK-XTAG2)
+* XTAG2 debug adapter and sliceKIT connector (XA-XTAG2 and XA-SK-XTAG2)
 
 Setup:
 
-* Connect the ``XA-SK-XTAG2`` adapter to the ``XP-SKC-L2`` sliceKIT core board. 
+* Connect the ``XA-SK-XTAG2`` debug adapter to the ``XP-SKC-L2`` sliceKIT core board. 
 * Ensure the *XMOS Link* switch is at *ON* position on the ``XA-SK-XTAG2`` adapter.
-* Connect ``XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
-* Connect the ``XTAG2`` to your computer using a USB cable.
+* Connect ``XA-XTAG2`` to ``XSYS`` side (``J1``) of the ``XA-SK-XTAG2`` adapter.
+* Connect the ``XA-XTAG2`` to your computer using a USB cable.
 * Connect the ``XA-SK-UART-8`` Multi UART sliceCARD to the ``XP-SKC-L2`` core board's ``SQUARE`` (indicated by a white colour square) slot.
 * Connect the ``XA-SK-E100`` Ethernet sliceCARD to the ``XP-SKC-L2`` core board's ``TRIANGLE`` (indicated by a white colour triangle) slot.
 * Using an Ethernet cable, connect the other side of ``XA-SK-E100`` Ethernet sliceCARD to your computer's Ethernet port.
@@ -61,7 +61,7 @@ Setup:
 
 Import and build the application
 --------------------------------
-Importing the ``serial to ethernet`` reference application:
+Importing the ``serial to ethernet`` demo application:
 
 * Open the xTIMEcomposer studio and ensure that it is operating in online mode.
 * Open the *XMOS Edit* perspective (Window -> Open Perspective -> XMOS Edit).
@@ -204,6 +204,6 @@ Next steps
 
 * Connect two or more USB-UART adapters to the host and Multi UART sliceCARD. Open the terminal client applications for the correct configuration as detailed in the above *Serial-Telnet data communication demo*. Test the data communication between the connected UARTs and their corresponding Telnet sockets.
 
-* Detach xTAG-2 debug adapter and sliceKIT connector from xCORE General Purpose (L-series) sliceKIT core board. Connect Ethernet sliceCARD to a spare Ethernet port of the router. If your platform is a MAC or a linux host, navigate to ``sw_serial_to_ethernet -> tests -> udp_test_server`` and run the udp_server.py python script (python udp_server.py). If you are using a Windows host, download *Serial_to_Ethernet_UDP_test_server* package and extract its contents to a directory. Navigate to (udp_test_server -> windows -> udp_server.exe), right-click on udp-server.exe and run as Administrator. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as displayed by the script. Open a web page or test Telnet-UART data communication using ip of the S2E device. Select other choices to change ip configuration settings of the S2E device(s).
+* Detach XTAG2 debug adapter and sliceKIT connector from xCORE General Purpose (L-series) sliceKIT core board. Connect Ethernet sliceCARD to a spare Ethernet port of the router. Navigate to ``sw_serial_to_ethernet -> tests -> udp_test_server`` and run the udp_server.py python script (python udp_server.py) using `administrator` privileges. The script displays the selected network adapter on the console. If there are multiple network adapters on your host, ensure the ip address used by the script corresponds to the one used by your network adapter connected to the router. Now, select option ``1`` to discover the S2E devices available on the network. Look at the S2E device ip address as listed by the script. Open a web page or test Telnet-UART data communication using the ip of the listed S2E device. Select other choices to change ip configuration settings of the S2E device(s).
 
-* Take a look at the ``http://xcore.github.io/sw_serial_to_ethernet`` for a more detailed documentation on using various features, design and programming guide for the application.
+* Take a look at the ``Serial to Ethernet bridging application manual`` for a more detailed documentation on using various features, design and programming guide for the application.
