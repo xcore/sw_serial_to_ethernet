@@ -239,10 +239,10 @@ FAQs
   
   Yes, more logic may be added based on the spare logical core(s) available and interfaced to the existing logical cores using interfaces/channels to achieve any additional functionality.
   
-  * How to find IP for s2e device?
+  * How to find IP for a s2e device? If there are several S2E devices connected to a network, is there a way to assign or modify IP address for those devices?
 
-  UDP discovery feature is a part of the application used to discover any S2E devices available on the network.
-  Refer to ``Using the application`` section of the ``Serial to Ethernet bridging application manual`` for usage details.
+  UDP discovery feature is a part of this application, used in order to discover any S2E devices available on the network.
+  Refer to ``Using the application`` section of the ``Serial to Ethernet bridging application manual`` for more details.
 
   * Getting an exception after modifying few application parameters!
   
