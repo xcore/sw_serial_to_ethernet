@@ -5,24 +5,9 @@ import time
 send_port = 15534
 recv_port = 15533
 
-ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-ip.connect(("google.com",80))
-Host_IP = (ip.getsockname()[0])
-ip.close()
-
 print '\n'+'-------------------------------------------------------'
 print '     WELCOME TO XMOS UDP BROADCAST SERVER FOR S2E      '
 print '-------------------------------------------------------' + '\n'
-
-print 'Your IP Address is :' +Host_IP +'\n'
-option=raw_input( "Press 'y' to continue or 'n' to enter your IP address (y/n):")
-option=str(option)
-if( option == 'n'):
-	Host_IP = raw_input('Enter Your IP Address : ') # IP from where python scripts are running
-	Host_IP=str(Host_IP)
-
-#print '\n' + 'Using Default Send Port : ' + str(send_port)
-#print 'Using Default Receive Port : ' + str(recv_port)
 
 print '\n\tEnter 1 for Sending S2E Broadcast Command \n'
 print '\tEnter 2 for Modifying IP of S2E  \n'
@@ -48,7 +33,7 @@ while  ((action == '1') or (action == '2') or (action == '3')) :
 
         print 'Brodcasted command: XMOS S2E REPLY '
         try:
-            s1.bind( ( Host_IP, recv_port ) )
+            s1.bind( ( '', recv_port ) )
             variable=0
             STOP_RECEIVE =0
             while (STOP_RECEIVE == 0):
